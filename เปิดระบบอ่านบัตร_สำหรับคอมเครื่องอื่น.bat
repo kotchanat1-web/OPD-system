@@ -5,11 +5,11 @@ color 0A
 cls
 echo ===================================================================
 echo     โปรแกรมเชื่อมต่อเครื่องอ่านบัตรประชาชน (Smart Card Bridge)
-echo     คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์ (พอร์ต 8181)
+echo     คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์ (สำหรับคอมพิวเตอร์ทุกเครื่อง)
 echo ===================================================================
 echo.
 
-:: Check and build CardReader.exe if missing
+:: 1. Check CardReader.exe
 if not exist "%~dp0CardReader.exe" (
     echo [INFO] กำลังคอมไพล์ CardReader.exe...
     if exist "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" (
@@ -19,23 +19,24 @@ if not exist "%~dp0CardReader.exe" (
     )
 )
 
-echo [INFO] กำลังเริ่มต้นบริการอ่านบัตรประชาชนที่พอร์ต 8181 (HTTP + WebSocket)...
+echo [OK] กำลังเริ่มบริการอ่านบัตรประชาชน (พอร์ต 8181 - รองรับ WebSocket + Vercel)...
 echo.
+echo * ท่านสามารถเปิดเว็บแอป OPD บน Vercel หรือเบราว์เซอร์ได้ทันที
+echo * เมื่อเสียบบัตรประชาชน ระบบจะอ่านข้อมูลอัตโนมัติ
+echo.
+echo ===================================================================
 
 where node >nul 2>nul
 if %errorlevel% equ 0 (
-    echo [OK] พบ Node.js ในเครื่อง กำลังเริ่ม Bridge ผ่าน Node.js...
-    node "%~dp0smartcard-bridge.js"
-    if %errorlevel% neq 0 (
-        echo.
-        echo [WARN] สลับไปใช้ CardReader.exe --server 8181 อัตโนมัติ...
-        "%~dp0CardReader.exe" --server 8181
+    if exist "%~dp0smartcard-bridge.js" (
+        node "%~dp0smartcard-bridge.js"
+        goto end
     )
-) else (
-    echo [OK] กำลังเริ่ม Bridge ผ่าน CardReader.exe --server 8181...
-    "%~dp0CardReader.exe" --server 8181
 )
 
+"%~dp0CardReader.exe" --server 8181
+
+:end
 echo.
-echo [INFO] บริการอ่านบัตรปิดตัวลงแล้ว
+echo [INFO] บริการอ่านบัตรประชาชนปิดตัวลงแล้ว
 pause

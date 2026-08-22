@@ -2,28 +2,99 @@ const http = require('http');
 const { execFile } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const PORT = 8181;
 const exePath = path.join(__dirname, 'CardReader.exe');
 const indexPath = path.join(__dirname, 'index.html');
 
-// In-flight request lock & debounce cache to prevent USB collision
+// In-flight request lock & debounce cache
 let isExecuting = false;
 let executionQueue = [];
 let lastReadResult = null;
 let lastReadTime = 0;
 const CACHE_DURATION_MS = 350;
 
+// Active WebSocket client sockets
+const activeWsSockets = new Set();
+
+function createWebSocketFrame(data) {
+  const payload = Buffer.isBuffer(data) ? data : Buffer.from(typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
+  const length = payload.length;
+  let header;
+
+  if (length <= 125) {
+    header = Buffer.from([0x81, length]);
+  } else if (length <= 65535) {
+    header = Buffer.alloc(4);
+    header[0] = 0x81;
+    header[1] = 126;
+    header.writeUInt16BE(length, 2);
+  } else {
+    header = Buffer.alloc(10);
+    header[0] = 0x81;
+    header[1] = 127;
+    header.writeBigUInt64BE(BigInt(length), 2);
+  }
+
+  return Buffer.concat([header, payload]);
+}
+
+function parseWebSocketFrame(buffer) {
+  if (buffer.length < 2) return null;
+  const secondByte = buffer[1];
+  const isMasked = (secondByte & 0x80) !== 0;
+  let payloadLength = secondByte & 0x7F;
+  let currentOffset = 2;
+
+  if (payloadLength === 126) {
+    if (buffer.length < 4) return null;
+    payloadLength = buffer.readUInt16BE(2);
+    currentOffset = 4;
+  } else if (payloadLength === 127) {
+    if (buffer.length < 10) return null;
+    payloadLength = Number(buffer.readBigUInt64BE(2));
+    currentOffset = 10;
+  }
+
+  let maskingKey = null;
+  if (isMasked) {
+    if (buffer.length < currentOffset + 4) return null;
+    maskingKey = buffer.slice(currentOffset, currentOffset + 4);
+    currentOffset += 4;
+  }
+
+  if (buffer.length < currentOffset + payloadLength) return null;
+  const payload = Buffer.from(buffer.slice(currentOffset, currentOffset + payloadLength));
+
+  if (isMasked && maskingKey) {
+    for (let i = 0; i < payload.length; i++) {
+      payload[i] ^= maskingKey[i % 4];
+    }
+  }
+
+  return { payload: payload.toString('utf8'), totalLength: currentOffset + payloadLength };
+}
+
+function broadcastWs(msgObj) {
+  const frame = createWebSocketFrame(msgObj);
+  for (const socket of activeWsSockets) {
+    try {
+      if (socket.writable) socket.write(frame);
+    } catch (e) {
+      activeWsSockets.delete(socket);
+    }
+  }
+}
+
 function executeCardReader(args, callback) {
   const isReadCommand = (!args || args.length === 0);
   const now = Date.now();
 
-  // If reading card and we have a very fresh cache, return cached result immediately
   if (isReadCommand && lastReadResult && (now - lastReadTime) < CACHE_DURATION_MS) {
     return callback(null, lastReadResult);
   }
 
-  // Queue if another read process is already communicating with the chip
   if (isExecuting) {
     executionQueue.push({ args, callback, isReadCommand });
     return;
@@ -57,13 +128,10 @@ function executeCardReader(args, callback) {
 
     callback(null, resultJson);
 
-    // Process next queued request if any
     if (executionQueue.length > 0) {
       const next = executionQueue.shift();
-      // If next is a read command and we just finished reading, resolve immediately
       if (next.isReadCommand && (Date.now() - lastReadTime) < CACHE_DURATION_MS) {
         next.callback(null, lastReadResult);
-        // continue draining any further duplicates
         while (executionQueue.length > 0 && executionQueue[0].isReadCommand) {
           executionQueue.shift().callback(null, lastReadResult);
         }
@@ -104,7 +172,7 @@ const server = http.createServer((req, res) => {
   const rawUrl = (req.url || '/').split('?')[0];
   const urlPath = rawUrl.toLowerCase();
 
-  // 1. Smart Card Read API (/read, /api/read)
+  // 1. Smart Card Read API
   if (urlPath === '/read' || urlPath === '/api/read') {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     executeCardReader([], (err, resultJson) => {
@@ -112,7 +180,7 @@ const server = http.createServer((req, res) => {
       res.end(resultJson);
     });
   } 
-  // 2. Health & Reader Status API (/health, /status, /api/health)
+  // 2. Health & Reader Status API
   else if (urlPath === '/health' || urlPath === '/status' || urlPath === '/api/health' || urlPath === '/api/status') {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     executeCardReader(['--health'], (err, resultJson) => {
@@ -120,7 +188,7 @@ const server = http.createServer((req, res) => {
       res.end(resultJson);
     });
   } 
-  // 3. Web App Serving (/app, /, /index.html, /opd)
+  // 3. Web App Serving
   else if (urlPath === '/' || urlPath === '/app' || urlPath === '/index.html' || urlPath === '/opd') {
     fs.readFile(indexPath, (err, htmlData) => {
       if (err) {
@@ -132,7 +200,7 @@ const server = http.createServer((req, res) => {
       res.end(htmlData);
     });
   }
-  // 4. Static file serving (e.g. assets)
+  // 4. Static file serving
   else {
     const safePath = path.normalize(rawUrl).replace(/^(\.\.[\/\\])+/, '');
     const localFilePath = path.join(__dirname, safePath);
@@ -149,6 +217,70 @@ const server = http.createServer((req, res) => {
   }
 });
 
+// WebSocket Upgrade Handler (RFC 6455)
+server.on('upgrade', (req, socket, head) => {
+  const wsKey = req.headers['sec-websocket-key'];
+  if (!wsKey) {
+    socket.destroy();
+    return;
+  }
+
+  const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+  const acceptKey = crypto.createHash('sha1').update(wsKey + GUID).digest('base64');
+
+  const responseHeaders = [
+    'HTTP/1.1 101 Switching Protocols',
+    'Upgrade: websocket',
+    'Connection: Upgrade',
+    `Sec-WebSocket-Accept: ${acceptKey}`,
+    'Access-Control-Allow-Origin: *',
+    'Access-Control-Allow-Private-Network: true',
+    '\r\n'
+  ];
+
+  socket.write(responseHeaders.join('\r\n'));
+  activeWsSockets.add(socket);
+
+  // Send greeting
+  const welcomeFrame = createWebSocketFrame({
+    event: 'connected',
+    message: 'Thai Smart Card Bridge (WebSocket) Ready',
+    status: 'ok'
+  });
+  socket.write(welcomeFrame);
+
+  let buffer = Buffer.alloc(0);
+
+  socket.on('data', (chunk) => {
+    buffer = Buffer.concat([buffer, chunk]);
+    while (buffer.length > 0) {
+      const parsed = parseWebSocketFrame(buffer);
+      if (!parsed) break;
+
+      buffer = buffer.slice(parsed.totalLength);
+      const text = parsed.payload;
+
+      if (text.includes('health') || text.includes('status')) {
+        executeCardReader(['--health'], (err, resJson) => {
+          socket.write(createWebSocketFrame(resJson));
+        });
+      } else {
+        executeCardReader([], (err, resJson) => {
+          socket.write(createWebSocketFrame(resJson));
+        });
+      }
+    }
+  });
+
+  socket.on('close', () => {
+    activeWsSockets.delete(socket);
+  });
+
+  socket.on('error', () => {
+    activeWsSockets.delete(socket);
+  });
+});
+
 server.on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
     console.log(`[INFO] Port ${PORT} is already in use. Smart Card Bridge is already active!`);
@@ -159,8 +291,9 @@ server.on('error', (e) => {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`===================================================================`);
-  console.log(`  Smart Card Bridge is listening on http://127.0.0.1:${PORT}`);
+  console.log(`  Smart Card Bridge (HTTP + WebSocket) is listening on port ${PORT}`);
   console.log(`  Web App URL: http://127.0.0.1:${PORT}/app`);
+  console.log(`  WebSocket URL: ws://127.0.0.1:${PORT}/ws`);
   console.log(`  พร้อมอ่านข้อมูลบัตรประชาชนสำหรับคลินิกเวชกรรมนครสวรรค์เฮลท์แคร์`);
   console.log(`===================================================================`);
 });
