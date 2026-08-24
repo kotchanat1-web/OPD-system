@@ -4165,6 +4165,17 @@
         const pastVisits = visits.filter(x => x.hn === patient.hn && x.vitals?.weight);
         const lastVitals = (pastVisits.length > 0) ? pastVisits[pastVisits.length - 1].vitals : { bp: "", pr: "", temp: "", weight: "", height: "", bmi: "" };
 
+                const allProcs = DB.get(STORAGE_KEYS.PROCEDURES) || [];
+        const defaultProc = allProcs.find(x => x.proc_id === 'PROC1' || x.name === 'ตรวจรักษาโรคทั่วไป OPD') || {
+          proc_id: "PROC1",
+          name: "ตรวจรักษาโรคทั่วไป OPD",
+          category: "บริการทั่วไป",
+          price: 150.00,
+          df_price: 150.00
+        };
+        const defaultPrice = Number(defaultProc.price || 150.00);
+        const defaultDfPrice = (defaultProc.df_price !== undefined && defaultProc.df_price !== null) ? Number(defaultProc.df_price) : defaultPrice;
+
         const newVisit = {
           visit_id: 'V_' + Date.now(),
           patient_id: patient.patient_id,
@@ -4181,10 +4192,10 @@
           prescriptions: [],
           labs: [],
           lab_attachments: [],
-          procedures: [{ proc_id: "PROC1", name: "ตรวจรักษาโรคทั่วไป OPD", category: "บริการทั่วไป", price: 100.00, df_price: 50.00, performer_name: AuthModule.getActiveDoctorName() }],
+          procedures: [{ proc_id: defaultProc.proc_id || "PROC1", name: defaultProc.name || "ตรวจรักษาโรคทั่วไป OPD", category: defaultProc.category || "บริการทั่วไป", price: defaultPrice, df_price: defaultDfPrice, performer_name: AuthModule.getActiveDoctorName() }],
           appointment: null,
           status: "OPEN",
-          billing: { subtotal: 100.00, discount: 0, amed_discount: 0, total: 100.00, paid: false, payment_method: (document.getElementById('nv-service-type').value === 'A-Med' ? 'A-Med (สปสช.)' : 'เงินสด') }
+          billing: { subtotal: defaultPrice, discount: 0, amed_discount: (document.getElementById('nv-service-type').value === 'A-Med' ? 180.00 : 0), total: (document.getElementById('nv-service-type').value === 'A-Med' ? Math.max(0, defaultPrice - 180.00) : defaultPrice), paid: false, payment_method: (document.getElementById('nv-service-type').value === 'A-Med' ? 'A-Med (สปสช.)' : 'เงินสด') }
         };
 
         visits.push(newVisit);
