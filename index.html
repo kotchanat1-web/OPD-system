@@ -4764,9 +4764,7 @@
         if (!confirm('⚠️ ยืนยันการลบ Visit ' + an + ' (' + name + ') หรือไม่?\nข้อมูลการตรวจและค่าใช้จ่ายของ Visit นี้จะถูกลบออกจากระบบอย่างถาวร')) return;
 
         const visitId = State.selectedVisit.visit_id;
-        let visits = DB.get(STORAGE_KEYS.VISITS) || [];
-        visits = visits.filter(v => v.visit_id !== visitId);
-        DB.set(STORAGE_KEYS.VISITS, visits);
+        DB.deleteItem(STORAGE_KEYS.VISITS, visitId, 'visit_id');
 
         const logs = DB.get(STORAGE_KEYS.AUDIT_LOGS) || [];
         logs.push({
@@ -5216,8 +5214,7 @@
         } else {
           templates.push(data);
         }
-
-        DB.set(STORAGE_KEYS.PE_TEMPLATES, templates);
+        DB.upsertItem(STORAGE_KEYS.PE_TEMPLATES, data);
         this.closeEditModal();
         this.renderTable();
         this.renderQuickDropdownAndChips();
@@ -5328,9 +5325,10 @@
         if (id) {
           const idx = groups.findIndex(x => x.group_id === id);
           if (idx !== -1) groups[idx] = data;
-        } else { groups.push(data); }
-
-        DB.set(STORAGE_KEYS.DRUG_GROUPS, groups);
+        } else {
+          groups.push(data);
+        }
+        DB.upsertItem(STORAGE_KEYS.DRUG_GROUPS, data);
         this.closeModal();
         this.render();
         VisitModule.renderDrugGroupsDropdown();
@@ -5429,8 +5427,10 @@
         if (id) {
           const idx = labs.findIndex(x => x.lab_id === id);
           if (idx !== -1) labs[idx] = data;
-        } else { labs.push(data); }
-        DB.set(STORAGE_KEYS.LABS, labs);
+        } else {
+          labs.push(data);
+        }
+        DB.upsertItem(STORAGE_KEYS.LABS, data);
         this.closeModal();
         this.render();
         VisitModule.renderLabsDropdown();
@@ -5744,8 +5744,7 @@
 
         if (!confirm('⚠️ ยืนยันการลบ Visit ' + (v.an || '') + ' (' + (v.patient_name || '') + ') หรือไม่?\nการกระทำนี้ไม่สามารถย้อนกลับได้')) return;
 
-        const newVisits = visits.filter(x => x.visit_id !== visitId);
-        DB.set(STORAGE_KEYS.VISITS, newVisits);
+        DB.deleteItem(STORAGE_KEYS.VISITS, visitId, 'visit_id');
 
         const logs = DB.get(STORAGE_KEYS.AUDIT_LOGS) || [];
         logs.push({
@@ -5959,9 +5958,10 @@
         if (id) {
           const idx = docs.findIndex(x => x.doctor_id === id);
           if (idx !== -1) docs[idx] = data;
-        } else { docs.push(data); }
-
-        DB.set(STORAGE_KEYS.DOCTORS, docs);
+        } else {
+          docs.push(data);
+        }
+        DB.upsertItem(STORAGE_KEYS.DOCTORS, data);
         this.closeModal();
         this.render();
         alert('บันทึกข้อมูลบุคลากร ' + data.title + ' ' + data.first_name + ' ' + data.last_name + ' เรียบร้อย');
@@ -6047,8 +6047,10 @@
         if (id) {
           const idx = drugs.findIndex(x => x.drug_id === id);
           if (idx !== -1) drugs[idx] = data;
-        } else { drugs.push(data); }
-        DB.set(STORAGE_KEYS.DRUGS, drugs);
+        } else {
+          drugs.push(data);
+        }
+        DB.upsertItem(STORAGE_KEYS.DRUGS, data);
         this.closeModal();
         this.render();
         DashboardModule.render();
@@ -6135,8 +6137,10 @@
         if (id) {
           const idx = procs.findIndex(x => x.proc_id === id);
           if (idx !== -1) procs[idx] = data;
-        } else { procs.push(data); }
-        DB.set(STORAGE_KEYS.PROCEDURES, procs);
+        } else {
+          procs.push(data);
+        }
+        DB.upsertItem(STORAGE_KEYS.PROCEDURES, data);
         this.closeModal();
         this.render();
         if (typeof TreatmentModule !== 'undefined' && TreatmentModule.renderProceduresDropdown) {
@@ -9139,6 +9143,19 @@
       debouncedNotifyUpdate(table, record) {
         clearTimeout(this._notifyDebounceTimer);
         this._notifyDebounceTimer = setTimeout(() => {
+          if (table === 'opd_visits' && State.selectedVisit) {
+            const currentVisits = DB.get(STORAGE_KEYS.VISITS) || [];
+            const exists = currentVisits.some(x => x.visit_id === State.selectedVisit.visit_id);
+            if (!exists) {
+              State.selectedVisit = null;
+              const emptySt = document.getElementById('chart-empty-state');
+              const formCont = document.getElementById('chart-form-content');
+              const actEl = document.getElementById('chart-actions');
+              if (emptySt) emptySt.style.display = 'block';
+              if (formCont) formCont.style.display = 'none';
+              if (actEl) actEl.style.display = 'none';
+            }
+          }
           this.notifyRealtimeUpdate(table, record);
         }, 120);
       },
