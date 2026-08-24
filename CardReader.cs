@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Net.WebSockets;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
@@ -36,18 +36,11 @@ namespace ThaiCardReader {
         static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
         private static readonly object _cardLock = new object();
-        private static readonly List<WebSocket> _activeWebSockets = new List<WebSocket>();
-        private static readonly object _wsLock = new object();
 
         static void Main(string[] args) {
             Console.OutputEncoding = Encoding.UTF8;
 
-            if (args.Length > 0 && (args[0] == "--server" || args[0] == "-s" || args[0] == "/server")) {
-                int port = 8181;
-                if (args.Length > 1) int.TryParse(args[1], out port);
-                StartHttpServer(port);
-                return;
-            }
+            int port = 8181;
 
             if (args.Length > 0 && (args[0] == "--health" || args[0] == "-h" || args[0] == "/health" || args[0] == "--status")) {
                 string statusJson = CheckReaderStatusJson();
@@ -55,53 +48,86 @@ namespace ThaiCardReader {
                 return;
             }
 
-            string json = ReadThaiCardJson();
-            Console.WriteLine(json);
+            if (args.Length > 0 && (args[0] == "--read-once" || args[0] == "-r")) {
+                string json = ReadThaiCardJson();
+                Console.WriteLine(json);
+                return;
+            }
+
+            for (int i = 0; i < args.Length; i++) {
+                int p;
+                if (int.TryParse(args[i], out p) && p > 1000 && p < 65535) {
+                    port = p;
+                }
+            }
+
+            StartTcpServer(port);
         }
 
-        public static List<string> GetReaderList(IntPtr hContext) {
-            List<string> readers = new List<string>();
-            try {
-                int pcchReaders = 4096;
-                byte[] readersBuffer = new byte[pcchReaders * 2];
-                int ret = SCardListReaders(hContext, null, readersBuffer, ref pcchReaders);
-                if (ret == 0 && pcchReaders > 2) {
-                    string allReaders = Encoding.Unicode.GetString(readersBuffer, 0, pcchReaders * 2);
-                    string[] parts = allReaders.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var p in parts) {
-                        if (!string.IsNullOrEmpty(p.Trim())) {
-                            readers.Add(p.Trim());
-                        }
-                    }
-                }
-            } catch {}
-            return readers;
+        private static IntPtr GetPci(uint protocol) {
+            IntPtr hModule = LoadLibrary("winscard.dll");
+            if (hModule == IntPtr.Zero) return IntPtr.Zero;
+            if (protocol == 2) {
+                return GetProcAddress(hModule, "g_rgSCardT1Pci");
+            }
+            return GetProcAddress(hModule, "g_rgSCardT0Pci");
         }
 
         public static string CheckReaderStatusJson() {
             lock (_cardLock) {
                 IntPtr hContext = IntPtr.Zero;
                 try {
-                    int ret = SCardEstablishContext(0, IntPtr.Zero, IntPtr.Zero, out hContext);
+                    int ret = SCardEstablishContext(2, IntPtr.Zero, IntPtr.Zero, out hContext);
                     if (ret != 0) {
-                        return "{\"status\":\"service_error\",\"message\":\"ไม่สามารถเชื่อมต่อ Windows Smart Card Service (Code: " + ret + ")\",\"readers\":[]}";
+                        return "{\"status\":\"no_reader\",\"error\":\"SCardEstablishContext failed (" + ret + ")\",\"readers\":[]}";
                     }
 
-                    var readers = GetReaderList(hContext);
-                    if (readers.Count == 0) {
-                        return "{\"status\":\"no_reader\",\"message\":\"ไม่พบเครื่องอ่านบัตรประชาชน USB ที่เชื่อมต่ออยู่\",\"readers\":[]}";
+                    int pcchReaders = 0;
+                    ret = SCardListReaders(hContext, null, null, ref pcchReaders);
+                    if (ret != 0 || pcchReaders <= 0) {
+                        return "{\"status\":\"no_reader\",\"message\":\"No smart card readers detected\",\"readers\":[]}";
+                    }
+
+                    byte[] readersBuffer = new byte[pcchReaders * 2];
+                    ret = SCardListReaders(hContext, null, readersBuffer, ref pcchReaders);
+                    if (ret != 0) {
+                        return "{\"status\":\"no_reader\",\"message\":\"Failed to list readers\",\"readers\":[]}";
+                    }
+
+                    string readersStr = Encoding.Unicode.GetString(readersBuffer);
+                    string[] readerList = readersStr.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (readerList.Length == 0) {
+                        return "{\"status\":\"no_reader\",\"message\":\"No readers available\",\"readers\":[]}";
+                    }
+
+                    bool anyCardPresent = false;
+                    string activeReaderName = readerList[0];
+
+                    foreach (string rName in readerList) {
+                        IntPtr hCard = IntPtr.Zero;
+                        uint activeProto = 0;
+                        int connRet = SCardConnect(hContext, rName, 2, 3, out hCard, out activeProto);
+                        if (connRet == 0 && hCard != IntPtr.Zero) {
+                            anyCardPresent = true;
+                            activeReaderName = rName;
+                            SCardDisconnect(hCard, 0);
+                            break;
+                        }
                     }
 
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("{\"status\":\"ok\",\"message\":\"พบเครื่องอ่านบัตรพร้อมใช้งาน\",\"reader_count\":").Append(readers.Count).Append(",\"readers\":[");
-                    for (int i = 0; i < readers.Count; i++) {
-                        sb.Append("\"").Append(EscapeJson(readers[i])).Append("\"");
-                        if (i < readers.Count - 1) sb.Append(",");
+                    sb.Append("{\"status\":\"ready\",\"card_present\":").Append(anyCardPresent ? "true" : "false");
+                    sb.Append(",\"primary_reader\":\"").Append(EscapeJson(activeReaderName)).Append("\"");
+                    sb.Append(",\"readers\":[");
+                    for (int i = 0; i < readerList.Length; i++) {
+                        if (i > 0) sb.Append(",");
+                        sb.Append("\"").Append(EscapeJson(readerList[i])).Append("\"");
                     }
                     sb.Append("]}");
                     return sb.ToString();
                 } catch (Exception ex) {
-                    return "{\"status\":\"error\",\"message\":\"" + EscapeJson(ex.Message) + "\"}";
+                    return "{\"status\":\"error\",\"error\":\"" + EscapeJson(ex.Message) + "\",\"readers\":[]}";
                 } finally {
                     if (hContext != IntPtr.Zero) SCardReleaseContext(hContext);
                 }
@@ -111,338 +137,415 @@ namespace ThaiCardReader {
         public static string ReadThaiCardJson() {
             lock (_cardLock) {
                 IntPtr hContext = IntPtr.Zero;
-                IntPtr hCard = IntPtr.Zero;
+
                 try {
-                    int ret = SCardEstablishContext(0, IntPtr.Zero, IntPtr.Zero, out hContext);
-                    if (ret != 0) {
-                        return "{\"status\":\"error\",\"code\":" + ret + ",\"message\":\"ไม่สามารถเชื่อมต่อ Windows Smart Card Service (Code: " + ret + ")\"}";
-                    }
+                    int ret = SCardEstablishContext(2, IntPtr.Zero, IntPtr.Zero, out hContext);
+                    if (ret != 0) return "{\"error\":\"ไม่พบบริการ Smart Card Service ใน Windows (Error: " + ret + ")\"}";
 
-                    var readers = GetReaderList(hContext);
-                    if (readers.Count == 0) {
-                        return "{\"status\":\"no_reader\",\"code\":-2146435026,\"message\":\"ไม่พบเครื่องอ่านบัตรประชาชน USB กรุณาเสียบสาย USB เครื่องอ่านบัตร\"}";
-                    }
+                    int pcchReaders = 0;
+                    ret = SCardListReaders(hContext, null, null, ref pcchReaders);
+                    if (ret != 0 || pcchReaders <= 0) return "{\"error\":\"ไม่พบเครื่องอ่านบัตร Smart Card (กรุณาเสียบสาย USB เครื่องอ่านบัตร)\"}";
 
-                    int lastConnectError = 0;
-                    uint activeProto = 0;
-                    string activeReader = "";
+                    byte[] readersBuffer = new byte[pcchReaders * 2];
+                    ret = SCardListReaders(hContext, null, readersBuffer, ref pcchReaders);
+                    if (ret != 0) return "{\"error\":\"ไม่สามารถระบุรายชื่อเครื่องอ่านบัตรได้\"}";
 
-                    // Attempt connection with slight retry for hot-plugged cards
-                    for (int attempt = 0; attempt < 3; attempt++) {
-                        foreach (var reader in readers) {
-                            ret = SCardConnect(hContext, reader, 2 /* SCARD_SHARE_SHARED */, 3 /* T0|T1 */, out hCard, out activeProto);
-                            if (ret == 0 && hCard != IntPtr.Zero) {
-                                activeReader = reader;
-                                break;
-                            }
-                            lastConnectError = ret;
+                    string readersStr = Encoding.Unicode.GetString(readersBuffer);
+                    string[] readerList = readersStr.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (readerList.Length == 0) return "{\"error\":\"ไม่พบเครื่องอ่านบัตรที่พร้อมใช้งาน\"}";
+
+                    // Try all detected readers
+                    foreach (string readerName in readerList) {
+                        IntPtr hCard = IntPtr.Zero;
+                        uint activeProto = 0;
+
+                        // Try connecting to card (Shared mode, T=0 or T=1)
+                        ret = SCardConnect(hContext, readerName, 2, 3, out hCard, out activeProto);
+                        if (ret != 0 || hCard == IntPtr.Zero) {
+                            continue;
                         }
 
-                        if (hCard != IntPtr.Zero) break;
-                        
-                        if (lastConnectError == -2146434970 || unchecked((uint)lastConnectError) == 0x80100066 ||
-                            lastConnectError == -2146435061 || unchecked((uint)lastConnectError) == 0x8010000B) {
-                            Thread.Sleep(60);
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (hCard == IntPtr.Zero) {
-                        if (lastConnectError == -2146434967 || unchecked((uint)lastConnectError) == 0x80100069 ||
-                            lastConnectError == -2146435060 || unchecked((uint)lastConnectError) == 0x8010000C) {
-                            return "{\"status\":\"waiting_card\",\"code\":" + lastConnectError + ",\"message\":\"เครื่องอ่านพร้อมใช้งาน กรุณาเสียบบัตรประชาชนเข้ากับเครื่องอ่านบัตร\"}";
-                        }
-                        if (lastConnectError == -2146434970 || unchecked((uint)lastConnectError) == 0x80100066) {
-                            return "{\"status\":\"card_error\",\"code\":" + lastConnectError + ",\"message\":\"บัตรประชาชนตอบสนองไม่ถูกต้อง กรุณาดึงบัตรออกแล้วเสียบใหม่อีกครั้งให้แน่น\"}";
-                        }
-                        if (lastConnectError == -2146435061 || unchecked((uint)lastConnectError) == 0x8010000B) {
-                            return "{\"status\":\"waiting_card\",\"code\":" + lastConnectError + ",\"message\":\"เครื่องอ่านกำลังประมวลผล กรุณารอสักครู่...\"}";
-                        }
-                        return "{\"status\":\"waiting_card\",\"code\":" + lastConnectError + ",\"message\":\"กรุณาเสียบบัตรประชาชนเข้ากับเครื่องอ่านบัตร (Code: " + lastConnectError + ")\"}";
-                    }
-
-                    IntPtr hWinscard = LoadLibrary("winscard.dll");
-                    IntPtr pci = (activeProto == 2) ? GetProcAddress(hWinscard, "g_rgSCardT1Pci") : GetProcAddress(hWinscard, "g_rgSCardT0Pci");
-
-                    // 1. Select Applet (Thai National ID Applet AID: A0 00 00 00 54 48 00 01)
-                    byte[] apduSelect = new byte[] { 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x00, 0x54, 0x48, 0x00, 0x01 };
-                    byte[] selResp = TransmitAPDU(hCard, pci, apduSelect);
-
-                    // 2. Read CID (13 chars)
-                    byte[] cidBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x04, 0x02, 0x00, 0x0d });
-                    string cid = Encoding.ASCII.GetString(cidBytes).Trim();
-
-                    // If CID is empty, try selecting applet once more
-                    if (string.IsNullOrEmpty(cid) || cid.Length < 13) {
-                        Thread.Sleep(50);
-                        TransmitAPDU(hCard, pci, apduSelect);
-                        cidBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x04, 0x02, 0x00, 0x0d });
-                        cid = Encoding.ASCII.GetString(cidBytes).Trim();
-                    }
-
-                    // 3. Read Full Name Thai (100 chars)
-                    byte[] nameBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x11, 0x02, 0x00, 0x64 });
-                    string nameThRaw = DecodeThaiString(nameBytes);
-                    string[] nameThParts = nameThRaw.Split('#');
-                    string title = nameThParts.Length > 0 ? nameThParts[0].Trim() : "";
-                    string firstName = nameThParts.Length > 1 ? nameThParts[1].Trim() : "";
-                    string middleName = nameThParts.Length > 2 ? nameThParts[2].Trim() : "";
-                    string lastName = nameThParts.Length > 3 ? nameThParts[3].Trim() : (nameThParts.Length > 2 ? nameThParts[2].Trim() : "");
-                    if (nameThParts.Length > 3 && !string.IsNullOrEmpty(middleName)) {
-                        firstName = firstName + " " + middleName;
-                    }
-
-                    // 4. Read DOB (YYYYMMDD)
-                    byte[] dobBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0xD9, 0x02, 0x00, 0x08 });
-                    string dobRaw = Encoding.ASCII.GetString(dobBytes).Trim();
-                    string dob = "";
-                    int age = 0;
-                    if (dobRaw.Length >= 8) {
                         try {
-                            int y = int.Parse(dobRaw.Substring(0, 4));
-                            int m = int.Parse(dobRaw.Substring(4, 2));
-                            int d = int.Parse(dobRaw.Substring(6, 2));
-                            if (y > 2400) y -= 543; // Convert Buddhist Era to CE
-                            dob = string.Format("{0:D4}-{1:D2}-{2:D2}", y, m, d);
+                            IntPtr pci = GetPci(activeProto);
 
-                            DateTime bday = new DateTime(y, m, d);
-                            DateTime today = DateTime.Today;
-                            age = today.Year - bday.Year;
-                            if (bday.Date > today.AddYears(-age)) age--;
-                        } catch {}
+                            // 1. Select Thai Card Applet
+                            byte[] cmdSelectApplet = new byte[] { 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x00, 0x54, 0x48, 0x00, 0x01 };
+                            byte[] recvBuf = new byte[258];
+                            int recvLen = recvBuf.Length;
+                            int transRet = SCardTransmit(hCard, pci, cmdSelectApplet, cmdSelectApplet.Length, IntPtr.Zero, recvBuf, ref recvLen);
+                            if (transRet != 0) {
+                                SCardDisconnect(hCard, 0);
+                                continue;
+                            }
+
+                            // 2. Read CID (National ID)
+                            string cid = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x04, 0x02, 0x00, 0x0d }, 13);
+                            if (string.IsNullOrEmpty(cid) || cid.Length != 13) {
+                                SCardDisconnect(hCard, 0);
+                                continue;
+                            }
+
+                            // 3. Read Full Name
+                            string nameThaiRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x11, 0x02, 0x00, 0x64 }, 100);
+                            string nameEngRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x75, 0x02, 0x00, 0x64 }, 100);
+
+                            // 4. Read DOB & Gender
+                            string dob = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x19, 0x02, 0x00, 0x08 }, 8);
+                            string gender = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x21, 0x02, 0x00, 0x01 }, 1);
+
+                            // 5. Read Address
+                            string addressRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x22, 0x02, 0x00, 0x96 }, 150);
+
+                            // 6. Read Issue / Expire
+                            string issueDate = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x67, 0x02, 0x00, 0x08 }, 8);
+                            string expireDate = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x6F, 0x02, 0x00, 0x08 }, 8);
+
+                            // Parse fields
+                            string[] nameParts = ParseThaiName(nameThaiRaw);
+                            string title = nameParts[0];
+                            string firstName = nameParts[1];
+                            string lastName = nameParts[2];
+
+                            string sex = (gender == "1") ? "ชาย" : (gender == "2" ? "หญิง" : "ไม่ระบุ");
+                            string dobFormatted = FormatDob(dob);
+                            string address = CleanAddress(addressRaw);
+
+                            Console.WriteLine("[INFO] อ่านบัตรสำเร็จ: " + title + firstName + " " + lastName + " (" + cid + ")");
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("{");
+                            sb.Append("\"status\":\"success\",");
+                            sb.Append("\"cid\":\"").Append(EscapeJson(cid)).Append("\",");
+                            sb.Append("\"title\":\"").Append(EscapeJson(title)).Append("\",");
+                            sb.Append("\"first_name\":\"").Append(EscapeJson(firstName)).Append("\",");
+                            sb.Append("\"last_name\":\"").Append(EscapeJson(lastName)).Append("\",");
+                            sb.Append("\"sex\":\"").Append(EscapeJson(sex)).Append("\",");
+                            sb.Append("\"dob\":\"").Append(EscapeJson(dobFormatted)).Append("\",");
+                            sb.Append("\"address\":\"").Append(EscapeJson(address)).Append("\",");
+                            sb.Append("\"issue_date\":\"").Append(EscapeJson(issueDate)).Append("\",");
+                            sb.Append("\"expire_date\":\"").Append(EscapeJson(expireDate)).Append("\",");
+                            sb.Append("\"reader\":\"").Append(EscapeJson(readerName)).Append("\",");
+                            sb.Append("\"read_at\":\"").Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")).Append("\"");
+                            sb.Append("}");
+
+                            SCardDisconnect(hCard, 0);
+                            return sb.ToString();
+                        } catch {
+                            if (hCard != IntPtr.Zero) SCardDisconnect(hCard, 0);
+                        }
                     }
 
-                    // 5. Read Gender (1 = M, 2 = F)
-                    byte[] sexBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0xE1, 0x02, 0x00, 0x01 });
-                    string sex = "ไม่ระบุ";
-                    if (sexBytes.Length > 0) {
-                        if (sexBytes[0] == 0x31 || sexBytes[0] == 1) sex = "ชาย";
-                        else if (sexBytes[0] == 0x32 || sexBytes[0] == 2) sex = "หญิง";
-                    }
-
-                    // 6. Read Address (160 chars)
-                    byte[] addrBytes = SendAndGetResponse(hCard, pci, new byte[] { 0x80, 0xb0, 0x15, 0x79, 0x02, 0x00, 0xa0 });
-                    string addrRaw = DecodeThaiString(addrBytes);
-                    string address = FormatThaiAddress(addrRaw);
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("{");
-                    sb.Append("\"status\":\"success\",");
-                    sb.Append("\"cid\":\"").Append(EscapeJson(cid)).Append("\",");
-                    sb.Append("\"title\":\"").Append(EscapeJson(title)).Append("\",");
-                    sb.Append("\"first_name\":\"").Append(EscapeJson(firstName)).Append("\",");
-                    sb.Append("\"last_name\":\"").Append(EscapeJson(lastName)).Append("\",");
-                    sb.Append("\"dob\":\"").Append(EscapeJson(dob)).Append("\",");
-                    sb.Append("\"age\":").Append(age).Append(",");
-                    sb.Append("\"sex\":\"").Append(EscapeJson(sex)).Append("\",");
-                    sb.Append("\"address\":\"").Append(EscapeJson(address)).Append("\",");
-                    sb.Append("\"reader\":\"").Append(EscapeJson(activeReader)).Append("\"");
-                    sb.Append("}");
-
-                    return sb.ToString();
+                    return "{\"error\":\"ไม่พบบัตรประชาชนในเครื่องอ่าน หรือเสียบบัตรไม่สนิท (กรุณาตรวจสอบว่าหงายด้านชิปสีทองถูกต้องและเสียบให้สุด)\"}";
                 } catch (Exception ex) {
-                    return "{\"status\":\"error\",\"message\":\"" + EscapeJson(ex.Message) + "\"}";
+                    return "{\"error\":\"" + EscapeJson(ex.Message) + "\"}";
                 } finally {
-                    if (hCard != IntPtr.Zero) SCardDisconnect(hCard, 0);
                     if (hContext != IntPtr.Zero) SCardReleaseContext(hContext);
                 }
             }
         }
 
-        private static string DecodeThaiString(byte[] raw) {
-            if (raw == null || raw.Length == 0) return "";
+        private static string ReadField(IntPtr hCard, IntPtr pci, byte[] apdu, int length) {
+            byte[] recvBuf = new byte[258];
+            int recvLen = recvBuf.Length;
+            int ret = SCardTransmit(hCard, pci, apdu, apdu.Length, IntPtr.Zero, recvBuf, ref recvLen);
+
+            // Direct response (T=1)
+            if (ret == 0 && recvLen > 2 && recvBuf[recvLen - 2] == 0x90 && recvBuf[recvLen - 1] == 0x00) {
+                Encoding tis = Encoding.GetEncoding(874);
+                int payloadLen = Math.Min(length, recvLen - 2);
+                return tis.GetString(recvBuf, 0, payloadLen).Trim();
+            }
+
+            // APDU 0x61 SW2 (Response Available)
+            byte getLen = (byte)length;
+            if (recvLen >= 2 && recvBuf[recvLen - 2] == 0x61) {
+                getLen = recvBuf[recvLen - 1];
+            }
+
+            byte[] cmdGetData = new byte[] { 0x00, 0xC0, 0x00, 0x00, getLen };
+            byte[] dataBuf = new byte[258];
+            int dataLen = dataBuf.Length;
+            ret = SCardTransmit(hCard, pci, cmdGetData, cmdGetData.Length, IntPtr.Zero, dataBuf, ref dataLen);
+            if (ret != 0 || dataLen < 2) return "";
+
+            Encoding tis620 = Encoding.GetEncoding(874);
+            int validLen = Math.Min(length, dataLen - 2);
+            return tis620.GetString(dataBuf, 0, validLen).Trim();
+        }
+
+        private static string[] ParseThaiName(string raw) {
+            if (string.IsNullOrEmpty(raw)) return new string[] { "", "", "" };
+            string[] parts = raw.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+            string title = parts.Length > 0 ? parts[0].Trim() : "";
+            string first = parts.Length > 1 ? parts[1].Trim() : "";
+            string middle = parts.Length > 2 ? parts[2].Trim() : "";
+            string last = parts.Length > 3 ? parts[3].Trim() : "";
+
+            if (!string.IsNullOrEmpty(middle) && string.IsNullOrEmpty(last)) {
+                last = middle;
+            }
+            return new string[] { title, first, last };
+        }
+
+        private static string FormatDob(string yyyymmdd) {
+            if (string.IsNullOrEmpty(yyyymmdd) || yyyymmdd.Length < 8) return "";
             try {
-                Encoding tis620 = Encoding.GetEncoding(874);
-                string text = tis620.GetString(raw).Trim();
-                text = text.Replace("\0", " ");
-                return text;
+                int yearBe = int.Parse(yyyymmdd.Substring(0, 4));
+                int yearCe = yearBe > 2400 ? yearBe - 543 : yearBe;
+                string mm = yyyymmdd.Substring(4, 2);
+                string dd = yyyymmdd.Substring(6, 2);
+                return string.Format("{0:D4}-{1}-{2}", yearCe, mm, dd);
             } catch {
-                return Encoding.UTF8.GetString(raw).Trim();
+                return "";
             }
         }
 
-        private static string FormatThaiAddress(string raw) {
+        private static string CleanAddress(string raw) {
             if (string.IsNullOrEmpty(raw)) return "";
             string cleaned = raw.Replace('#', ' ');
             cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
             return cleaned;
         }
 
-        private static byte[] SendAndGetResponse(IntPtr hCard, IntPtr pci, byte[] cmd) {
-            byte[] recv = TransmitAPDU(hCard, pci, cmd);
-            if (recv.Length >= 2) {
-                byte sw1 = recv[recv.Length - 2];
-                byte sw2 = recv[recv.Length - 1];
-
-                if (sw1 == 0x61) {
-                    byte[] getResp = new byte[] { 0x00, 0xC0, 0x00, 0x00, sw2 };
-                    byte[] respData = TransmitAPDU(hCard, pci, getResp);
-                    if (respData.Length > 2) {
-                        byte[] result = new byte[respData.Length - 2];
-                        Array.Copy(respData, 0, result, 0, respData.Length - 2);
-                        return result;
-                    }
-                } else if (sw1 == 0x90 && sw2 == 0x00 && recv.Length > 2) {
-                    byte[] result = new byte[recv.Length - 2];
-                    Array.Copy(recv, 0, result, 0, recv.Length - 2);
-                    return result;
-                }
-            }
-            return new byte[0];
-        }
-
-        private static byte[] TransmitAPDU(IntPtr hCard, IntPtr pci, byte[] cmd) {
-            byte[] recv = new byte[512];
-            int recvLen = recv.Length;
-            int ret = SCardTransmit(hCard, pci, cmd, cmd.Length, IntPtr.Zero, recv, ref recvLen);
-            if (ret == 0 && recvLen > 0) {
-                byte[] trimmed = new byte[recvLen];
-                Array.Copy(recv, 0, trimmed, 0, recvLen);
-                return trimmed;
-            }
-            return new byte[0];
-        }
-
         private static string EscapeJson(string s) {
-            if (s == null) return "";
-            return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\n", " ");
+            if (string.IsNullOrEmpty(s)) return "";
+            return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\n", "\\n");
         }
 
-        public static void StartHttpServer(int port) {
-            HttpListener listener = new HttpListener();
-            listener.Prefixes.Add("http://127.0.0.1:" + port + "/");
-            listener.Prefixes.Add("http://localhost:" + port + "/");
-            
+        public static void StartTcpServer(int port) {
+            TcpListener server = null;
             try {
-                listener.Start();
+                server = new TcpListener(IPAddress.Any, port);
+                server.Start();
+
+                Console.WriteLine("===================================================================");
+                Console.WriteLine("  Thai Smart Card Bridge (HTTP + WebSocket) is running on port " + port);
+                Console.WriteLine("  Web App URL: http://127.0.0.1:" + port + "/app");
+                Console.WriteLine("  WebSocket:   ws://127.0.0.1:" + port + "/ws");
+                Console.WriteLine("  สถานะ: พร้อมให้บริการอ่านบัตรประชาชน (เปิดหน้าต่างนี้ทิ้งไว้ตลอดการใช้งาน)");
+                Console.WriteLine("===================================================================");
+                Console.WriteLine();
+
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string htmlFilePath = Path.Combine(baseDir, "index.html");
+
+                while (true) {
+                    try {
+                        TcpClient client = server.AcceptTcpClient();
+                        ThreadPool.QueueUserWorkItem((state) => {
+                            HandleTcpClient((TcpClient)state, htmlFilePath);
+                        }, client);
+                    } catch (Exception ex) {
+                        Console.WriteLine("Accept Error: " + ex.Message);
+                        Thread.Sleep(200);
+                    }
+                }
             } catch (Exception ex) {
-                Console.WriteLine("Server start error: " + ex.Message);
-                return;
-            }
-
-            Console.WriteLine("===================================================================");
-            Console.WriteLine("  Thai Smart Card Bridge (HTTP + WebSocket) is running on port " + port);
-            Console.WriteLine("  Web App URL: http://127.0.0.1:" + port + "/app");
-            Console.WriteLine("  WebSocket Endpoint: ws://127.0.0.1:" + port + "/ws");
-            Console.WriteLine("  พร้อมรองรับการอ่านบัตรจาก Vercel / Cloud และเครื่องลูกข่าย");
-            Console.WriteLine("===================================================================");
-
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string htmlFilePath = Path.Combine(baseDir, "index.html");
-
-            while (true) {
-                try {
-                    HttpListenerContext ctx = listener.GetContext();
-                    ThreadPool.QueueUserWorkItem(async (state) => {
-                        HttpListenerContext c = (HttpListenerContext)state;
-                        try {
-                            if (c.Request.IsWebSocketRequest) {
-                                await HandleWebSocket(c);
-                            } else {
-                                HandleHttpRequest(c, htmlFilePath, baseDir);
-                            }
-                        } catch (Exception) {
-                            try { c.Response.StatusCode = 500; c.Response.Close(); } catch {}
-                        }
-                    }, ctx);
-                } catch (Exception ex) {
-                    Console.WriteLine("Listener Error: " + ex.Message);
+                Console.WriteLine("Fatal Server Error: " + ex.Message);
+                Console.WriteLine("กรุณาตรวจสอบว่ามีโปรแกรมอื่นใช้พอร์ต " + port + " อยู่หรือไม่");
+                while (true) {
+                    Thread.Sleep(3000);
                 }
             }
         }
 
-        private static async Task HandleWebSocket(HttpListenerContext ctx) {
-            WebSocketContext wsContext = null;
+        private static void HandleTcpClient(TcpClient client, string htmlFilePath) {
             try {
-                wsContext = await ctx.AcceptWebSocketAsync(subProtocol: null);
-                WebSocket ws = wsContext.WebSocket;
+                using (NetworkStream stream = client.GetStream()) {
+                    stream.ReadTimeout = 5000;
+                    byte[] buffer = new byte[8192];
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    if (bytesRead <= 0) return;
 
-                lock (_wsLock) {
-                    _activeWebSockets.Add(ws);
+                    string requestStr = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    string[] lines = requestStr.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    if (lines.Length == 0) return;
+
+                    string firstLine = lines[0];
+                    string[] tokens = firstLine.Split(' ');
+                    if (tokens.Length < 2) return;
+
+                    string method = tokens[0].ToUpper();
+                    string path = tokens[1].ToLower();
+
+                    // Check for WebSocket Upgrade
+                    bool isWebSocket = false;
+                    string wsKey = "";
+                    foreach (string line in lines) {
+                        if (line.ToLower().StartsWith("upgrade:") && line.ToLower().Contains("websocket")) {
+                            isWebSocket = true;
+                        }
+                        if (line.ToLower().StartsWith("sec-websocket-key:")) {
+                            wsKey = line.Substring(18).Trim();
+                        }
+                    }
+
+                    if (isWebSocket && !string.IsNullOrEmpty(wsKey)) {
+                        HandleWebSocketStream(stream, wsKey);
+                        return;
+                    }
+
+                    // CORS Preflight OPTIONS
+                    if (method == "OPTIONS") {
+                        string optResponse = "HTTP/1.1 204 No Content\r\n" +
+                            "Access-Control-Allow-Origin: *\r\n" +
+                            "Access-Control-Allow-Private-Network: true\r\n" +
+                            "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n" +
+                            "Access-Control-Allow-Headers: *\r\n" +
+                            "Connection: close\r\n\r\n";
+                        byte[] optBytes = Encoding.UTF8.GetBytes(optResponse);
+                        stream.Write(optBytes, 0, optBytes.Length);
+                        return;
+                    }
+
+                    // Serve HTML
+                    if (path == "/" || path == "/app" || path == "/index.html" || path == "/opd") {
+                        if (File.Exists(htmlFilePath)) {
+                            byte[] htmlBytes = File.ReadAllBytes(htmlFilePath);
+                            string header = "HTTP/1.1 200 OK\r\n" +
+                                "Content-Type: text/html; charset=utf-8\r\n" +
+                                "Access-Control-Allow-Origin: *\r\n" +
+                                "Access-Control-Allow-Private-Network: true\r\n" +
+                                "Content-Length: " + htmlBytes.Length + "\r\n" +
+                                "Connection: close\r\n\r\n";
+                            byte[] hBytes = Encoding.UTF8.GetBytes(header);
+                            stream.Write(hBytes, 0, hBytes.Length);
+                            stream.Write(htmlBytes, 0, htmlBytes.Length);
+                        } else {
+                            string msg = "index.html not found";
+                            byte[] msgBytes = Encoding.UTF8.GetBytes(msg);
+                            string header = "HTTP/1.1 404 Not Found\r\n" +
+                                "Content-Type: text/plain; charset=utf-8\r\n" +
+                                "Content-Length: " + msgBytes.Length + "\r\n" +
+                                "Connection: close\r\n\r\n";
+                            byte[] hBytes = Encoding.UTF8.GetBytes(header);
+                            stream.Write(hBytes, 0, hBytes.Length);
+                            stream.Write(msgBytes, 0, msgBytes.Length);
+                        }
+                        return;
+                    }
+
+                    // JSON API (/health or /read)
+                    string jsonResponse = "";
+                    if (path.Contains("health") || path.Contains("status")) {
+                        jsonResponse = CheckReaderStatusJson();
+                    } else {
+                        jsonResponse = ReadThaiCardJson();
+                    }
+
+                    byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonResponse);
+                    string resHeader = "HTTP/1.1 200 OK\r\n" +
+                        "Content-Type: application/json; charset=utf-8\r\n" +
+                        "Access-Control-Allow-Origin: *\r\n" +
+                        "Access-Control-Allow-Private-Network: true\r\n" +
+                        "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n" +
+                        "Access-Control-Allow-Headers: *\r\n" +
+                        "Content-Length: " + bodyBytes.Length + "\r\n" +
+                        "Connection: close\r\n\r\n";
+
+                    byte[] resHeaderBytes = Encoding.UTF8.GetBytes(resHeader);
+                    stream.Write(resHeaderBytes, 0, resHeaderBytes.Length);
+                    stream.Write(bodyBytes, 0, bodyBytes.Length);
                 }
+            } catch {
+            } finally {
+                try { client.Close(); } catch {}
+            }
+        }
 
-                // Send initial greeting
+        private static void HandleWebSocketStream(NetworkStream stream, string wsKey) {
+            try {
+                string acceptKey = Convert.ToBase64String(
+                    SHA1.Create().ComputeHash(
+                        Encoding.UTF8.GetBytes(wsKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+                    )
+                );
+
+                string response = "HTTP/1.1 101 Switching Protocols\r\n" +
+                    "Upgrade: websocket\r\n" +
+                    "Connection: Upgrade\r\n" +
+                    "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
+
+                byte[] resBytes = Encoding.UTF8.GetBytes(response);
+                stream.Write(resBytes, 0, resBytes.Length);
+
                 string greeting = "{\"event\":\"connected\",\"message\":\"Thai Smart Card Bridge Ready\",\"status\":\"ok\"}";
-                byte[] greetBytes = Encoding.UTF8.GetBytes(greeting);
-                await ws.SendAsync(new ArraySegment<byte>(greetBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                SendWebSocketFrame(stream, greeting);
 
                 byte[] buffer = new byte[4096];
-                while (ws.State == WebSocketState.Open) {
-                    WebSocketReceiveResult result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                    if (result.MessageType == WebSocketMessageType.Close) {
-                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-                        break;
-                    } else if (result.MessageType == WebSocketMessageType.Text) {
-                        string msg = Encoding.UTF8.GetString(buffer, 0, result.Count).Trim();
+                while (true) {
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    if (bytesRead <= 0) break;
+
+                    bool fin = (buffer[0] & 0x80) != 0;
+                    int opcode = buffer[0] & 0x0F;
+
+                    if (opcode == 0x8) break;
+
+                    if (opcode == 0x1) {
+                        bool isMasked = (buffer[1] & 0x80) != 0;
+                        int payloadLen = buffer[1] & 0x7F;
+                        int offset = 2;
+
+                        if (payloadLen == 126) {
+                            payloadLen = (buffer[2] << 8) | buffer[3];
+                            offset = 4;
+                        }
+
+                        byte[] mask = new byte[4];
+                        if (isMasked) {
+                            Array.Copy(buffer, offset, mask, 0, 4);
+                            offset += 4;
+                        }
+
+                        byte[] decoded = new byte[payloadLen];
+                        for (int i = 0; i < payloadLen; i++) {
+                            decoded[i] = (byte)(buffer[offset + i] ^ (isMasked ? mask[i % 4] : 0));
+                        }
+
+                        string incomingMsg = Encoding.UTF8.GetString(decoded).Trim();
                         string replyJson = "";
 
-                        if (msg.Contains("health") || msg.Contains("status")) {
+                        if (incomingMsg.Contains("health") || incomingMsg.Contains("status")) {
                             replyJson = CheckReaderStatusJson();
                         } else {
                             replyJson = ReadThaiCardJson();
                         }
 
-                        byte[] replyBytes = Encoding.UTF8.GetBytes(replyJson);
-                        await ws.SendAsync(new ArraySegment<byte>(replyBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                        SendWebSocketFrame(stream, replyJson);
                     }
                 }
-            } catch (Exception) {
-            } finally {
-                if (wsContext != null) {
-                    lock (_wsLock) {
-                        _activeWebSockets.Remove(wsContext.WebSocket);
-                    }
-                }
+            } catch {
             }
         }
 
-        private static void HandleHttpRequest(HttpListenerContext ctx, string htmlFilePath, string baseDir) {
-            HttpListenerRequest req = ctx.Request;
-            HttpListenerResponse res = ctx.Response;
+        private static void SendWebSocketFrame(NetworkStream stream, string text) {
+            byte[] payload = Encoding.UTF8.GetBytes(text);
+            byte[] frame;
 
-            // CORS and Chrome Private Network Access Headers
-            res.Headers.Add("Access-Control-Allow-Origin", "*");
-            res.Headers.Add("Access-Control-Allow-Private-Network", "true");
-            res.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            res.Headers.Add("Access-Control-Allow-Headers", "*");
-
-            if (req.HttpMethod == "OPTIONS") {
-                res.StatusCode = 204;
-                res.Close();
-                return;
-            }
-
-            string path = req.Url != null ? req.Url.AbsolutePath.ToLower() : "/";
-
-            if (path == "/" || path == "/app" || path == "/index.html" || path == "/opd") {
-                if (File.Exists(htmlFilePath)) {
-                    byte[] htmlBytes = File.ReadAllBytes(htmlFilePath);
-                    res.ContentType = "text/html; charset=utf-8";
-                    res.ContentLength64 = htmlBytes.Length;
-                    res.OutputStream.Write(htmlBytes, 0, htmlBytes.Length);
-                } else {
-                    byte[] msgBytes = Encoding.UTF8.GetBytes("index.html not found");
-                    res.ContentType = "text/plain; charset=utf-8";
-                    res.ContentLength64 = msgBytes.Length;
-                    res.OutputStream.Write(msgBytes, 0, msgBytes.Length);
-                }
-                res.Close();
-                return;
-            }
-
-            string jsonResponse;
-            if (path == "/health" || path == "/status" || path == "/api/health") {
-                jsonResponse = CheckReaderStatusJson();
+            if (payload.Length <= 125) {
+                frame = new byte[2 + payload.Length];
+                frame[0] = 0x81;
+                frame[1] = (byte)payload.Length;
+                Array.Copy(payload, 0, frame, 2, payload.Length);
+            } else if (payload.Length <= 65535) {
+                frame = new byte[4 + payload.Length];
+                frame[0] = 0x81;
+                frame[1] = 126;
+                frame[2] = (byte)((payload.Length >> 8) & 0xFF);
+                frame[3] = (byte)(payload.Length & 0xFF);
+                Array.Copy(payload, 0, frame, 4, payload.Length);
             } else {
-                jsonResponse = ReadThaiCardJson();
+                frame = new byte[10 + payload.Length];
+                frame[0] = 0x81;
+                frame[1] = 127;
+                for (int i = 0; i < 8; i++) {
+                    frame[2 + i] = (byte)((payload.Length >> ((7 - i) * 8)) & 0xFF);
+                }
+                Array.Copy(payload, 0, frame, 10, payload.Length);
             }
 
-            byte[] buffer = Encoding.UTF8.GetBytes(jsonResponse);
-            res.ContentType = "application/json; charset=utf-8";
-            res.ContentLength64 = buffer.Length;
-            res.OutputStream.Write(buffer, 0, buffer.Length);
-            res.Close();
+            stream.Write(frame, 0, frame.Length);
         }
     }
 }

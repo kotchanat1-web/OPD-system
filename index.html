@@ -8433,7 +8433,7 @@
 
         const data = readRes.data;
 
-        if (data.status === 'success' && data.cid) {
+        if (!data.error && (data.cid || data.status === 'success')) {
           // Success read!
           this.stopPolling();
           this.playSuccessSound();
@@ -8497,7 +8497,7 @@
         }
 
         const readRes = await this.queryBridge('/read');
-        if (readRes.success && readRes.data && readRes.data.status === 'success' && readRes.data.cid) {
+        if (readRes.success && readRes.data && !readRes.data.error && (readRes.data.cid || readRes.data.status === 'success')) {
           this.playSuccessSound();
           if (readerBox) {
             readerBox.innerHTML = 
