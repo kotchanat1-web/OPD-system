@@ -8653,13 +8653,59 @@
 
         let statusHtml = '';
         let buttonText = '';
+        let newPatientFormHtml = '';
 
         if (existing) {
           statusHtml = '<div class="badge badge-success" style="font-size: 0.84rem; padding: 4px 10px;"><i data-lucide="check-circle"></i> พบประวัติผู้ป่วยเดิม (HN: ' + existing.hn + ')</div>';
           buttonText = '<i data-lucide="stethoscope"></i> ⚡ ยืนยันเปิด Visit ตรวจทันที (ออก AN)';
         } else {
-          statusHtml = '<div class="badge badge-blue" style="font-size: 0.84rem; padding: 4px 10px;"><i data-lucide="user-plus"></i> ผู้ป่วยใหม่ (เปิด HN ให้อัตโนมัติ)</div>';
-          buttonText = '<i data-lucide="user-check"></i> ⚡ บันทึกทะเบียน HN ใหม่ & เปิด Visit ตรวจทันที';
+          statusHtml = '<div class="badge badge-blue" style="font-size: 0.84rem; padding: 4px 10px;"><i data-lucide="user-plus"></i> ผู้ป่วยใหม่ (พร้อมลงทะเบียน HN)</div>';
+          buttonText = '<i data-lucide="user-check"></i> ⚡ บันทึกทะเบียนผู้ป่วย & เปิด Visit ตรวจทันที';
+
+          newPatientFormHtml = 
+            '<div style="margin-top: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; border-radius: 10px; padding: 14px;">' +
+              '<div style="font-weight: 700; font-size: 0.92rem; color: #0f766e; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">' +
+                '<i data-lucide="clipboard-check" style="width: 18px; height: 18px; color: #0d9488;"></i> ข้อมูลเพิ่มเติมสำหรับผู้ป่วยใหม่ (กรอกเพื่อบันทึกลงทะเบียนครบถ้วนในครั้งเดียว):' +
+              '</div>' +
+              '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">' +
+                '<div class="form-group" style="margin-bottom: 0;">' +
+                  '<label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #134e4a;">📱 เบอร์โทรศัพท์มือถือ:</label>' +
+                  '<input type="tel" id="sc-new-phone" class="form-input" placeholder="เช่น 081-234-5678" style="background: white; font-size: 0.85rem;" value="' + (data.phone || '') + '">' +
+                '</div>' +
+                '<div class="form-group" style="margin-bottom: 0;">' +
+                  '<label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #134e4a;">🏥 สิทธิการรักษา:</label>' +
+                  '<select id="sc-new-rights" class="form-select" style="background: white; font-size: 0.85rem;">' +
+                    '<option value="UC" selected>UC (บัตรทอง 30 บาท)</option>' +
+                    '<option value="ประกันสังคม">ประกันสังคม (SSS)</option>' +
+                    '<option value="ข้าราชการ/เบิกตรง">ข้าราชการ / เบิกตรง (OFC)</option>' +
+                    '<option value="ชำระเอง">ชำระเงินเอง (Self-Pay)</option>' +
+                    '<option value="A-Med">A-Med (สปสช.)</option>' +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+              '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">' +
+                '<div class="form-group" style="margin-bottom: 0;">' +
+                  '<label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #b91c1c;">⚠️ ประวัติแพ้ยา (Allergy):</label>' +
+                  '<input type="text" id="sc-new-allergy" class="form-input" placeholder="ระบุชื่อยาที่แพ้ (หรือ ปฏิเสธแพ้ยา)" style="background: white; font-size: 0.85rem;" value="' + (data.drug_allergy || '') + '">' +
+                  '<div style="display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap;">' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-allergy\').value=\'ปฏิเสธการแพ้ยา\'">ปฏิเสธแพ้ยา</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-allergy\').value=\'Penicillin\'">Penicillin</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-allergy\').value=\'Sulfa\'">Sulfa</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-allergy\').value=\'NSAIDs\'">NSAIDs</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="form-group" style="margin-bottom: 0;">' +
+                  '<label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #1e3a8a;">🩺 โรคประจำตัว (Chronic):</label>' +
+                  '<input type="text" id="sc-new-chronic" class="form-input" placeholder="เช่น HT, DM, DLP (หรือ ไม่มี)" style="background: white; font-size: 0.85rem;" value="' + (data.chronic || '') + '">' +
+                  '<div style="display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap;">' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-chronic\').value=\'ไม่มีโรคประจำตัว\'">ไม่มี</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-chronic\').value=\'HT (ความดันโลหิตสูง)\'">HT</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-chronic\').value=\'DM (เบาหวาน)\'">DM</button>' +
+                    '<button type="button" class="badge" style="cursor:pointer; background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.7rem; padding: 2px 6px;" onclick="document.getElementById(\'sc-new-chronic\').value=\'DLP (ไขมันในเลือดสูง)\'">DLP</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
         }
 
         detailsEl.style.display = 'block';
@@ -8684,6 +8730,7 @@
               '<div><strong>สิทธิการรักษา:</strong> <span class="badge badge-emerald" style="font-size: 0.76rem;">UC (บัตรทอง 30 บาท)</span></div>' +
             '</div>' +
             '<div style="font-size: 0.82rem; color: #334155; margin-top: 10px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #f1f5f9;"><strong>📍 ที่อยู่ตามบัตร:</strong> ' + (data.address || '-') + '</div>' +
+            newPatientFormHtml +
           '</div>';
 
         const proceedBtn = document.getElementById('sc-btn-proceed');
