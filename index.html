@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -92,6 +93,26 @@
     .brand-text p { font-size: 0.76rem; color: #99f6e4; opacity: 0.9; }
 
     .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .cloud-status-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transition: all var(--transition-fast);
+    }
+    .cloud-status-badge:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
 
     .smartcard-btn-top {
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
@@ -753,6 +774,10 @@
     </div>
 
     <div class="topbar-right">
+      <div class="cloud-status-badge" id="topbar-cloud-status" onclick="App.switchTab('tab-data')" title="สถานะ Cloud Database & Realtime Sync (คลิกเพื่อตั้งค่า)">
+        <span class="status-dot" id="cloud-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; display: inline-block;"></span>
+        <span id="cloud-status-text">Cloud Sync</span>
+      </div>
       <button class="smartcard-btn-top" style="background: linear-gradient(135deg, #059669 0%, #0d9488 100%);" onclick="SmartCardModule.readRealCardAndOpenVisit()">
         <i data-lucide="scan"></i> ⚡ เปิด Visit จากการเสียบบัตร
       </button>
@@ -1941,23 +1966,69 @@
       <!-- TAB 12: DATA & CLOUD -->
       <section class="tab-pane" id="tab-data">
         <div class="page-header">
-          <div><h2 class="page-title"><i data-lucide="database"></i> สำรองข้อมูล & Cloud Sync</h2><p class="page-subtitle">ส่งออก สำรองข้อมูล และเชื่อมต่อ Supabase Database</p></div>
-        </div>
-        <div class="card" style="background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%); border-color: #93c5fd;">
-          <div class="card-header"><h3 class="card-title" style="color: #1e40af;"><i data-lucide="cloud"></i> ตั้งค่า Supabase Cloud Database</h3></div>
-          <div class="form-row form-row-2">
-            <div class="form-group"><label class="form-label">Supabase URL</label><input type="text" id="cfg-supabase-url" class="form-input" placeholder="https://xyz.supabase.co"></div>
-            <div class="form-group"><label class="form-label">Supabase Anon Key</label><input type="password" id="cfg-supabase-key" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."></div>
+          <div>
+            <h2 class="page-title"><i data-lucide="database"></i> สำรองข้อมูล & Supabase Cloud Sync</h2>
+            <p class="page-subtitle">เชื่อมต่อฐานข้อมูล Cloud (PostgreSQL) ซิงค์ข้อมูล Real-time ข้ามทุกเครื่องและสำรองข้อมูล</p>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="CloudSyncModule.saveConfig()"><i data-lucide="save"></i> บันทึกการเชื่อมต่อ</button>
         </div>
+
+        <!-- Realtime Status Banner -->
+        <div id="cloud-status-info-card" style="margin-bottom: 16px;"></div>
+
+        <!-- Cloud Configuration & Actions -->
+        <div class="card" style="background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%); border: 1.5px solid #93c5fd; margin-bottom: 16px;">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <h3 class="card-title" style="color: #1e40af; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="cloud"></i> ตั้งค่าเชื่อมต่อ Supabase Cloud Database (PostgreSQL + Realtime)
+            </h3>
+            <span class="badge badge-primary">รองรับ Vercel + คอมพิวเตอร์หลายเครื่อง</span>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600;">Supabase Project URL</label>
+              <input type="text" id="cfg-supabase-url" class="form-input" placeholder="https://xxxxxxxxxxxxxxxx.supabase.co" style="font-family: monospace;">
+              <small style="color: var(--slate-500); font-size: 0.76rem;">หาได้จาก Supabase Dashboard -> Project Settings -> Configuration -> API</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600;">Supabase Anon Public Key</label>
+              <input type="password" id="cfg-supabase-key" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="font-family: monospace;">
+              <small style="color: var(--slate-500); font-size: 0.76rem;">Public Anon Key (สามารถเปิดเผยกับเว็บแอปได้)</small>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <button class="btn btn-primary" onclick="CloudSyncModule.saveConfig()"><i data-lucide="save"></i> บันทึกและเชื่อมต่อ Cloud</button>
+            <button class="btn btn-emerald" id="btn-seed-cloud" onclick="CloudSyncModule.initialSeedToCloud()"><i data-lucide="upload-cloud"></i> อัปโหลดข้อมูลตั้งต้นขึ้น Cloud (Initial Seed 669 ผู้ป่วย + คลังยา)</button>
+            <button class="btn btn-outline" onclick="CloudSyncModule.pullLatestFromCloud(true)"><i data-lucide="download-cloud"></i> ดึงข้อมูลล่าสุดจาก Cloud (Full Pull)</button>
+            <button class="btn btn-secondary" onclick="CloudSyncModule.toggleSqlHelper()"><i data-lucide="code"></i> ดูคำสั่งสร้างตาราง SQL Schema</button>
+          </div>
+        </div>
+
+        <!-- SQL Schema Helper Accordion (Collapsible) -->
+        <div id="sql-helper-box" class="card" style="display: none; margin-bottom: 16px; background: #0f172a; color: #f8fafc; border: 1px solid #334155;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-weight: 700; color: #38bdf8; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="terminal"></i> คำสั่งสร้างตารางใน Supabase (SQL Editor)
+            </div>
+            <button class="btn btn-sm btn-outline" style="color: white; border-color: #475569;" onclick="CloudSyncModule.copySqlSchema()"><i data-lucide="copy"></i> คัดลอก SQL ทั้งหมด</button>
+          </div>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">
+            <strong>วิธีทำ:</strong> 1. เข้า <a href="https://supabase.com/dashboard" target="_blank" style="color:#38bdf8; text-decoration: underline;">Supabase Dashboard</a> &rarr; 2. เลือกโปรเจกต์ &rarr; 3. เข้าเมนู <strong>SQL Editor</strong> ด้านซ้าย &rarr; 4. วางคำสั่งด้านล่างนี้แล้วกดปุ่ม <strong>RUN</strong>
+          </p>
+          <pre id="sql-schema-pre" style="background: #1e293b; padding: 12px; border-radius: 8px; font-size: 0.74rem; font-family: monospace; max-height: 240px; overflow-y: auto; color: #e2e8f0; border: 1px solid #334155; user-select: all;"></pre>
+        </div>
+
+        <!-- Local Backup & Restore -->
         <div class="form-row form-row-2">
           <div class="card">
-            <div class="card-header"><h3 class="card-title"><i data-lucide="download"></i> ส่งออกข้อมูลสำรอง (Backup)</h3></div>
+            <div class="card-header"><h3 class="card-title"><i data-lucide="download"></i> สำรองข้อมูลแบบไฟล์ (JSON Backup)</h3></div>
+            <p style="font-size: 0.82rem; color: var(--slate-600); margin-bottom: 12px;">ดาวน์โหลดข้อมูลทั้งหมดในระบบเป็นไฟล์ .json เก็บไว้ในเครื่องคอมพิวเตอร์</p>
             <button class="btn btn-primary" onclick="MigrationModule.exportDataJSON()"><i data-lucide="download"></i> ดาวน์โหลด Backup JSON</button>
           </div>
           <div class="card">
-            <div class="card-header"><h3 class="card-title"><i data-lucide="upload"></i> นำเข้าข้อมูล (Import)</h3></div>
+            <div class="card-header"><h3 class="card-title"><i data-lucide="upload"></i> นำเข้าข้อมูลจากไฟล์ (Import JSON)</h3></div>
+            <p style="font-size: 0.82rem; color: var(--slate-600); margin-bottom: 12px;">กู้คืนหรือนำเข้าข้อมูลจากไฟล์สำรอง .json ที่เคยบันทึกไว้</p>
             <input type="file" id="import-file-input" accept=".json" class="form-input" style="margin-bottom: 8px;">
             <button class="btn btn-emerald" onclick="MigrationModule.importDataJSON()"><i data-lucide="upload"></i> นำเข้าข้อมูล</button>
           </div>
@@ -2984,8 +3055,11 @@
       get(key) {
         try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
       },
-      set(key, data) {
+      set(key, data, skipCloudSync = false) {
         try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+        if (!skipCloudSync && typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady()) {
+          CloudSyncModule.syncKeyToCloud(key, data);
+        }
       }
     };
 
@@ -3272,6 +3346,7 @@
         DB.init();
         LoginModule.init();
         AuthModule.init();
+        CloudSyncModule.init();
         this.setupNavigation();
         this.setupRealtimeClock();
         this.renderAll();
@@ -8563,11 +8638,412 @@
     };
 
     const CloudSyncModule = {
-      saveConfig() {
-        const url = document.getElementById('cfg-supabase-url').value.trim();
-        const key = document.getElementById('cfg-supabase-key').value.trim();
+      client: null,
+      realtimeChannel: null,
+      isSyncing: false,
+      status: 'offline', // 'connected', 'connecting', 'offline', 'error'
+      lastSyncTime: null,
+      sqlSchema: "-- ==============================================================================\n-- สคริปต์สร้างฐานข้อมูล Supabase สำหรับระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n-- วิธีใช้: นำโค้ดทั้งหมดนี้ไปวางในหน้า \"SQL Editor\" ของ Supabase แล้วกดปุ่ม \"RUN\"\n-- ==============================================================================\n\n-- 1. ตารางผู้ป่วย (opd_patients)\ncreate table if not exists public.opd_patients (\n    patient_id text primary key,\n    hn text not null,\n    national_id text,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    sex text,\n    dob text,\n    phone text,\n    rights text default 'UC',\n    chronic text,\n    drug_allergy text,\n    address text,\n    note text,\n    raw_data jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 2. ตารางการเข้ารับบริการ / AN (opd_visits)\ncreate table if not exists public.opd_visits (\n    visit_id text primary key,\n    an text not null,\n    hn text not null,\n    patient_id text not null,\n    patient_name text,\n    visit_date text,\n    queue_no text,\n    queue_type text default 'ทั่วไป',\n    status text default 'waiting', -- waiting, examining, lab_wait, pharmacy, completed, cancelled\n    doctor text,\n    doctor_id text,\n    doctor_license text,\n    cc text, -- Chief Complaint\n    pi text, -- Present Illness\n    pe text, -- Physical Examination\n    diagnosis text,\n    vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat\n    drugs jsonb, -- array of prescribed drugs\n    labs jsonb, -- array of lab orders & results\n    procedures jsonb, -- array of procedures & DF\n    billing jsonb, -- total, discount, net, payment_type\n    certificates jsonb, -- medical certificate data\n    audit_logs jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)\ncreate table if not exists public.opd_drugs (\n    drug_id text primary key,\n    code text,\n    trade_name text,\n    generic_name text not null,\n    dosage text,\n    unit text,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock numeric default 0,\n    category text,\n    usage_instruction text,\n    usage_text text,\n    warning text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 4. ตารางการนัดหมาย (opd_appointments)\ncreate table if not exists public.opd_appointments (\n    appointment_id text primary key,\n    patient_id text not null,\n    hn text not null,\n    patient_name text not null,\n    doctor text,\n    appt_date text not null,\n    appt_time text,\n    reason text,\n    status text default 'scheduled', -- scheduled, arrived, completed, cancelled\n    note text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 5. ตารางหัตถการ (opd_procedures)\ncreate table if not exists public.opd_procedures (\n    proc_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    df_price numeric default 0,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 6. ตารางตรวจทางห้องปฏิบัติการ (opd_labs)\ncreate table if not exists public.opd_labs (\n    lab_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    normal_range text,\n    unit text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 7. ตารางชุดแล็บ (opd_lab_sets)\ncreate table if not exists public.opd_lab_sets (\n    set_id text primary key,\n    name text not null,\n    category text,\n    description text,\n    items jsonb,\n    price numeric default 0,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 8. ตารางชุดยาที่ใช้บ่อย (opd_drug_groups)\ncreate table if not exists public.opd_drug_groups (\n    group_id text primary key,\n    name text not null,\n    description text,\n    items jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 9. ตารางเทมเพลตตรวจร่างกาย (opd_pe_templates)\ncreate table if not exists public.opd_pe_templates (\n    template_id text primary key,\n    title text not null,\n    category text,\n    content text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 10. ตารางแพทย์และเจ้าหน้าที่ (opd_doctors)\ncreate table if not exists public.opd_doctors (\n    doctor_id text primary key,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    license_no text,\n    specialty text,\n    phone text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 11. ตาราง Audit Logs บันทึกการใช้งาน (opd_audit_logs)\ncreate table if not exists public.opd_audit_logs (\n    id bigint generated always as identity primary key,\n    action text,\n    user_role text,\n    doctor_name text,\n    details jsonb,\n    timestamp text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตาราง System Configs (opd_system_configs)\ncreate table if not exists public.opd_system_configs (\n    key text primary key,\n    value jsonb,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- ==============================================================================\n-- สร้าง Indexes เพื่อความเร็วในการค้นหา\n-- ==============================================================================\ncreate index if not exists idx_patients_hn on public.opd_patients(hn);\ncreate index if not exists idx_patients_cid on public.opd_patients(national_id);\ncreate index if not exists idx_patients_name on public.opd_patients(first_name, last_name);\ncreate index if not exists idx_visits_an on public.opd_visits(an);\ncreate index if not exists idx_visits_hn on public.opd_visits(hn);\ncreate index if not exists idx_visits_date on public.opd_visits(visit_date);\ncreate index if not exists idx_visits_status on public.opd_visits(status);\ncreate index if not exists idx_appointments_date on public.opd_appointments(appt_date);\n\n-- ==============================================================================\n-- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key\n-- ==============================================================================\nalter table public.opd_patients enable row level security;\nalter table public.opd_visits enable row level security;\nalter table public.opd_drugs enable row level security;\nalter table public.opd_appointments enable row level security;\nalter table public.opd_procedures enable row level security;\nalter table public.opd_labs enable row level security;\nalter table public.opd_lab_sets enable row level security;\nalter table public.opd_drug_groups enable row level security;\nalter table public.opd_pe_templates enable row level security;\nalter table public.opd_doctors enable row level security;\nalter table public.opd_audit_logs enable row level security;\nalter table public.opd_system_configs enable row level security;\n\n-- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key\ncreate policy \"Allow all operations for anon on opd_patients\" on public.opd_patients for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_visits\" on public.opd_visits for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drugs\" on public.opd_drugs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_appointments\" on public.opd_appointments for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_procedures\" on public.opd_procedures for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_labs\" on public.opd_labs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_lab_sets\" on public.opd_lab_sets for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_groups\" on public.opd_drug_groups for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_pe_templates\" on public.opd_pe_templates for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_doctors\" on public.opd_doctors for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_audit_logs\" on public.opd_audit_logs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_system_configs\" on public.opd_system_configs for all using (true) with check (true);\n\n-- ==============================================================================\n-- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)\n-- ==============================================================================\ndo $\nbegin\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_patients') then\n    alter publication supabase_realtime add table public.opd_patients;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_visits') then\n    alter publication supabase_realtime add table public.opd_visits;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drugs') then\n    alter publication supabase_realtime add table public.opd_drugs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_appointments') then\n    alter publication supabase_realtime add table public.opd_appointments;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_procedures') then\n    alter publication supabase_realtime add table public.opd_procedures;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_labs') then\n    alter publication supabase_realtime add table public.opd_labs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_groups') then\n    alter publication supabase_realtime add table public.opd_drug_groups;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_pe_templates') then\n    alter publication supabase_realtime add table public.opd_pe_templates;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_doctors') then\n    alter publication supabase_realtime add table public.opd_doctors;\n  end if;\nend $;\n",
+
+      TABLE_MAP: {
+        'opd_nakhonsawan_patients_v5': { table: 'opd_patients', pk: 'patient_id' },
+        'opd_nakhonsawan_visits_v7': { table: 'opd_visits', pk: 'visit_id' },
+        'opd_nakhonsawan_drugs_v4': { table: 'opd_drugs', pk: 'drug_id' },
+        'opd_nakhonsawan_appointments_v5': { table: 'opd_appointments', pk: 'appointment_id' },
+        'opd_nakhonsawan_procedures_v4': { table: 'opd_procedures', pk: 'proc_id' },
+        'opd_nakhonsawan_labs_v4': { table: 'opd_labs', pk: 'lab_id' },
+        'opd_nakhonsawan_lab_sets_v1': { table: 'opd_lab_sets', pk: 'set_id' },
+        'opd_nakhonsawan_drug_groups_v4': { table: 'opd_drug_groups', pk: 'group_id' },
+        'opd_nakhonsawan_pe_templates_v5': { table: 'opd_pe_templates', pk: 'template_id' },
+        'opd_nakhonsawan_doctors_v4': { table: 'opd_doctors', pk: 'doctor_id' }
+      },
+
+      getConfig() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.CLOUD_CONFIG);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      },
+
+      isReady() {
+        return this.client !== null && this.status === 'connected';
+      },
+
+      async init() {
+        const cfg = this.getConfig();
+        const urlInput = document.getElementById('cfg-supabase-url');
+        const keyInput = document.getElementById('cfg-supabase-key');
+        if (urlInput && cfg?.url) urlInput.value = cfg.url;
+        if (keyInput && cfg?.key) keyInput.value = cfg.key;
+
+        const pre = document.getElementById('sql-schema-pre');
+        if (pre) pre.textContent = this.sqlSchema;
+
+        if (cfg && cfg.url && cfg.key) {
+          await this.connect(cfg.url, cfg.key, false);
+        } else {
+          this.updateStatusBadge('offline', 'Local Mode');
+          this.renderCloudInfoCard();
+        }
+      },
+
+      async connect(url, key, isManual = false) {
+        if (!url || !key) {
+          this.updateStatusBadge('offline', 'Local Mode');
+          this.renderCloudInfoCard();
+          return false;
+        }
+
+        if (typeof window.supabase === 'undefined') {
+          console.warn('Supabase SDK not loaded.');
+          this.updateStatusBadge('error', 'ไม่พบ Supabase SDK');
+          this.renderCloudInfoCard();
+          return false;
+        }
+
+        this.updateStatusBadge('connecting', 'กำลังเชื่อมต่อ Cloud...');
+
+        try {
+          this.client = window.supabase.createClient(url, key, {
+            auth: { persistSession: false }
+          });
+
+          // Test connection by reading 1 patient record
+          const { data, error } = await this.client.from('opd_patients').select('patient_id').limit(1);
+          if (error) throw error;
+
+          this.status = 'connected';
+          this.updateStatusBadge('connected', '🟢 Cloud Synced');
+          this.renderCloudInfoCard();
+
+          // Subscribe to Realtime Postgres Changes
+          this.subscribeRealtime();
+
+          // Pull any updates from cloud
+          this.pullLatestFromCloud(false);
+
+          if (isManual) {
+            alert('🎉 เชื่อมต่อ Supabase Cloud Database สำเร็จ! พร้อมซิงค์ข้อมูล Real-time ทุกเครื่องเรียบร้อยแล้ว');
+          }
+          return true;
+        } catch (err) {
+          console.error('Supabase connection failed:', err);
+          this.status = 'error';
+          this.updateStatusBadge('error', '🔴 เชื่อมต่อไม่สำเร็จ');
+          this.renderCloudInfoCard();
+          if (isManual) {
+            alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Supabase:\n' + (err.message || JSON.stringify(err)) + '\n\nคำแนะนำ:\n1. ตรวจสอบว่าได้รันคำสั่ง SQL สร้างตารางใน Supabase แล้วหรือไม่\n2. ตรวจสอบ URL และ Anon Key ให้ถูกต้อง');
+          }
+          return false;
+        }
+      },
+
+      disconnect() {
+        if (this.realtimeChannel) {
+          this.client?.removeChannel(this.realtimeChannel);
+          this.realtimeChannel = null;
+        }
+        this.client = null;
+        this.status = 'offline';
+        localStorage.removeItem(STORAGE_KEYS.CLOUD_CONFIG);
+        const urlInput = document.getElementById('cfg-supabase-url');
+        const keyInput = document.getElementById('cfg-supabase-key');
+        if (urlInput) urlInput.value = '';
+        if (keyInput) keyInput.value = '';
+        this.updateStatusBadge('offline', 'Local Mode');
+        this.renderCloudInfoCard();
+        alert('ตัดการเชื่อมต่อ Cloud เรียบร้อย ระบบกลับสู่โหมด Local');
+      },
+
+      async saveConfig() {
+        const url = (document.getElementById('cfg-supabase-url')?.value || '').trim();
+        const key = (document.getElementById('cfg-supabase-key')?.value || '').trim();
+
+        if (!url || !key) {
+          alert('กรุณากรอก Supabase URL และ Anon Key ให้ครบถ้วน');
+          return;
+        }
+
         localStorage.setItem(STORAGE_KEYS.CLOUD_CONFIG, JSON.stringify({ url, key }));
-        alert('บันทึกการตั้งค่า Cloud Database เรียบร้อย');
+        await this.connect(url, key, true);
+      },
+
+      updateStatusBadge(status, text) {
+        const textEl = document.getElementById('cloud-status-text');
+        const dotEl = document.getElementById('cloud-status-dot');
+
+        if (dotEl) {
+          if (status === 'connected') dotEl.style.background = '#10b981';
+          else if (status === 'connecting') dotEl.style.background = '#f59e0b';
+          else if (status === 'error') dotEl.style.background = '#ef4444';
+          else dotEl.style.background = '#94a3b8';
+        }
+
+        if (textEl) {
+          textEl.innerText = text;
+        }
+      },
+
+      renderCloudInfoCard() {
+        const cardEl = document.getElementById('cloud-status-info-card');
+        if (!cardEl) return;
+
+        if (this.status === 'connected') {
+          cardEl.innerHTML = `
+            <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 16px; color: #065f46;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 42px; height: 42px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i data-lucide="check-circle" style="color: #059669; width: 24px; height: 24px;"></i>
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 1rem; color: #065f46;">🟢 เชื่อมต่อ Supabase Cloud สำเร็จ (Realtime Sync พร้อมทำงาน)</div>
+                    <div style="font-size: 0.82rem; color: #047857; margin-top: 2px;">เมื่อเครื่องใดเปิด AN, สั่งยา หรือลงทะเบียนคนไข้ เครื่องอื่นจะอัปเดตอัตโนมัติทันที ⚡</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline btn-sm" onclick="CloudSyncModule.pullLatestFromCloud(true)"><i data-lucide="refresh-cw"></i> ดึงข้อมูลล่าสุด</button>
+                  <button class="btn btn-danger btn-sm" onclick="CloudSyncModule.disconnect()"><i data-lucide="power"></i> ตัดการเชื่อมต่อ</button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          cardEl.innerHTML = `
+            <div style="background: #fffbeb; border: 1.5px solid #fef3c7; border-radius: 12px; padding: 16px; color: #92400e;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 42px; height: 42px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <i data-lucide="cloud-off" style="color: #d97706; width: 24px; height: 24px;"></i>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 700; font-size: 0.95rem; color: #92400e;">🟡 ระบบกำลังทำงานในโหมด Local Storage (ใช้งานเฉพาะในเครื่องนี้)</div>
+                  <p style="font-size: 0.82rem; color: #78350f; margin: 2px 0 0;">หากต้องการให้ใช้งานร่วมกันหลายเครื่อง ให้กรอก Supabase URL และ Anon Key ด้านล่าง</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        lucide.createIcons();
+      },
+
+      subscribeRealtime() {
+        if (!this.client) return;
+        if (this.realtimeChannel) {
+          this.client.removeChannel(this.realtimeChannel);
+        }
+
+        this.realtimeChannel = this.client.channel('opd-realtime-channel')
+          .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+            this.handleRealtimeChange(payload);
+          })
+          .subscribe((status) => {
+            console.log('Supabase realtime subscription status:', status);
+          });
+      },
+
+      handleRealtimeChange(payload) {
+        const { table, eventType, new: newRecord, old: oldRecord } = payload;
+        console.log(`[Realtime Sync] ${eventType} on ${table}:`, newRecord || oldRecord);
+
+        let storageKey = null;
+        let pk = 'id';
+
+        for (const [sKey, conf] of Object.entries(this.TABLE_MAP)) {
+          if (conf.table === table) {
+            storageKey = sKey;
+            pk = conf.pk;
+            break;
+          }
+        }
+
+        if (!storageKey) return;
+
+        let localList = DB.get(storageKey) || [];
+
+        if (eventType === 'INSERT') {
+          const idx = localList.findIndex(item => item[pk] === newRecord[pk]);
+          if (idx === -1) {
+            localList.unshift(newRecord);
+          } else {
+            localList[idx] = newRecord;
+          }
+          DB.set(storageKey, localList, true);
+          this.notifyRealtimeUpdate(table, newRecord);
+        } else if (eventType === 'UPDATE') {
+          const idx = localList.findIndex(item => item[pk] === newRecord[pk]);
+          if (idx !== -1) {
+            localList[idx] = newRecord;
+          } else {
+            localList.push(newRecord);
+          }
+          DB.set(storageKey, localList, true);
+          this.notifyRealtimeUpdate(table, newRecord);
+        } else if (eventType === 'DELETE') {
+          localList = localList.filter(item => item[pk] !== oldRecord[pk]);
+          DB.set(storageKey, localList, true);
+          this.notifyRealtimeUpdate(table, oldRecord);
+        }
+      },
+
+      notifyRealtimeUpdate(table, record) {
+        if (State.currentTab === 'tab-dashboard') DashboardModule.render();
+        if (State.currentTab === 'tab-patients') PatientModule.render();
+        if (State.currentTab === 'tab-opd') VisitModule.render();
+        if (State.currentTab === 'tab-an-master') AnMasterModule.render();
+        if (State.currentTab === 'tab-appointments') AppointmentModule.render();
+        if (State.currentTab === 'tab-drugs') DrugModule.render();
+        if (State.currentTab === 'tab-procedures') ProcedureModule.render();
+        if (State.currentTab === 'tab-labs') LabModule.render();
+
+        const tableNamesTh = {
+          'opd_patients': 'ข้อมูลผู้ป่วย',
+          'opd_visits': 'การเปิด AN / ตรวจรักษา',
+          'opd_drugs': 'คลังยา',
+          'opd_appointments': 'การนัดหมาย'
+        };
+        const thName = tableNamesTh[table] || table;
+        this.showSyncToast(`⚡ อัปเดต ${thName} จากอุปกรณ์อื่นแล้ว`);
+      },
+
+      showSyncToast(msg) {
+        let toast = document.getElementById('cloud-sync-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'cloud-sync-toast';
+          toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f172a;color:#10b981;padding:12px 20px;border-radius:12px;font-size:0.86rem;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.3);z-index:9999;display:flex;align-items:center;gap:10px;transition:opacity 0.3s;pointer-events:none;opacity:0;border:1.5px solid #10b981;';
+          document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:50%;box-shadow:0 0 8px #10b981;"></span> ${msg}`;
+        toast.style.opacity = '1';
+        clearTimeout(this._toastTimer);
+        this._toastTimer = setTimeout(() => {
+          toast.style.opacity = '0';
+        }, 2800);
+      },
+
+      async syncKeyToCloud(storageKey, dataArray) {
+        if (!this.isReady() || !Array.isArray(dataArray)) return;
+        const conf = this.TABLE_MAP[storageKey];
+        if (!conf) return;
+
+        try {
+          const batchSize = 100;
+          for (let i = 0; i < dataArray.length; i += batchSize) {
+            const batch = dataArray.slice(i, i + batchSize);
+            const { error } = await this.client.from(conf.table).upsert(batch);
+            if (error) console.error(`Batch sync error on ${conf.table}:`, error);
+          }
+        } catch (e) {
+          console.error(`Exception during full key sync on ${conf.table}:`, e);
+        }
+      },
+
+      async initialSeedToCloud() {
+        if (!this.isReady()) {
+          alert('กรุณาเชื่อมต่อ Supabase Cloud ให้สำเร็จก่อนทำการอัปโหลด');
+          return;
+        }
+
+        const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
+        const visits = DB.get(STORAGE_KEYS.VISITS) || [];
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+
+        if (!confirm('ยืนยันการอัปโหลดข้อมูลตั้งต้นขึ้น Cloud หรือไม่?\n- ผู้ป่วย: ' + patients.length + ' ราย\n- การตรวจ/AN: ' + visits.length + ' รายการ\n- คลังยา: ' + drugs.length + ' รายการ\n\nข้อมูลจะถูกบันทึกขึ้นฐานข้อมูลออนไลน์ใน Supabase ทันที')) {
+          return;
+        }
+
+        const btn = document.getElementById('btn-seed-cloud');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<i data-lucide="loader" class="spin"></i> กำลังอัปโหลดข้อมูลขึ้น Cloud...';
+          lucide.createIcons();
+        }
+
+        try {
+          const keysToSeed = [
+            STORAGE_KEYS.PATIENTS,
+            STORAGE_KEYS.DRUGS,
+            STORAGE_KEYS.PROCEDURES,
+            STORAGE_KEYS.LABS,
+            STORAGE_KEYS.LAB_SETS,
+            STORAGE_KEYS.DRUG_GROUPS,
+            STORAGE_KEYS.PE_TEMPLATES,
+            STORAGE_KEYS.DOCTORS,
+            STORAGE_KEYS.APPOINTMENTS,
+            STORAGE_KEYS.VISITS
+          ];
+
+          for (const sKey of keysToSeed) {
+            const conf = this.TABLE_MAP[sKey];
+            if (!conf) continue;
+            const data = DB.get(sKey) || [];
+            if (data.length > 0) {
+              console.log(`Uploading ${data.length} records to ${conf.table}...`);
+              const batchSize = 100;
+              for (let i = 0; i < data.length; i += batchSize) {
+                const batch = data.slice(i, i + batchSize);
+                const { error } = await this.client.from(conf.table).upsert(batch);
+                if (error) throw error;
+              }
+            }
+          }
+
+          alert('🎉 อัปโหลดข้อมูลเริ่มต้น (669 ผู้ป่วย, คลังยา, หัตถการ) ขึ้น Cloud สำเร็จครบถ้วนแล้ว! ทุกอุปกรณ์ที่เปิดผ่าน Vercel จะเห็นข้อมูลเดียวกันทันที');
+        } catch (err) {
+          console.error('Error during initial cloud seed:', err);
+          alert('เกิดข้อผิดพลาดในการอัปโหลดข้อมูล:\n' + err.message);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="upload-cloud"></i> อัปโหลดข้อมูลตั้งต้นขึ้น Cloud (Initial Seed 669 ผู้ป่วย + คลังยา)';
+            lucide.createIcons();
+          }
+        }
+      },
+
+      async pullLatestFromCloud(showNotification = false) {
+        if (!this.isReady()) return;
+
+        try {
+          for (const [sKey, conf] of Object.entries(this.TABLE_MAP)) {
+            const { data, error } = await this.client.from(conf.table).select('*').limit(3000);
+            if (!error && Array.isArray(data) && data.length > 0) {
+              DB.set(sKey, data, true);
+            }
+          }
+          this.lastSyncTime = new Date();
+          App.renderAll();
+          if (showNotification) {
+            alert('📥 ดึงข้อมูลล่าสุดจาก Supabase Cloud ลงเครื่องเรียบร้อยแล้ว!');
+          }
+        } catch (err) {
+          console.error('Error pulling latest from cloud:', err);
+          if (showNotification) {
+            alert('เกิดข้อผิดพลาดในการดึงข้อมูลจาก Cloud: ' + err.message);
+          }
+        }
+      },
+
+      toggleSqlHelper() {
+        const box = document.getElementById('sql-helper-box');
+        if (!box) return;
+        const isHidden = box.style.display === 'none';
+        box.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          const pre = document.getElementById('sql-schema-pre');
+          if (pre) pre.textContent = this.sqlSchema;
+        }
+        lucide.createIcons();
+      },
+
+      copySqlSchema() {
+        navigator.clipboard.writeText(this.sqlSchema).then(() => {
+          alert('📋 คัดลอกคำสั่ง SQL ทั้งหมดเรียบร้อยแล้ว! นำไปวางในหน้า SQL Editor บน Supabase แล้วกด RUN ได้ทันที');
+        }).catch(() => {
+          alert('กรุณาคัดลอกข้อความในกรอบด้วยตนเอง (Ctrl + C)');
+        });
       }
     };
 
