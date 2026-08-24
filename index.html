@@ -8183,6 +8183,60 @@
 
     const SmartCardModule = {
       bridgeUrls: ['http://127.0.0.1:8181', 'http://localhost:8181'],
+      wsUrls: ['ws://127.0.0.1:8181/ws', 'ws://localhost:8181/ws'],
+
+      queryBridgeWs(action = 'read', timeoutMs = 2500) {
+        return new Promise((resolve) => {
+          let resolved = false;
+          let ws = null;
+
+          const timer = setTimeout(() => {
+            if (!resolved) {
+              resolved = true;
+              try { if (ws) ws.close(); } catch(e) {}
+              resolve({ success: false });
+            }
+          }, timeoutMs);
+
+          try {
+            const url = this.wsUrls[0];
+            ws = new WebSocket(url);
+
+            ws.onopen = () => {
+              ws.send(action);
+            };
+
+            ws.onmessage = (event) => {
+              try {
+                const data = JSON.parse(event.data);
+                if (data.event === 'connected' && action !== 'health' && action !== 'status') {
+                  return;
+                }
+                if (!resolved) {
+                  resolved = true;
+                  clearTimeout(timer);
+                  try { ws.close(); } catch(e) {}
+                  resolve({ success: true, data, source: 'ws' });
+                }
+              } catch(e) {}
+            };
+
+            ws.onerror = () => {
+              if (!resolved) {
+                resolved = true;
+                clearTimeout(timer);
+                resolve({ success: false });
+              }
+            };
+          } catch(err) {
+            if (!resolved) {
+              resolved = true;
+              clearTimeout(timer);
+              resolve({ success: false });
+            }
+          }
+        });
+      },
       cardSamples: {
         "1": { cid: "3570501055363", title: "นาย", first_name: "อ้วน", last_name: "แสนคำ", sex: "ชาย", dob: "1955-08-10", address: "130 หมู่ที่ 1 ตำบลวอแก้ว อำเภอห้างฉัตร จังหวัดลำปาง" },
         "2": { cid: "3150200119854", title: "นาย", first_name: "หนุ่ม", last_name: "ดวงแก้ว", sex: "ชาย", dob: "1978-04-18", address: "83 หมู่ที่ 4 ตำบลแม่เล่ย์ อำเภอแม่วงก์ จังหวัดนครสวรรค์" },
@@ -8244,10 +8298,21 @@
       },
 
       async queryBridge(endpoint = '/read') {
+        const action = endpoint.includes('health') || endpoint.includes('status') ? 'health' : 'read';
+
+        // 1. Try WebSocket first (bypasses HTTPS mixed-content restrictions in modern browsers)
+        try {
+          const wsRes = await this.queryBridgeWs(action, 1800);
+          if (wsRes && wsRes.success) {
+            return wsRes;
+          }
+        } catch(e) {}
+
+        // 2. Fallback to HTTP fetch
         for (const base of this.bridgeUrls) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2200);
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
             const res = await fetch(`${base}${endpoint}`, { 
               method: 'GET', 
               signal: controller.signal,
@@ -8256,7 +8321,7 @@
             clearTimeout(timeoutId);
             if (res && res.ok) {
               const data = await res.json();
-              return { success: true, data, base };
+              return { success: true, data, base, source: 'http' };
             }
           } catch (e) {}
         }
