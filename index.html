@@ -8768,10 +8768,111 @@
         return this.client !== null && this.status === 'connected';
       },
 
+            serializeForCloud(table, item) {
+        if (!item) return item;
+        if (table === 'opd_visits') {
+          return {
+            visit_id: item.visit_id || ('V_' + Date.now()),
+            an: item.an || '',
+            hn: item.hn || '',
+            patient_id: item.patient_id || item.hn || '',
+            patient_name: item.patient_name || '',
+            visit_date: item.visit_date || new Date().toISOString().slice(0, 16).replace('T', ' '),
+            queue_no: item.queue_no || '',
+            queue_type: item.service_type || item.queue_type || 'ทั่วไป',
+            status: item.status || 'OPEN',
+            doctor: item.doctor || 'นพ. กชณัฐ พันธุ์วรรธนะสิน',
+            doctor_id: item.doctor_id || '',
+            doctor_license: item.doctor_license || '',
+            cc: item.chief_complaint || item.cc || '',
+            pi: item.present_illness || item.pi || '',
+            pe: item.physical_exam || item.pe || '',
+            diagnosis: Array.isArray(item.diagnoses) ? JSON.stringify(item.diagnoses) : (item.diagnosis || ''),
+            vitals: item.vitals || {},
+            drugs: item.prescriptions || item.drugs || [],
+            labs: item.labs || [],
+            procedures: item.procedures || [],
+            billing: item.billing || {},
+            certificates: item.certificates || {},
+            audit_logs: item.audit_logs || []
+          };
+        }
+        if (table === 'opd_patients') {
+          return {
+            patient_id: item.patient_id || ('P_' + Date.now()),
+            hn: item.hn || '',
+            national_id: item.national_id || '',
+            title: item.title || '',
+            first_name: item.first_name || '',
+            last_name: item.last_name || '',
+            sex: item.sex || '',
+            dob: item.dob || '',
+            phone: item.phone || '',
+            rights: item.rights || 'UC',
+            chronic: item.chronic || '',
+            drug_allergy: item.drug_allergy || '',
+            address: item.address || '',
+            note: item.note || ''
+          };
+        }
+        if (table === 'opd_appointments') {
+          return {
+            appointment_id: item.appointment_id || ('APP_' + Date.now()),
+            patient_id: item.patient_id || item.hn || '',
+            hn: item.hn || '',
+            patient_name: item.patient_name || '',
+            doctor: item.doctor || '',
+            appt_date: item.appt_date || '',
+            appt_time: item.appt_time || '',
+            reason: item.reason || '',
+            status: item.status || 'scheduled',
+            note: item.note || ''
+          };
+        }
+        return item;
+      },
+
+      deserializeFromCloud(table, row) {
+        if (!row) return row;
+        if (table === 'opd_visits') {
+          let diagnosesList = [];
+          if (row.diagnosis) {
+            try {
+              if (typeof row.diagnosis === 'string' && row.diagnosis.startsWith('[')) {
+                diagnosesList = JSON.parse(row.diagnosis);
+              } else if (typeof row.diagnosis === 'string') {
+                diagnosesList = [{ code: row.diagnosis, name: row.diagnosis, type: 'Principal Dx' }];
+              }
+            } catch(e) {}
+          }
+          return {
+            ...row,
+            service_type: row.queue_type || row.service_type || 'ทั่วไป',
+            chief_complaint: row.cc || row.chief_complaint || '',
+            present_illness: row.pi || row.present_illness || '',
+            physical_exam: row.pe || row.physical_exam || '',
+            diagnoses: diagnosesList,
+            prescriptions: row.drugs || row.prescriptions || [],
+            procedures: row.procedures || [],
+            labs: row.labs || [],
+            vitals: row.vitals || {},
+            billing: row.billing || {}
+          };
+        }
+        if (table === 'opd_patients') {
+          return {
+            ...row,
+            age: Utils.calcAge(row.dob)
+          };
+        }
+        return row;
+      },
+
       async upsertRecord(table, item) {
         if (!this.isReady() || !item) return;
         try {
-          const { error } = await this.client.from(table).upsert(item);
+          const payload = this.serializeForCloud(table, item);
+          const { error } = await this.client.from(table).upsert(payload);
           if (error) console.error(`Error upserting record to ${table}:`, error);
         } catch(e) {
           console.error(`Exception upserting record to ${table}:`, e);
@@ -9024,23 +9125,25 @@
         let localList = DB.get(storageKey) || [];
 
         if (eventType === 'INSERT') {
-          const idx = localList.findIndex(item => item[pk] === newRecord[pk]);
+          const mapped = this.deserializeFromCloud(table, newRecord);
+          const idx = localList.findIndex(item => item[pk] === mapped[pk]);
           if (idx === -1) {
-            localList.unshift(newRecord);
+            localList.unshift(mapped);
           } else {
-            localList[idx] = newRecord;
+            localList[idx] = mapped;
           }
           DB.set(storageKey, localList, true);
-          this.debouncedNotifyUpdate(table, newRecord);
+          this.debouncedNotifyUpdate(table, mapped);
         } else if (eventType === 'UPDATE') {
-          const idx = localList.findIndex(item => item[pk] === newRecord[pk]);
+          const mapped = this.deserializeFromCloud(table, newRecord);
+          const idx = localList.findIndex(item => item[pk] === mapped[pk]);
           if (idx !== -1) {
-            localList[idx] = newRecord;
+            localList[idx] = mapped;
           } else {
-            localList.push(newRecord);
+            localList.push(mapped);
           }
           DB.set(storageKey, localList, true);
-          this.debouncedNotifyUpdate(table, newRecord);
+          this.debouncedNotifyUpdate(table, mapped);
         } else if (eventType === 'DELETE') {
           localList = localList.filter(item => item[pk] !== oldRecord[pk]);
           DB.set(storageKey, localList, true);
@@ -9171,7 +9274,8 @@
           for (const [sKey, conf] of Object.entries(this.TABLE_MAP)) {
             const { data, error } = await this.client.from(conf.table).select('*').limit(3000);
             if (!error && Array.isArray(data) && data.length > 0) {
-              DB.set(sKey, data, true);
+              const deserialized = data.map(row => this.deserializeFromCloud(conf.table, row));
+              DB.set(sKey, deserialized, true);
             }
           }
           this.lastSyncTime = new Date();
