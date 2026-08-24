@@ -3286,7 +3286,37 @@
           'DOCTOR': 'แพทย์ (Doctor)',
           'STAFF': 'ผู้ช่วย/เจ้าหน้าที่ (Staff)'
         };
-        alert('✅ บันทึกรหัสผ่านสำหรับบทบาท ' + (roleLabels[targetRole] || targetRole) + ' เรียบร้อยแล้ว\nรหัสใหม่มีผลใช้งานทันที');
+        alert('✅ บันทึกรหัสผ่านสำหรับบทบาท ' + (roleLabels[targetRole] || targetRole) + ' เรียบร้อยแล้ว\nรหัสใหม่มีผลซิงค์ไปยังทุกเครื่องทันที');
+      },
+
+      closeChangePasswordModal() {
+        const modal = document.getElementById('modal-change-admin-pin');
+        if (modal) modal.classList.remove('active');
+      },
+
+      saveNewAdminPin() {
+        const pinOld = document.getElementById('pin-old').value.trim();
+        const pinNew = document.getElementById('pin-new').value.trim();
+        const pinConfirm = document.getElementById('pin-confirm').value.trim();
+
+        if (pinOld !== this.getAdminPin()) {
+          alert('⚠️ รหัสผ่านเดิม (PIN) ไม่ถูกต้อง');
+          document.getElementById('pin-old').focus();
+          return;
+        }
+        if (!pinNew || pinNew.length < 4) {
+          alert('กรุณาใส่รหัสผ่านใหม่อย่างน้อย 4 ตัวอักษร');
+          document.getElementById('pin-new').focus();
+          return;
+        }
+        if (pinNew !== pinConfirm) {
+          alert('⚠️ รหัสผ่านใหม่และยืนยันรหัสผ่านไม่ตรงกัน');
+          document.getElementById('pin-confirm').focus();
+          return;
+        }
+        this.setRolePassword('ADMIN', pinNew);
+        this.closeChangePasswordModal();
+        alert('✅ เปลี่ยนรหัสผ่าน Admin เรียบร้อยแล้ว\nรหัสใหม่ถูกซิงค์ขึ้น Cloud เพื่อใช้งานกับทุกเครื่องทันที');
       }
     };
 
@@ -9165,9 +9195,10 @@
         console.log(`[Realtime Sync] ${eventType} on ${table}:`, newRecord || oldRecord);
 
         if (table === 'opd_system_configs') {
-          if (newRecord && newRecord.key === 'user_passwords') {
+          if (newRecord && newRecord.key === 'user_passwords' && newRecord.value) {
             try {
               localStorage.setItem(STORAGE_KEYS.USER_PASSWORDS, JSON.stringify(newRecord.value));
+              this.showSyncToast('🔑 รหัสผ่านระบบได้รับการอัปเดตแบบ Realtime แล้ว');
             } catch(e) {}
           }
           return;
