@@ -3055,10 +3055,36 @@
       get(key) {
         try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
       },
-      set(key, data, skipCloudSync = false) {
+            set(key, data, skipCloudSync = false) {
         try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
         if (!skipCloudSync && typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady()) {
           CloudSyncModule.syncKeyToCloud(key, data);
+        }
+      },
+      upsertItem(storageKey, item, pkField = null) {
+        if (!item) return;
+        const list = this.get(storageKey) || [];
+        const conf = (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.TABLE_MAP) ? CloudSyncModule.TABLE_MAP[storageKey] : null;
+        const pk = pkField || (conf ? conf.pk : 'id');
+        const idx = list.findIndex(x => x[pk] === item[pk]);
+        if (idx >= 0) {
+          list[idx] = item;
+        } else {
+          list.unshift(item);
+        }
+        try { localStorage.setItem(storageKey, JSON.stringify(list)); } catch (e) {}
+        if (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady() && conf) {
+          CloudSyncModule.upsertRecord(conf.table, item);
+        }
+      },
+      deleteItem(storageKey, pkValue, pkField = null) {
+        let list = this.get(storageKey) || [];
+        const conf = (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.TABLE_MAP) ? CloudSyncModule.TABLE_MAP[storageKey] : null;
+        const pk = pkField || (conf ? conf.pk : 'id');
+        list = list.filter(x => x[pk] !== pkValue);
+        try { localStorage.setItem(storageKey, JSON.stringify(list)); } catch (e) {}
+        if (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady() && conf) {
+          CloudSyncModule.deleteRecord(conf.table, pk, pkValue);
         }
       }
     };
@@ -3096,6 +3122,9 @@
         const list = this.getAllPasswords();
         list[role] = String(newPassword).trim();
         localStorage.setItem(STORAGE_KEYS.USER_PASSWORDS, JSON.stringify(list));
+        if (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady()) {
+          CloudSyncModule.saveConfigKey('user_passwords', list);
+        }
       },
 
       init() {
@@ -3639,8 +3668,7 @@
           const idx = patients.findIndex(x => x.patient_id === id);
           if (idx !== -1) patients[idx] = data;
         } else { patients.push(data); }
-
-        DB.set(STORAGE_KEYS.PATIENTS, patients);
+        DB.upsertItem(STORAGE_KEYS.PATIENTS, data);
         this.closeModal();
         this.render();
         App.setActivePatient(data);
@@ -4109,6 +4137,7 @@
 
         const newVisit = {
           visit_id: 'V_' + Date.now(),
+          patient_id: patient.patient_id,
           an: document.getElementById('nv-an').value,
           hn: patient.hn,
           patient_name: (patient.title || '') + patient.first_name + ' ' + patient.last_name,
@@ -4129,7 +4158,7 @@
         };
 
         visits.push(newVisit);
-        DB.set(STORAGE_KEYS.VISITS, visits);
+        DB.upsertItem(STORAGE_KEYS.VISITS, newVisit);
         this.closeNewVisitModal();
         this.selectVisitForChart(newVisit.visit_id);
         DashboardModule.render();
@@ -4689,7 +4718,7 @@
         const visits = DB.get(STORAGE_KEYS.VISITS);
         const idx = visits.findIndex(x => x.visit_id === v.visit_id);
         if (idx !== -1) visits[idx] = v;
-        DB.set(STORAGE_KEYS.VISITS, visits);
+        DB.upsertItem(STORAGE_KEYS.VISITS, v);
 
         this.renderVisitList();
         DashboardModule.render();
@@ -6187,7 +6216,7 @@
         const visits = DB.get(STORAGE_KEYS.VISITS);
         const idx = visits.findIndex(x => x.visit_id === v.visit_id);
         if (idx !== -1) visits[idx] = v;
-        DB.set(STORAGE_KEYS.VISITS, visits);
+        DB.upsertItem(STORAGE_KEYS.VISITS, v);
 
         this.renderReceiptPreview(v);
         DashboardModule.render();
@@ -8613,6 +8642,9 @@
       },
 
       displayCardResult(data) {
+        if (data.dob && (data.age === undefined || data.age === null || data.age === '-' || data.age === '')) {
+          data.age = Utils.calcAge(data.dob);
+        }
         this.currentCardData = data;
         const detailsEl = document.getElementById('sc-card-details');
         const patients = DB.get(STORAGE_KEYS.PATIENTS);
@@ -8647,7 +8679,7 @@
             '</div>' +
             '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.86rem; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #f1f5f9;">' +
               '<div><strong>เลขบัตร ปชช. / Passport:</strong> <span style="font-family: monospace; font-weight: 700; color: #0f172a; letter-spacing: 0.5px;">' + data.cid + '</span></div>' +
-              '<div><strong>เพศ:</strong> ' + (data.sex || '-') + ' | <strong>อายุ:</strong> ' + (data.age !== undefined ? (data.age + ' ปี') : '-') + '</div>' +
+              '<div><strong>เพศ:</strong> ' + (data.sex || '-') + ' | <strong>อายุ:</strong> <span style="font-weight:700;color:#047857;">' + (data.age !== undefined && data.age !== '-' ? (data.age + ' ปี') : (Utils.calcAge(data.dob) !== '-' ? (Utils.calcAge(data.dob) + ' ปี') : '-')) + '</span></div>' +
               '<div><strong>วันเกิด:</strong> ' + Utils.formatDateShort(data.dob) + '</div>' +
               '<div><strong>สิทธิการรักษา:</strong> <span class="badge badge-emerald" style="font-size: 0.76rem;">UC (บัตรทอง 30 บาท)</span></div>' +
             '</div>' +
@@ -8688,7 +8720,7 @@
             address: data.address || ''
           };
           patients.push(patientObj);
-          DB.set(STORAGE_KEYS.PATIENTS, patients);
+          DB.upsertItem(STORAGE_KEYS.PATIENTS, patientObj);
           PatientModule.render();
           DashboardModule.render();
         }
@@ -8734,6 +8766,52 @@
 
       isReady() {
         return this.client !== null && this.status === 'connected';
+      },
+
+      async upsertRecord(table, item) {
+        if (!this.isReady() || !item) return;
+        try {
+          const { error } = await this.client.from(table).upsert(item);
+          if (error) console.error(`Error upserting record to ${table}:`, error);
+        } catch(e) {
+          console.error(`Exception upserting record to ${table}:`, e);
+        }
+      },
+
+      async deleteRecord(table, pkField, pkValue) {
+        if (!this.isReady() || !pkValue) return;
+        try {
+          const { error } = await this.client.from(table).delete().eq(pkField, pkValue);
+          if (error) console.error(`Error deleting record from ${table}:`, error);
+        } catch(e) {
+          console.error(`Exception deleting record from ${table}:`, e);
+        }
+      },
+
+      async saveConfigKey(key, value) {
+        if (!this.isReady()) return;
+        try {
+          await this.client.from('opd_system_configs').upsert({
+            key: key,
+            value: value,
+            updated_at: new Date().toISOString()
+          });
+        } catch(e) {
+          console.error('Error saving config key to cloud:', e);
+        }
+      },
+
+      async loadSystemConfigsFromCloud() {
+        if (!this.isReady()) return;
+        try {
+          const { data, error } = await this.client.from('opd_system_configs').select('*');
+          if (error || !data) return;
+          data.forEach(cfg => {
+            if (cfg.key === 'user_passwords' && cfg.value) {
+              localStorage.setItem(STORAGE_KEYS.USER_PASSWORDS, JSON.stringify(cfg.value));
+            }
+          });
+        } catch(e) {}
       },
 
       async init() {
@@ -8787,6 +8865,7 @@
           this.subscribeRealtime();
 
           // Pull any updates from cloud
+          this.loadSystemConfigsFromCloud();
           this.pullLatestFromCloud(false);
 
           if (isManual) {
@@ -8908,9 +8987,26 @@
           });
       },
 
+      _notifyDebounceTimer: null,
+      debouncedNotifyUpdate(table, record) {
+        clearTimeout(this._notifyDebounceTimer);
+        this._notifyDebounceTimer = setTimeout(() => {
+          this.notifyRealtimeUpdate(table, record);
+        }, 120);
+      },
+
       handleRealtimeChange(payload) {
         const { table, eventType, new: newRecord, old: oldRecord } = payload;
         console.log(`[Realtime Sync] ${eventType} on ${table}:`, newRecord || oldRecord);
+
+        if (table === 'opd_system_configs') {
+          if (newRecord && newRecord.key === 'user_passwords') {
+            try {
+              localStorage.setItem(STORAGE_KEYS.USER_PASSWORDS, JSON.stringify(newRecord.value));
+            } catch(e) {}
+          }
+          return;
+        }
 
         let storageKey = null;
         let pk = 'id';
@@ -8935,7 +9031,7 @@
             localList[idx] = newRecord;
           }
           DB.set(storageKey, localList, true);
-          this.notifyRealtimeUpdate(table, newRecord);
+          this.debouncedNotifyUpdate(table, newRecord);
         } else if (eventType === 'UPDATE') {
           const idx = localList.findIndex(item => item[pk] === newRecord[pk]);
           if (idx !== -1) {
@@ -8944,11 +9040,11 @@
             localList.push(newRecord);
           }
           DB.set(storageKey, localList, true);
-          this.notifyRealtimeUpdate(table, newRecord);
+          this.debouncedNotifyUpdate(table, newRecord);
         } else if (eventType === 'DELETE') {
           localList = localList.filter(item => item[pk] !== oldRecord[pk]);
           DB.set(storageKey, localList, true);
-          this.notifyRealtimeUpdate(table, oldRecord);
+          this.debouncedNotifyUpdate(table, oldRecord);
         }
       },
 
