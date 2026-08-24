@@ -11,6 +11,12 @@ using System.Collections.Generic;
 
 namespace ThaiCardReader {
     class Program {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SCARD_IO_REQUEST {
+            public uint dwProtocol;
+            public uint cbPciLength;
+        }
+
         [DllImport("winscard.dll")]
         static extern int SCardEstablishContext(uint dwScope, IntPtr pvReserved1, IntPtr pvReserved2, out IntPtr phContext);
 
@@ -20,6 +26,9 @@ namespace ThaiCardReader {
         [DllImport("winscard.dll", EntryPoint = "SCardConnectW", CharSet = CharSet.Unicode)]
         static extern int SCardConnect(IntPtr hContext, string szReader, uint dwShareMode, uint dwPreferredProtocols, out IntPtr phCard, out uint pdwActiveProtocol);
 
+        [DllImport("winscard.dll", EntryPoint = "SCardReconnect")]
+        static extern int SCardReconnect(IntPtr hCard, uint dwShareMode, uint dwPreferredProtocols, uint dwInitialization, out uint pdwActiveProtocol);
+
         [DllImport("winscard.dll")]
         static extern int SCardDisconnect(IntPtr hCard, uint dwDisposition);
 
@@ -27,13 +36,7 @@ namespace ThaiCardReader {
         static extern int SCardReleaseContext(IntPtr phContext);
 
         [DllImport("winscard.dll")]
-        static extern int SCardTransmit(IntPtr hCard, IntPtr pioSendPci, byte[] pbSendBuffer, int cbSendLength, IntPtr pioRecvPci, byte[] pbRecvBuffer, ref int pcbRecvLength);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+        static extern int SCardTransmit(IntPtr hCard, ref SCARD_IO_REQUEST pioSendPci, byte[] pbSendBuffer, int cbSendLength, IntPtr pioRecvPci, byte[] pbRecvBuffer, ref int pcbRecvLength);
 
         private static readonly object _cardLock = new object();
 
@@ -62,15 +65,6 @@ namespace ThaiCardReader {
             }
 
             StartTcpServer(port);
-        }
-
-        private static IntPtr GetPci(uint protocol) {
-            IntPtr hModule = LoadLibrary("winscard.dll");
-            if (hModule == IntPtr.Zero) return IntPtr.Zero;
-            if (protocol == 2) {
-                return GetProcAddress(hModule, "g_rgSCardT1Pci");
-            }
-            return GetProcAddress(hModule, "g_rgSCardT0Pci");
         }
 
         public static string CheckReaderStatusJson() {
@@ -154,51 +148,55 @@ namespace ThaiCardReader {
                     string[] readerList = readersStr.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
                     if (readerList.Length == 0) return "{\"error\":\"ไม่พบเครื่องอ่านบัตรที่พร้อมใช้งาน\"}";
 
-                    // Try all detected readers
                     foreach (string readerName in readerList) {
                         IntPtr hCard = IntPtr.Zero;
                         uint activeProto = 0;
 
-                        // Try connecting to card (Shared mode, T=0 or T=1)
                         ret = SCardConnect(hContext, readerName, 2, 3, out hCard, out activeProto);
                         if (ret != 0 || hCard == IntPtr.Zero) {
                             continue;
                         }
 
                         try {
-                            IntPtr pci = GetPci(activeProto);
+                            SCARD_IO_REQUEST pci = new SCARD_IO_REQUEST { dwProtocol = activeProto, cbPciLength = 8 };
 
                             // 1. Select Thai Card Applet
                             byte[] cmdSelectApplet = new byte[] { 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x00, 0x54, 0x48, 0x00, 0x01 };
                             byte[] recvBuf = new byte[258];
                             int recvLen = recvBuf.Length;
-                            int transRet = SCardTransmit(hCard, pci, cmdSelectApplet, cmdSelectApplet.Length, IntPtr.Zero, recvBuf, ref recvLen);
+                            int transRet = SCardTransmit(hCard, ref pci, cmdSelectApplet, cmdSelectApplet.Length, IntPtr.Zero, recvBuf, ref recvLen);
+
+                            if (transRet != 0) {
+                                SCardReconnect(hCard, 2, 3, 1, out activeProto);
+                                pci.dwProtocol = activeProto;
+                                transRet = SCardTransmit(hCard, ref pci, cmdSelectApplet, cmdSelectApplet.Length, IntPtr.Zero, recvBuf, ref recvLen);
+                            }
+
                             if (transRet != 0) {
                                 SCardDisconnect(hCard, 0);
                                 continue;
                             }
 
                             // 2. Read CID (National ID)
-                            string cid = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x04, 0x02, 0x00, 0x0d }, 13);
+                            string cid = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x00, 0x04, 0x02, 0x00, 0x0d }, 13);
                             if (string.IsNullOrEmpty(cid) || cid.Length != 13) {
                                 SCardDisconnect(hCard, 0);
                                 continue;
                             }
 
-                            // 3. Read Full Name
-                            string nameThaiRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x11, 0x02, 0x00, 0x64 }, 100);
-                            string nameEngRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x00, 0x75, 0x02, 0x00, 0x64 }, 100);
+                            // 3. Read Full Name (Thai)
+                            string nameThaiRaw = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x00, 0x11, 0x02, 0x00, 0x64 }, 100);
 
                             // 4. Read DOB & Gender
-                            string dob = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x19, 0x02, 0x00, 0x08 }, 8);
-                            string gender = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x21, 0x02, 0x00, 0x01 }, 1);
+                            string dob = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x00, 0xD9, 0x02, 0x00, 0x08 }, 8);
+                            string gender = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x00, 0xE1, 0x02, 0x00, 0x01 }, 1);
 
                             // 5. Read Address
-                            string addressRaw = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x22, 0x02, 0x00, 0x96 }, 150);
+                            string addressRaw = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x15, 0x79, 0x02, 0x00, 0x96 }, 150);
 
-                            // 6. Read Issue / Expire
-                            string issueDate = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x67, 0x02, 0x00, 0x08 }, 8);
-                            string expireDate = ReadField(hCard, pci, new byte[] { 0x80, 0xb0, 0x01, 0x6F, 0x02, 0x00, 0x08 }, 8);
+                            // 6. Read Issue & Expire Date
+                            string issueDate = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x01, 0x67, 0x02, 0x00, 0x08 }, 8);
+                            string expireDate = ReadField(hCard, ref pci, new byte[] { 0x80, 0xb0, 0x01, 0x6F, 0x02, 0x00, 0x08 }, 8);
 
                             // Parse fields
                             string[] nameParts = ParseThaiName(nameThaiRaw);
@@ -244,13 +242,22 @@ namespace ThaiCardReader {
             }
         }
 
-        private static string ReadField(IntPtr hCard, IntPtr pci, byte[] apdu, int length) {
+        private static string ReadField(IntPtr hCard, ref SCARD_IO_REQUEST pci, byte[] apdu, int length) {
             byte[] recvBuf = new byte[258];
             int recvLen = recvBuf.Length;
-            int ret = SCardTransmit(hCard, pci, apdu, apdu.Length, IntPtr.Zero, recvBuf, ref recvLen);
+            int ret = SCardTransmit(hCard, ref pci, apdu, apdu.Length, IntPtr.Zero, recvBuf, ref recvLen);
 
-            // Direct response (T=1)
-            if (ret == 0 && recvLen > 2 && recvBuf[recvLen - 2] == 0x90 && recvBuf[recvLen - 1] == 0x00) {
+            if (ret != 0) {
+                uint proto;
+                SCardReconnect(hCard, 2, 3, 1, out proto);
+                pci.dwProtocol = proto;
+                ret = SCardTransmit(hCard, ref pci, apdu, apdu.Length, IntPtr.Zero, recvBuf, ref recvLen);
+            }
+
+            if (ret != 0) return "";
+
+            // Direct response
+            if (recvLen > 2 && recvBuf[recvLen - 2] == 0x90 && recvBuf[recvLen - 1] == 0x00) {
                 Encoding tis = Encoding.GetEncoding(874);
                 int payloadLen = Math.Min(length, recvLen - 2);
                 return tis.GetString(recvBuf, 0, payloadLen).Trim();
@@ -265,7 +272,7 @@ namespace ThaiCardReader {
             byte[] cmdGetData = new byte[] { 0x00, 0xC0, 0x00, 0x00, getLen };
             byte[] dataBuf = new byte[258];
             int dataLen = dataBuf.Length;
-            ret = SCardTransmit(hCard, pci, cmdGetData, cmdGetData.Length, IntPtr.Zero, dataBuf, ref dataLen);
+            ret = SCardTransmit(hCard, ref pci, cmdGetData, cmdGetData.Length, IntPtr.Zero, dataBuf, ref dataLen);
             if (ret != 0 || dataLen < 2) return "";
 
             Encoding tis620 = Encoding.GetEncoding(874);
