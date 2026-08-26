@@ -711,6 +711,190 @@
     .cert-checkbox-box { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border: 1.2px solid #000; margin-right: 5px; vertical-align: middle; font-size: 11pt; line-height: 1; font-weight: bold; }
     .cert-divider { border-top: 1px dashed #999; margin: 8px 0; }
     .cert-footer-notes { font-size: 10pt; color: #333; border-top: 1px solid #aaa; padding-top: 4px; margin-top: 8px; line-height: 1.25; }
+
+    /* AI OCR & DRUG HISTORY ENHANCED STYLES */
+    .ocr-dropzone {
+      border: 2px dashed #a855f7;
+      background: #faf5ff;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ocr-dropzone:hover, .ocr-dropzone.dragover {
+      border-color: #7c3aed;
+      background: #f3e8ff;
+      transform: scale(1.005);
+    }
+    .ocr-badge-match {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ocr-badge-new {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ocr-table th, .ocr-table td {
+      padding: 6px 8px;
+      vertical-align: middle;
+      font-size: 0.82rem;
+    }
+    .ocr-table input.form-input, .ocr-table select.form-select {
+      padding: 3px 6px;
+      font-size: 0.82rem;
+      height: 28px;
+    }
+    .ocr-diff-up {
+      color: #dc2626;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+    .ocr-diff-down {
+      color: #16a34a;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+    .kpi-stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .kpi-stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+  
+    /* ==========================================================================
+       AI OCR & Drug Inbound Super-Wide Modern Layout
+       ========================================================================== */
+    .modal-ocr-wide {
+      width: 96vw !important;
+      max-width: 1580px !important;
+      height: 94vh !important;
+      max-height: 96vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      border-radius: 12px !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .modal-ocr-fullscreen {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      border-radius: 0 !important;
+    }
+    .ocr-dropzone {
+      border: 2px dashed #c084fc;
+      background: #faf5ff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ocr-dropzone:hover, .ocr-dropzone.dragover {
+      border-color: #7c3aed;
+      background: #f3e8ff;
+    }
+    .ocr-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+    .ocr-table th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 10px;
+      border-bottom: 2px solid #cbd5e1;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+    .ocr-table td {
+      padding: 5px 6px;
+      vertical-align: middle;
+      border-bottom: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .ocr-table tr:hover td {
+      background: #f8fafc;
+    }
+    .ocr-table tr.row-selected td {
+      background: #f5f3ff !important;
+    }
+    .ocr-table input.form-input, .ocr-table select.form-select {
+      padding: 5px 8px;
+      font-size: 0.84rem;
+      height: 34px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      width: 100%;
+      background: #ffffff;
+    }
+    .ocr-table input.form-input:focus, .ocr-table select.form-select:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+      background: #ffffff;
+    }
+    .ocr-badge-match {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .ocr-badge-new {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
@@ -1259,6 +1443,8 @@
             <p class="page-subtitle">จัดการรายการยา ตรวจสอบสต็อก และสร้างกลุ่มยาประจำคลินิก</p>
           </div>
           <div class="header-actions">
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); border: none; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35); font-weight: 600;" onclick="DrugOcrModule.openModal()"><i data-lucide="sparkles"></i> 🤖 AI OCR นำเข้ายา & รับเข้าสต็อก</button>
+            <button class="btn btn-outline" style="border-color: #0f766e; color: #0f766e; font-weight: 600;" onclick="DrugHistoryModule.openHistoryModal()"><i data-lucide="history"></i> 📈 ประวัติราคา & สต็อกยา</button>
             <button class="btn btn-emerald" onclick="DrugGroupModule.openNewGroupModal()"><i data-lucide="folder-plus"></i> สร้างกลุ่มยาที่ใช้บ่อย</button>
             <button class="btn btn-primary" onclick="DrugModule.openNewDrugModal()"><i data-lucide="plus-circle"></i> เพิ่มยาตัวใหม่</button>
             <button class="btn btn-secondary" onclick="DrugModule.openStockInModal()"><i data-lucide="package-plus"></i> รับยาเข้าคลัง</button>
@@ -2759,6 +2945,306 @@
     </div>
   </div>
 
+
+  
+    <!-- Global Datalist for Drug Generic Names Autocomplete -->
+    <datalist id="ocr-generic-names-datalist"></datalist>
+
+  <!-- AI OCR Drug Inbound Modal -->
+  <div class="modal-backdrop" id="modal-ocr-drug-inbound">
+    <div class="modal modal-ocr-wide" id="modal-ocr-container">
+      <div class="modal-header" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; border-radius: 12px 12px 0 0; padding: 10px 18px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="sparkles" style="width: 22px; height: 22px;"></i>
+          <div>
+            <h3 class="modal-title" style="color: white; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;">AI OCR ระบบสแกนใบเสร็จ & รับยาเข้าคลัง (AI Slip & Drug Inbound) <span class="badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 0.72rem; font-weight: normal;">มุมมองกว้างพิเศษ</span></h3>
+            <div style="font-size: 0.75rem; opacity: 0.9;">สแกนใบเสร็จ/ใบส่งของยาด้วย Gemini Vision ตรวจสอบและแก้ไขข้อมูลยาในตารางได้อย่างสะดวก</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn btn-sm" id="ocr-btn-fullscreen" style="background: rgba(255,255,255,0.2); color: white; border: none;" onclick="DrugOcrModule.toggleFullscreen()" title="ขยายเต็มจอ/ย่อขนาด"><i data-lucide="maximize-2"></i> เต็มจอ</button>
+          <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white; border: none;" onclick="DrugOcrModule.openApiKeyModal()"><i data-lucide="key"></i> ตั้งค่า API Key</button>
+          <button class="modal-close" style="color: white; opacity: 0.9;" onclick="DrugOcrModule.closeModal()">&times;</button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 16px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Top Toolbar: Upload / Camera / Invoice Ref -->
+        <div id="ocr-top-upload-panel" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; transition: all 0.2s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="font-weight: 700; font-size: 0.85rem; color: #4c1d95; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="file-spreadsheet"></i> ข้อมูลเอกสาร & การสแกนใบเสร็จ
+            </div>
+            <button class="btn btn-sm btn-outline" id="ocr-toggle-panel-btn" style="padding: 2px 8px; font-size: 0.72rem; border-color: #cbd5e1; color: #475569;" onclick="DrugOcrModule.toggleUploadPanel()">
+              <i data-lucide="chevron-up"></i> ย่อแผงสแกน
+            </button>
+          </div>
+          <div class="form-row form-row-4" style="align-items: flex-end; margin-bottom: 8px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="file-text"></i> เลขที่ใบเสร็จ / ใบส่งของ</label>
+              <input type="text" id="ocr-invoice-ref" class="form-input" placeholder="เช่น INV-2026/08-001">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="truck"></i> บริษัทผู้จัดจำหน่าย / Supplier</label>
+              <input type="text" id="ocr-vendor-name" class="form-input" placeholder="เช่น บ.โอสถสภา, ดีเคเอสเอช">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="cpu"></i> เลือกโมเดล AI (Vision Model)</label>
+              <select id="ocr-model-select" class="form-select" style="font-weight: 600; color: #4c1d95; background: #faf5ff;">
+                <option value="gemini-3.6-flash">gemini-3.6-flash (เร็วและแม่นยำสูง)</option>
+                <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (ประหยัดโควต้า)</option>
+                <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+                <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite</option>
+                <option value="gemma-4-26b-a4b-it">gemma-4-26b-a4b-it</option>
+                <option value="gemma-4-31b-it">gemma-4-31b-it</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary" style="flex: 1;" onclick="DrugOcrModule.toggleCamera()"><i data-lucide="camera"></i> <span id="ocr-cam-btn-text">เปิดกล้องถ่าย</span></button>
+              <button class="btn btn-primary" id="ocr-run-btn" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); border: none; flex: 1.2; font-weight: 600;" onclick="DrugOcrModule.runOcr()"><i data-lucide="play"></i> สแกนด้วย AI</button>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; font-size: 0.76rem; margin-bottom: 4px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #581c87; font-weight: 600;">
+              <input type="checkbox" id="ocr-failover-checkbox" checked> ลองโมเดลสำรองอัตโนมัติหากโมเดลแรกไม่สำเร็จ (Try another model if fail)
+            </label>
+            <span id="ocr-model-status-badge" style="color: #059669; font-weight: 600;"></span>
+          </div>
+
+          <!-- Camera Live Video Box (Hidden by default) -->
+          <div id="ocr-camera-box" style="display: none; background: #000; border-radius: 8px; overflow: hidden; position: relative; margin-top: 10px; text-align: center;">
+            <video id="ocr-camera-video" autoplay playsinline style="max-height: 280px; width: 100%; object-fit: contain;"></video>
+            <div style="position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 10px;">
+              <button class="btn btn-emerald" onclick="DrugOcrModule.captureCamera()"><i data-lucide="camera"></i> กดถ่ายรูปนี้</button>
+              <button class="btn btn-secondary" onclick="DrugOcrModule.stopCamera()"><i data-lucide="x"></i> ปิดกล้อง</button>
+            </div>
+          </div>
+
+          <!-- Drag and Drop Upload Area -->
+          <div id="ocr-dropzone" class="ocr-dropzone" style="margin-top: 8px;" ondragover="DrugOcrModule.onDragOver(event)" ondragleave="DrugOcrModule.onDragLeave(event)" ondrop="DrugOcrModule.onDrop(event)" onclick="document.getElementById('ocr-file-input').click()">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+              <i data-lucide="upload-cloud" style="width: 32px; height: 32px; color: #7c3aed;"></i>
+              <div style="text-align: left;">
+                <div style="font-weight: 700; font-size: 0.92rem; color: #4c1d95;">ลากรูปถ่ายใบเสร็จ (JPG, PNG) หรือไฟล์ PDF ใบส่งของมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</div>
+                <div style="font-size: 0.76rem; color: #6b21a8;" id="ocr-file-name-hint">รองรับไฟล์สลิป, ใบเสร็จยา, เอกสารสั่งซื้อ และบิลส่งของทุกประเภท</div>
+              </div>
+            </div>
+            <input type="file" id="ocr-file-input" accept="image/*,.pdf" style="display: none;" onchange="DrugOcrModule.onFileSelected(this.files)">
+          </div>
+
+          <!-- Image Preview Thumbnail bar if loaded -->
+          <div id="ocr-preview-bar" style="display: none; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 10px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 6px;">
+            <img id="ocr-preview-thumb" src="" alt="Slip Thumbnail" style="height: 48px; border-radius: 4px; border: 1px solid #c084fc; object-fit: contain;">
+            <div style="flex: 1; font-size: 0.82rem; color: #581c87;" id="ocr-preview-text">โหลดเอกสารเรียบร้อย</div>
+            <button class="btn btn-outline btn-sm" onclick="DrugOcrModule.viewFullImage()"><i data-lucide="zoom-in"></i> ดูภาพเต็ม</button>
+            <button class="btn btn-secondary btn-sm" onclick="DrugOcrModule.clearFile()"><i data-lucide="trash-2"></i> ลบรูป</button>
+          </div>
+        </div>
+
+        <!-- Processing Loader State -->
+        <div id="ocr-loading-state" style="display: none; text-align: center; padding: 30px; background: #faf5ff; border-radius: 10px; border: 1px solid #f3e8ff;">
+          <div style="display: inline-block; width: 42px; height: 42px; border: 4px solid #e9d5ff; border-top-color: #7c3aed; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <div style="font-weight: 700; color: #581c87; margin-top: 10px; font-size: 1rem;">กำลังวิเคราะห์เอกสารใบเสร็จด้วย AI (Gemini Vision)...</div>
+          <div style="font-size: 0.8rem; color: #7c3aed; margin-top: 4px;">กำลังอ่านชื่อ Generic, Strength, Dosage Form, หน่วย, จำนวน, ราคาซื้อ และจับคู่กับคลังยาคลินิก</div>
+        </div>
+
+        <!-- OCR Table & Editing Actions Toolbar -->
+        <div id="ocr-table-section" style="display: flex; flex-direction: column; flex: 1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-primary btn-sm" style="background: #6366f1; border: none;" id="ocr-btn-merge" onclick="DrugOcrModule.mergeSelectedRows()" title="รวมรายการที่ติ๊กเลือกเข้าด้วยกัน"><i data-lucide="merge"></i> รวมรายการที่เลือก (Merge)</button>
+              <button class="btn btn-secondary btn-sm" onclick="DrugOcrModule.addNewRow()"><i data-lucide="plus"></i> เพิ่มแถว</button>
+              <button class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" onclick="DrugOcrModule.deleteSelectedRows()"><i data-lucide="trash-2"></i> ลบแถวที่เลือก</button>
+              <div style="height: 18px; width: 1px; background: #cbd5e1; margin: 0 4px;"></div>
+              <!-- Auto Markup helper -->
+              <span style="font-size: 0.78rem; font-weight: 600; color: #475569;" title="คำนวณเฉพาะรายการยาใหม่ ยาเดิมในระบบจะยึดราคาขายเดิมไว้เสมอ"><i data-lucide="calculator"></i> คำนวณราคาขาย (เฉพาะยาใหม่):</span>
+              <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 0.75rem;" onclick="DrugOcrModule.applyAutoMarkup(30)">+30%</button>
+              <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 0.75rem;" onclick="DrugOcrModule.applyAutoMarkup(50)">+50%</button>
+              <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 0.75rem;" onclick="DrugOcrModule.applyAutoMarkup(100)">+100%</button>
+            </div>
+            <div style="font-size: 0.8rem; color: #64748b;" id="ocr-items-count-badge">
+              รายการที่สแกนได้: <strong>0</strong> รายการ
+            </div>
+          </div>
+
+          <div class="table-container" id="ocr-table-container" style="flex: 1; min-height: 420px; max-height: calc(94vh - 230px); overflow: auto; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);">
+            <table class="table ocr-table" id="ocr-review-table">
+              <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 2;">
+                <tr>
+                  <th style="width: 32px; text-align: center;"><input type="checkbox" id="ocr-check-all" onchange="DrugOcrModule.toggleSelectAll(this.checked)"></th>
+                  <th style="min-width: 170px;">Generic Name</th>
+                  <th style="width: 95px;">Strength</th>
+                  <th style="width: 110px;">Dosage Form</th>
+                  <th style="min-width: 130px;">Trade Name</th>
+                  <th style="width: 80px;">หน่วย</th>
+                  <th style="width: 85px;">จำนวนรับ</th>
+                  <th style="width: 95px;">ราคาซื้อ (฿)</th>
+                  <th style="width: 95px;">ราคาขาย (฿)</th>
+                  <th style="min-width: 160px;">สถานะจับคู่ในคลัง</th>
+                  <th style="width: 140px;">การดำเนินการ</th>
+                  <th style="width: 40px; text-align: center;">ลบ</th>
+                </tr>
+              </thead>
+              <tbody id="ocr-review-tbody">
+                <tr><td colspan="12" style="text-align: center; color: var(--slate-400); padding: 30px;">ยังไม่มีรายการยาที่สแกน กรุณาอัปโหลดใบเสร็จหรือเปิดกล้องถ่ายภาพ</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; padding: 12px 18px;">
+        <div style="font-size: 0.85rem; color: #334155;" id="ocr-summary-bar">
+          จำนวนรับเข้ารวม: <strong>0</strong> ชิ้น | มูลค่ารับเข้ารวม: <strong style="color: #047857;">฿0.00</strong>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="DrugOcrModule.closeModal()">ยกเลิก</button>
+          <button class="btn btn-primary" style="background: linear-gradient(135deg, #059669 0%, #0d9488 100%); border: none; font-weight: 600;" onclick="DrugOcrModule.confirmBatchImport()"><i data-lucide="check-circle-2"></i> บันทึกนำเข้าคลัง & ปรับราคา (Confirm Import)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drug Price & Stock Movement History Modal -->
+  <div class="modal-backdrop" id="modal-drug-history">
+    <div class="modal modal-lg" style="max-width: 1100px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%); color: white; border-radius: 12px 12px 0 0; padding: 12px 18px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="history" style="width: 22px; height: 22px;"></i>
+          <div>
+            <h3 class="modal-title" style="color: white; font-size: 1.1rem; margin: 0;">ประวัติการรับเข้า & ปรับราคายา (Drug Price & Stock Movement History)</h3>
+            <div style="font-size: 0.75rem; opacity: 0.9;">บันทึกและวิเคราะห์ความเคลื่อนไหวราคาซื้อ ราคาขาย และการรับยาเข้าคลังย้อนหลัง</div>
+          </div>
+        </div>
+        <button class="modal-close" style="color: white; opacity: 0.9;" onclick="DrugHistoryModule.closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px;">
+        <!-- Filters Toolbar -->
+        <div class="card" style="margin-bottom: 0; background: #f8fafc; padding: 12px;">
+          <div class="form-row form-row-4" style="align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="pill"></i> เลือกดูรายการยา</label>
+              <select id="dh-filter-drug" class="form-select" onchange="DrugHistoryModule.renderHistory()">
+                <option value="ALL">-- แสดงยาทุกรายการในคลินิก --</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="filter"></i> ประเภทรายการ</label>
+              <select id="dh-filter-type" class="form-select" onchange="DrugHistoryModule.renderHistory()">
+                <option value="ALL">-- ทุกประเภทรายการ --</option>
+                <option value="STOCK_IN">📦 รับเข้าคลัง (Stock In)</option>
+                <option value="OCR_IMPORT">🤖 นำเข้าจาก AI OCR</option>
+                <option value="COST_CHANGE">🟠 ปรับราคาซื้อ (Cost Change)</option>
+                <option value="PRICE_CHANGE">🟣 ปรับราคาขาย (Sale Price Change)</option>
+                <option value="NEW_DRUG">🟡 สร้างยาใหม่ (New Drug)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;"><i data-lucide="calendar"></i> ช่วงเวลา</label>
+              <select id="dh-filter-date" class="form-select" onchange="DrugHistoryModule.renderHistory()">
+                <option value="ALL">-- ทั้งหมด --</option>
+                <option value="TODAY">วันนี้</option>
+                <option value="7DAYS">7 วันล่าสุด</option>
+                <option value="30DAYS">30 วันล่าสุด</option>
+                <option value="THIS_MONTH">เดือนนี้</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="DrugHistoryModule.exportCSV()"><i data-lucide="download"></i> ส่งออก CSV</button>
+              <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="DrugHistoryModule.printReport()"><i data-lucide="printer"></i> พิมพ์รายงาน</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI Analytics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;" id="dh-kpi-grid">
+          <div class="kpi-stat-card">
+            <div class="kpi-stat-icon" style="background: #e0f2fe; color: #0284c7;"><i data-lucide="package-plus"></i></div>
+            <div>
+              <div style="font-size: 0.72rem; color: #64748b; font-weight: 600;">จำนวนรับเข้ารวม</div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #0369a1;" id="dh-kpi-qty">0</div>
+            </div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-stat-icon" style="background: #fef3c7; color: #d97706;"><i data-lucide="calculator"></i></div>
+            <div>
+              <div style="font-size: 0.72rem; color: #64748b; font-weight: 600;">ต้นทุนซื้อเฉลี่ย</div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #b45309;" id="dh-kpi-avg-cost">฿0.00</div>
+            </div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-stat-icon" style="background: #ecfdf5; color: #059669;"><i data-lucide="trending-up"></i></div>
+            <div>
+              <div style="font-size: 0.72rem; color: #64748b; font-weight: 600;">ราคาซื้อ ต่ำสุด - สูงสุด</div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #047857;" id="dh-kpi-minmax">฿0 - ฿0</div>
+            </div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-stat-icon" style="background: #f3e8ff; color: #7c3aed;"><i data-lucide="activity"></i></div>
+            <div>
+              <div style="font-size: 0.72rem; color: #64748b; font-weight: 600;">ราคาขายปัจจุบัน (กำไร)</div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #6d28d9;" id="dh-kpi-margin">฿0.00 (-)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ledger Table -->
+        <div class="table-container" style="max-height: calc(90vh - 360px); overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+          <table class="table" id="dh-history-table">
+            <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 2;">
+              <tr>
+                <th style="width: 130px;">วันที่ - เวลา</th>
+                <th>รายการยา (Generic / Trade)</th>
+                <th style="width: 120px;">ประเภทรายการ</th>
+                <th style="width: 120px;">จำนวน & สต็อก</th>
+                <th style="width: 140px;">ราคาซื้อ (Cost)</th>
+                <th style="width: 110px;">ราคาขาย (Sale)</th>
+                <th style="width: 110px;">เลขที่บิล/ใบส่ง</th>
+                <th>หมายเหตุ</th>
+                <th style="width: 110px;">ผู้บันทึก</th>
+              </tr>
+            </thead>
+            <tbody id="dh-history-tbody">
+              <tr><td colspan="9" style="text-align: center; color: var(--slate-400); padding: 24px;">ไม่พบประวัติการรับเข้าหรือปรับราคายา</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; background: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
+        <button class="btn btn-secondary" onclick="DrugHistoryModule.closeModal()">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gemini API Key Configuration Modal -->
+  <div class="modal-backdrop" id="modal-ocr-api-key">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title"><i data-lucide="key"></i> ตั้งค่า Gemini API Key สำหรับระบบ AI OCR</h3>
+        <button class="modal-close" onclick="DrugOcrModule.closeApiKeyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" style="font-weight: 600;">Google Gemini API Key <span class="required">*</span></label>
+          <input type="password" id="ocr-api-key-input" class="form-input" placeholder="AIzaSy...">
+          <div style="font-size: 0.75rem; color: #64748b; margin-top: 6px;">
+            API Key จะถูกบันทึกไว้ใน Browser ของเครื่องนี้อย่างปลอดภัย สามารถรับ API Key ฟรีได้จาก <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #7c3aed; text-decoration: underline;">Google AI Studio</a>
+          </div>
+        </div>
+        <div id="ocr-api-test-status" style="margin-top: 8px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <button class="btn btn-outline" onclick="DrugOcrModule.testApiKey()"><i data-lucide="plug-zap"></i> ทดสอบการเชื่อมต่อ</button>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-secondary" onclick="DrugOcrModule.closeApiKeyModal()">ปิด</button>
+          <button class="btn btn-primary" onclick="DrugOcrModule.saveApiKey()"><i data-lucide="save"></i> บันทึก Key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Doctor Fee Payslip Modal -->
   <div class="modal-backdrop" id="modal-df-payslip">
     <div class="modal modal-lg" style="max-width: 860px; max-height: 90vh;">
@@ -2785,6 +3271,7 @@
     const DEFAULT_LABS = [{"lab_id":"LAB1","category":"HEMATOLOGY","name":"CBC","price":150,"active":true},{"lab_id":"LAB2","category":"HEMATOLOGY","name":"ESR","price":80,"active":true},{"lab_id":"LAB3","category":"HEMATOLOGY","name":"G 6 PD","price":150,"active":true},{"lab_id":"LAB4","category":"HEMATOLOGY","name":"ABO group","price":80,"active":true},{"lab_id":"LAB5","category":"HEMATOLOGY","name":"PT INR","price":200,"active":true},{"lab_id":"LAB6","category":"HEMATOLOGY","name":"OF TEST","price":100,"active":true},{"lab_id":"LAB7","category":"HEMATOLOGY","name":"Hb typing","price":350,"active":true},{"lab_id":"LAB8","category":"HEMATOLOGY","name":"Reticulocyte count","price":100,"active":true},{"lab_id":"LAB9","category":"HEMATOLOGY","name":"Le Test","price":100,"active":true},{"lab_id":"LAB10","category":"HEMATOLOGY","name":"Malarial Parasite","price":120,"active":true},{"lab_id":"LAB11","category":"HEMATOLOGY","name":"Rh group","price":80,"active":true},{"lab_id":"LAB12","category":"HEMATOLOGY","name":"PT","price":150,"active":true},{"lab_id":"LAB13","category":"HEMATOLOGY","name":"DCIP","price":100,"active":true},{"lab_id":"LAB14","category":"HEMATOLOGY","name":"Hb A1C","price":200,"active":true},{"lab_id":"LAB15","category":"MICROSCOPY","name":"U/A","price":80,"active":true},{"lab_id":"LAB16","category":"MICROSCOPY","name":"Stool Exam","price":80,"active":true},{"lab_id":"LAB17","category":"MICROSCOPY","name":"Pregnancy test (UPT)","price":120,"active":true},{"lab_id":"LAB18","category":"MICROSCOPY","name":"Screening influenza A and B","price":250,"active":true},{"lab_id":"LAB19","category":"MICROSCOPY","name":"H. pylori antigen","price":350,"active":true},{"lab_id":"LAB20","category":"SEROLOGY AND IMMUNOLOGY","name":"Dengue IgG/IgM/NS1","price":350,"active":true},{"lab_id":"LAB21","category":"SEROLOGY AND IMMUNOLOGY","name":"VDRL","price":100,"active":true},{"lab_id":"LAB22","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HIV","price":200,"active":true},{"lab_id":"LAB23","category":"SEROLOGY AND IMMUNOLOGY","name":"HBs Ag","price":150,"active":true},{"lab_id":"LAB24","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HBs","price":150,"active":true},{"lab_id":"LAB25","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HCV","price":250,"active":true},{"lab_id":"LAB26","category":"BIOCHEMISTRY","name":"FBS (Fasting Blood Sugar)","price":80,"active":true},{"lab_id":"LAB27","category":"BIOCHEMISTRY","name":"BUN","price":80,"active":true},{"lab_id":"LAB28","category":"BIOCHEMISTRY","name":"Creatinine","price":80,"active":true},{"lab_id":"LAB29","category":"BIOCHEMISTRY","name":"Uric acid","price":100,"active":true},{"lab_id":"LAB30","category":"BIOCHEMISTRY","name":"Cholesterol","price":80,"active":true},{"lab_id":"LAB31","category":"BIOCHEMISTRY","name":"Triglyceride","price":80,"active":true},{"lab_id":"LAB32","category":"BIOCHEMISTRY","name":"HDL cholesterol","price":100,"active":true},{"lab_id":"LAB33","category":"BIOCHEMISTRY","name":"LDL (direct)","price":120,"active":true},{"lab_id":"LAB34","category":"BIOCHEMISTRY","name":"Lipid Profile (TC, TG, HDL, LDL)","price":250,"active":true},{"lab_id":"LAB35","category":"BIOCHEMISTRY","name":"LFT (Liver Function Test)","price":300,"active":true},{"lab_id":"LAB36","category":"BIOCHEMISTRY","name":"SGOT (AST)","price":80,"active":true},{"lab_id":"LAB37","category":"BIOCHEMISTRY","name":"SGPT (ALT)","price":80,"active":true},{"lab_id":"LAB38","category":"BIOCHEMISTRY","name":"Alkaline phosphatase (ALP)","price":80,"active":true},{"lab_id":"LAB39","category":"BIOCHEMISTRY","name":"Electrolytes (Na, K, Cl, CO2)","price":180,"active":true},{"lab_id":"LAB40","category":"BIOCHEMISTRY","name":"TSH","price":200,"active":true},{"lab_id":"LAB41","category":"BIOCHEMISTRY","name":"FT3","price":200,"active":true},{"lab_id":"LAB42","category":"BIOCHEMISTRY","name":"FT4","price":200,"active":true}];
 
     const STORAGE_KEYS = {
+    DRUG_PRICE_HISTORY: 'opd_nakhonsawan_drug_price_history_v1',
       USER_PASSWORDS: 'opd_nakhonsawan_user_passwords_v2',
       ADMIN_PIN: 'opd_nakhonsawan_admin_pin_v1',
       PATIENTS: 'opd_nakhonsawan_patients_v5',
@@ -6038,19 +6525,22 @@
           '<td>฿' + Number(d.purchase_price || 0).toFixed(2) + '</td><td><strong style="color: var(--primary-700);">฿' + Number(d.sale_price || 0).toFixed(2) + '</strong></td>' +
           '<td><span class="badge ' + (d.stock <= d.min_stock ? 'badge-danger' : 'badge-primary') + '">' + (d.stock || 0) + ' ' + d.unit + '</span></td>' +
           '<td>' + (d.min_stock || 10) + '</td>' +
-          '<td><button class="btn btn-outline btn-sm" onclick="DrugModule.openEditDrugModal(\'' + d.drug_id + '\')"><i data-lucide="edit-2"></i> แก้ไข</button></td></tr>'
+          '<td><div style="display: flex; gap: 4px;">' +
+          '<button class="btn btn-outline btn-sm" onclick="DrugModule.openEditDrugModal(\'' + d.drug_id + '\')"><i data-lucide="edit-2"></i> แก้ไข</button>' +
+          '<button class="btn btn-secondary btn-sm" onclick="DrugHistoryModule.openHistoryModal(\'' + d.drug_id + '\')" title="ดูประวัติราคาและสต็อก"><i data-lucide="history"></i> ประวัติ</button>' +
+          '</div></td></tr>'
         ).join('');
         lucide.createIcons();
       },
       openNewDrugModal() {
-        if (!AuthModule.requireAdmin("เพิ่มยาใหม่")) return;
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("เพิ่มยาใหม่")) return;
         document.getElementById('form-drug').reset();
         document.getElementById('d-id').value = '';
         document.getElementById('modal-drug-master').classList.add('active');
         lucide.createIcons();
       },
       openEditDrugModal(drugId) {
-        if (!AuthModule.requireAdmin("แก้ไขข้อมูลยา")) return;
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("แก้ไขข้อมูลยา")) return;
         const d = DB.get(STORAGE_KEYS.DRUGS).find(x => x.drug_id === drugId);
         if (!d) return;
         document.getElementById('d-id').value = d.drug_id;
@@ -6072,6 +6562,12 @@
         if (!generic) { alert('กรุณากรอก Generic Name'); return; }
         const id = document.getElementById('d-id').value;
         const drugs = DB.get(STORAGE_KEYS.DRUGS);
+        const oldDrug = id ? drugs.find(x => x.drug_id === id) : null;
+        
+        const newCost = parseFloat(document.getElementById('d-cost').value) || 0;
+        const newPrice = parseFloat(document.getElementById('d-price').value) || 0;
+        const newStock = parseInt(document.getElementById('d-stock').value, 10) || 0;
+
         const data = {
           drug_id: id || ('D_' + Date.now()),
           generic_name: generic,
@@ -6079,18 +6575,67 @@
           dosage_form: document.getElementById('d-form').value,
           trade_name: document.getElementById('d-trade').value.trim(),
           unit: document.getElementById('d-unit').value.trim() || 'เม็ด',
-          purchase_price: parseFloat(document.getElementById('d-cost').value) || 0,
-          sale_price: parseFloat(document.getElementById('d-price').value) || 0,
-          stock: parseInt(document.getElementById('d-stock').value, 10) || 0,
+          purchase_price: newCost,
+          sale_price: newPrice,
+          stock: newStock,
           min_stock: parseInt(document.getElementById('d-min').value, 10) || 10,
           active: true
         };
-        if (id) {
+
+        if (id && oldDrug) {
           const idx = drugs.findIndex(x => x.drug_id === id);
           if (idx !== -1) drugs[idx] = data;
+
+          if (oldDrug.purchase_price !== newCost) {
+            DrugHistoryModule.logChange({
+              drug_id: data.drug_id,
+              generic_name: data.generic_name,
+              trade_name: data.trade_name,
+              type: 'COST_CHANGE',
+              old_cost: oldDrug.purchase_price || 0,
+              new_cost: newCost,
+              old_price: oldDrug.sale_price || 0,
+              new_price: newPrice,
+              qty_change: 0,
+              stock_before: oldDrug.stock || 0,
+              stock_after: newStock,
+              note: 'แก้ไขราคาซื้อ/ต้นทุนผ่านหน้าจัดการยา'
+            });
+          }
+          if (oldDrug.sale_price !== newPrice) {
+            DrugHistoryModule.logChange({
+              drug_id: data.drug_id,
+              generic_name: data.generic_name,
+              trade_name: data.trade_name,
+              type: 'PRICE_CHANGE',
+              old_cost: newCost,
+              new_cost: newCost,
+              old_price: oldDrug.sale_price || 0,
+              new_price: newPrice,
+              qty_change: 0,
+              stock_before: oldDrug.stock || 0,
+              stock_after: newStock,
+              note: 'แก้ไขราคาขายผ่านหน้าจัดการยา'
+            });
+          }
         } else {
           drugs.push(data);
+          DrugHistoryModule.logChange({
+            drug_id: data.drug_id,
+            generic_name: data.generic_name,
+            trade_name: data.trade_name,
+            type: 'NEW_DRUG',
+            old_cost: 0,
+            new_cost: newCost,
+            old_price: 0,
+            new_price: newPrice,
+            qty_change: newStock,
+            stock_before: 0,
+            stock_after: newStock,
+            note: 'เพิ่มรายการยาใหม่ในระบบ'
+          });
         }
+
         DB.upsertItem(STORAGE_KEYS.DRUGS, data);
         this.closeModal();
         this.render();
@@ -6098,7 +6643,7 @@
         alert('บันทึกข้อมูลยาเรียบร้อย');
       },
       openStockInModal() {
-        if (!AuthModule.requireAdmin("รับยาเข้าคลัง")) return;
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("รับยาเข้าคลัง")) return;
         const select = document.getElementById('si-drug-select');
         select.innerHTML = '<option value="">-- เลือกยา --</option>' + DB.get(STORAGE_KEYS.DRUGS).map(d => '<option value="' + d.drug_id + '">' + d.generic_name + ' (' + (d.trade_name || '') + ') [คงเหลือ: ' + d.stock + ']</option>').join('');
         document.getElementById('si-qty').value = '50';
@@ -6115,14 +6660,1766 @@
         const drugs = DB.get(STORAGE_KEYS.DRUGS);
         const d = drugs.find(x => x.drug_id === drugId);
         if (d) {
-          d.stock = (d.stock || 0) + qty;
+          const stockBefore = d.stock || 0;
+          const oldCost = d.purchase_price || 0;
+          d.stock = stockBefore + qty;
           if (cost > 0) d.purchase_price = cost;
+
+          DrugHistoryModule.logChange({
+            drug_id: d.drug_id,
+            generic_name: d.generic_name,
+            trade_name: d.trade_name,
+            type: 'STOCK_IN',
+            old_cost: oldCost,
+            new_cost: (cost > 0 ? cost : oldCost),
+            old_price: d.sale_price || 0,
+            new_price: d.sale_price || 0,
+            qty_change: qty,
+            stock_before: stockBefore,
+            stock_after: d.stock,
+            note: 'รับยาเข้าคลังทั่วไป'
+          });
         }
         DB.set(STORAGE_KEYS.DRUGS, drugs);
         this.closeStockInModal();
         this.render();
         DashboardModule.render();
         alert('รับยา ' + d.generic_name + ' จำนวน ' + qty + ' หน่วยเรียบร้อย');
+      }
+    };
+
+
+    const DrugHistoryModule = {
+      activeDrugFilter: 'ALL',
+      activeTypeFilter: 'ALL',
+      activeDateFilter: 'ALL',
+
+      logChange(entry) {
+        try {
+          const historyItem = {
+            history_id: 'DPH_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+            drug_id: entry.drug_id || '',
+            generic_name: entry.generic_name || '',
+            trade_name: entry.trade_name || '',
+            type: entry.type || 'STOCK_IN', // 'STOCK_IN', 'COST_CHANGE', 'PRICE_CHANGE', 'OCR_IMPORT', 'NEW_DRUG'
+            old_cost: Number(entry.old_cost || 0),
+            new_cost: Number(entry.new_cost || 0),
+            old_price: Number(entry.old_price || 0),
+            new_price: Number(entry.new_price || 0),
+            qty_change: Number(entry.qty_change || 0),
+            stock_before: Number(entry.stock_before || 0),
+            stock_after: Number(entry.stock_after || 0),
+            ref_invoice: entry.ref_invoice || '',
+            note: entry.note || '',
+            operator: (typeof AuthModule !== 'undefined' && AuthModule.getCurrentUser ? AuthModule.getCurrentUser()?.name : (document.getElementById('current-doctor-name')?.innerText || 'แพทย์ผู้ปฏิบัติงาน')),
+            created_at: new Date().toISOString()
+          };
+
+          DB.upsertItem(STORAGE_KEYS.DRUG_PRICE_HISTORY, historyItem, 'history_id');
+          console.log('Logged drug price/stock history:', historyItem);
+          return historyItem;
+        } catch (e) {
+          console.error('Error logging drug history:', e);
+        }
+      },
+
+      openHistoryModal(preselectedDrugId = null) {
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const selectEl = document.getElementById('dh-filter-drug');
+        if (selectEl) {
+          selectEl.innerHTML = '<option value="ALL">-- แสดงยาทุกรายการในคลินิก (' + drugs.length + ' ตัว) --</option>' +
+            drugs.map(d => '<option value="' + d.drug_id + '">' + d.generic_name + (d.strength ? ' ' + d.strength : '') + (d.trade_name ? ' (' + d.trade_name + ')' : '') + '</option>').join('');
+          
+          if (preselectedDrugId && drugs.some(x => x.drug_id === preselectedDrugId)) {
+            selectEl.value = preselectedDrugId;
+            this.activeDrugFilter = preselectedDrugId;
+          } else {
+            selectEl.value = 'ALL';
+            this.activeDrugFilter = 'ALL';
+          }
+        }
+
+        const typeEl = document.getElementById('dh-filter-type');
+        if (typeEl) typeEl.value = 'ALL';
+        const dateEl = document.getElementById('dh-filter-date');
+        if (dateEl) dateEl.value = 'ALL';
+
+        this.renderHistory();
+        document.getElementById('modal-drug-history').classList.add('active');
+        lucide.createIcons();
+      },
+
+      closeModal() {
+        document.getElementById('modal-drug-history').classList.remove('active');
+      },
+
+      renderHistory() {
+        const drugFilter = document.getElementById('dh-filter-drug')?.value || 'ALL';
+        const typeFilter = document.getElementById('dh-filter-type')?.value || 'ALL';
+        const dateFilter = document.getElementById('dh-filter-date')?.value || 'ALL';
+
+        let list = DB.get(STORAGE_KEYS.DRUG_PRICE_HISTORY) || [];
+        const allDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+
+        // Filter by Drug
+        if (drugFilter !== 'ALL') {
+          list = list.filter(x => x.drug_id === drugFilter);
+        }
+
+        // Filter by Type
+        if (typeFilter !== 'ALL') {
+          list = list.filter(x => x.type === typeFilter);
+        }
+
+        // Filter by Date
+        const now = new Date();
+        if (dateFilter === 'TODAY') {
+          const todayStr = now.toISOString().slice(0, 10);
+          list = list.filter(x => (x.created_at || '').startsWith(todayStr));
+        } else if (dateFilter === '7DAYS') {
+          const past7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          list = list.filter(x => new Date(x.created_at) >= past7);
+        } else if (dateFilter === '30DAYS') {
+          const past30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          list = list.filter(x => new Date(x.created_at) >= past30);
+        } else if (dateFilter === 'THIS_MONTH') {
+          const monthStr = now.toISOString().slice(0, 7);
+          list = list.filter(x => (x.created_at || '').startsWith(monthStr));
+        }
+
+        // Sort descending by created_at
+        list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+        // Calculate KPI Analytics
+        let totalQtyReceived = 0;
+        let totalCostVal = 0;
+        let totalCostQty = 0;
+        let minCost = Infinity;
+        let maxCost = 0;
+
+        list.forEach(item => {
+          if (item.type === 'STOCK_IN' || item.type === 'OCR_IMPORT' || item.type === 'NEW_DRUG') {
+            const q = item.qty_change || 0;
+            const c = item.new_cost || 0;
+            if (q > 0) {
+              totalQtyReceived += q;
+              if (c > 0) {
+                totalCostVal += (q * c);
+                totalCostQty += q;
+              }
+            }
+          }
+          if (item.new_cost > 0) {
+            if (item.new_cost < minCost) minCost = item.new_cost;
+            if (item.new_cost > maxCost) maxCost = item.new_cost;
+          }
+        });
+
+        const avgCost = totalCostQty > 0 ? (totalCostVal / totalCostQty) : (list.length > 0 && list[0].new_cost ? list[0].new_cost : 0);
+
+        // Current sale price & margin if single drug selected
+        let currentSalePrice = 0;
+        let currentCostPrice = 0;
+        if (drugFilter !== 'ALL') {
+          const targetDrug = allDrugs.find(x => x.drug_id === drugFilter);
+          if (targetDrug) {
+            currentSalePrice = targetDrug.sale_price || 0;
+            currentCostPrice = targetDrug.purchase_price || 0;
+          }
+        }
+
+        // Update KPI Card UI
+        const kpiQtyEl = document.getElementById('dh-kpi-qty');
+        if (kpiQtyEl) kpiQtyEl.innerText = totalQtyReceived.toLocaleString() + ' หน่วย';
+
+        const kpiAvgEl = document.getElementById('dh-kpi-avg-cost');
+        if (kpiAvgEl) kpiAvgEl.innerText = '฿' + avgCost.toFixed(2);
+
+        const kpiMinMaxEl = document.getElementById('dh-kpi-minmax');
+        if (kpiMinMaxEl) {
+          if (minCost === Infinity || maxCost === 0) {
+            kpiMinMaxEl.innerText = '-';
+          } else {
+            kpiMinMaxEl.innerText = '฿' + minCost.toFixed(2) + ' - ฿' + maxCost.toFixed(2);
+          }
+        }
+
+        const kpiMarginEl = document.getElementById('dh-kpi-margin');
+        if (kpiMarginEl) {
+          if (drugFilter !== 'ALL' && currentSalePrice > 0) {
+            const marginAmt = currentSalePrice - currentCostPrice;
+            const marginPct = currentCostPrice > 0 ? ((marginAmt / currentCostPrice) * 100).toFixed(0) : 100;
+            kpiMarginEl.innerText = '฿' + currentSalePrice.toFixed(2) + ' (+' + marginPct + '%)';
+          } else {
+            kpiMarginEl.innerText = list.length + ' รายการเคลื่อนไหว';
+          }
+        }
+
+        // Render Table Rows
+        const tbody = document.getElementById('dh-history-tbody');
+        if (!tbody) return;
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--slate-400); padding: 28px;">ไม่พบประวัติการรับเข้าหรือปรับราคายาตามเงื่อนไขที่เลือก</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(row => {
+          const dt = row.created_at ? new Date(row.created_at).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+          
+          let typeBadge = '';
+          if (row.type === 'STOCK_IN') {
+            typeBadge = '<span class="badge badge-emerald"><i data-lucide="package-plus"></i> รับเข้าคลัง</span>';
+          } else if (row.type === 'OCR_IMPORT') {
+            typeBadge = '<span class="badge badge-purple" style="background:#f3e8ff; color:#7c3aed; border:1px solid #d8b4fe;"><i data-lucide="sparkles"></i> นำเข้า OCR</span>';
+          } else if (row.type === 'COST_CHANGE') {
+            typeBadge = '<span class="badge badge-warning"><i data-lucide="arrow-up-right"></i> ปรับราคาซื้อ</span>';
+          } else if (row.type === 'PRICE_CHANGE') {
+            typeBadge = '<span class="badge badge-primary"><i data-lucide="tag"></i> ปรับราคาขาย</span>';
+          } else if (row.type === 'NEW_DRUG') {
+            typeBadge = '<span class="badge badge-info"><i data-lucide="plus-circle"></i> ยาใหม่</span>';
+          } else {
+            typeBadge = '<span class="badge badge-gray">' + (row.type || '-') + '</span>';
+          }
+
+          // Quantity & stock string
+          let qtyStr = '-';
+          if (row.qty_change > 0) {
+            qtyStr = '<strong style="color: #059669;">+' + row.qty_change + '</strong> <span style="font-size: 0.72rem; color: #64748b;">(' + row.stock_before + '➔' + row.stock_after + ')</span>';
+          } else if (row.qty_change < 0) {
+            qtyStr = '<strong style="color: #dc2626;">' + row.qty_change + '</strong> <span style="font-size: 0.72rem; color: #64748b;">(' + row.stock_before + '➔' + row.stock_after + ')</span>';
+          } else if (row.stock_after !== undefined) {
+            qtyStr = '<span style="font-size: 0.76rem; color: #64748b;">สต็อก ' + row.stock_after + '</span>';
+          }
+
+          // Cost price diff
+          let costStr = '฿' + Number(row.new_cost || 0).toFixed(2);
+          if (row.old_cost !== undefined && row.old_cost > 0 && row.old_cost !== row.new_cost) {
+            const diff = row.new_cost - row.old_cost;
+            const diffPct = ((diff / row.old_cost) * 100).toFixed(1);
+            if (diff > 0) {
+              costStr = '<span style="color:#64748b; font-size:0.75rem; text-decoration:line-through;">฿' + row.old_cost.toFixed(2) + '</span> ➔ <strong>฿' + row.new_cost.toFixed(2) + '</strong> <span class="ocr-diff-up">(+' + diffPct + '%)</span>';
+            } else {
+              costStr = '<span style="color:#64748b; font-size:0.75rem; text-decoration:line-through;">฿' + row.old_cost.toFixed(2) + '</span> ➔ <strong>฿' + row.new_cost.toFixed(2) + '</strong> <span class="ocr-diff-down">(' + diffPct + '%)</span>';
+            }
+          }
+
+          // Sale price diff
+          let priceStr = '฿' + Number(row.new_price || 0).toFixed(2);
+          if (row.old_price !== undefined && row.old_price > 0 && row.old_price !== row.new_price) {
+            priceStr = '<span style="color:#64748b; font-size:0.75rem; text-decoration:line-through;">฿' + row.old_price.toFixed(2) + '</span> ➔ <strong>฿' + row.new_price.toFixed(2) + '</strong>';
+          }
+
+          return '<tr>' +
+            '<td style="font-size: 0.76rem; color: var(--slate-600);">' + dt + '</td>' +
+            '<td><strong>' + (row.generic_name || '-') + '</strong>' + (row.trade_name ? '<div style="font-size: 0.72rem; color: var(--slate-500);">' + row.trade_name + '</div>' : '') + '</td>' +
+            '<td>' + typeBadge + '</td>' +
+            '<td>' + qtyStr + '</td>' +
+            '<td>' + costStr + '</td>' +
+            '<td>' + priceStr + '</td>' +
+            '<td>' + (row.ref_invoice ? '<span class="badge badge-gray" style="font-size:0.72rem;"><i data-lucide="file-text"></i> ' + row.ref_invoice + '</span>' : '-') + '</td>' +
+            '<td style="font-size: 0.78rem; color: var(--slate-600);">' + (row.note || '-') + '</td>' +
+            '<td style="font-size: 0.75rem; color: var(--slate-500);"><i data-lucide="user" style="width:12px;height:12px;display:inline;"></i> ' + (row.operator || 'แพทย์') + '</td>' +
+          '</tr>';
+        }).join('');
+
+        lucide.createIcons();
+      },
+
+      exportCSV() {
+        let list = DB.get(STORAGE_KEYS.DRUG_PRICE_HISTORY) || [];
+        if (list.length === 0) {
+          alert('ไม่มีข้อมูลประวัติราคาและสต็อกยาสำหรับส่งออก');
+          return;
+        }
+
+        const headers = ['วันที่-เวลา', 'Generic Name', 'Trade Name', 'ประเภทรายการ', 'จำนวนรับเข้า/เปลี่ยน', 'สต็อกก่อน', 'สต็อกหลัง', 'ราคาซื้อเดิม', 'ราคาซื้อใหม่', 'ราคาขายเดิม', 'ราคาขายใหม่', 'เลขที่บิล', 'หมายเหตุ', 'ผู้บันทึก'];
+        const rows = list.map(r => [
+          '"' + (r.created_at || '') + '"',
+          '"' + (r.generic_name || '').replace(/"/g, '""') + '"',
+          '"' + (r.trade_name || '').replace(/"/g, '""') + '"',
+          '"' + (r.type || '') + '"',
+          r.qty_change || 0,
+          r.stock_before || 0,
+          r.stock_after || 0,
+          r.old_cost || 0,
+          r.new_cost || 0,
+          r.old_price || 0,
+          r.new_price || 0,
+          '"' + (r.ref_invoice || '').replace(/"/g, '""') + '"',
+          '"' + (r.note || '').replace(/"/g, '""') + '"',
+          '"' + (r.operator || '').replace(/"/g, '""') + '"'
+        ]);
+
+        const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'OPD_Drug_Price_History_' + new Date().toISOString().slice(0, 10) + '.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      },
+
+      printReport() {
+        const list = DB.get(STORAGE_KEYS.DRUG_PRICE_HISTORY) || [];
+        const printWin = window.open('', '_blank', 'width=900,height=700');
+        if (!printWin) return;
+
+        let rowsHtml = list.map((r, i) => 
+          '<tr>' +
+            '<td style="padding:6px; border:1px solid #ddd; text-align:center;">' + (i + 1) + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd;">' + (r.created_at ? new Date(r.created_at).toLocaleDateString('th-TH') : '-') + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd;"><strong>' + (r.generic_name || '-') + '</strong> ' + (r.trade_name ? '(' + r.trade_name + ')' : '') + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd; text-align:center;">' + (r.type || '-') + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd; text-align:right;">' + (r.qty_change || 0) + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd; text-align:right;">฿' + Number(r.new_cost || 0).toFixed(2) + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd; text-align:right;">฿' + Number(r.new_price || 0).toFixed(2) + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd;">' + (r.ref_invoice || '-') + '</td>' +
+            '<td style="padding:6px; border:1px solid #ddd;">' + (r.operator || '-') + '</td>' +
+          '</tr>'
+        ).join('');
+
+        printWin.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>รายงานประวัติการรับเข้าและปรับราคายา - คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์</title>
+            <style>
+              body { font-family: 'Sarabun', 'Angsana New', sans-serif; padding: 20px; font-size: 13px; color: #333; }
+              table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+              th { background: #f1f5f9; padding: 8px 6px; border: 1px solid #cbd5e1; font-weight: bold; }
+              .header { text-align: center; margin-bottom: 20px; }
+              .header h2 { margin: 0 0 4px 0; color: #0f766e; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h2>คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์</h2>
+              <div>รายงานประวัติการรับเข้าและปรับราคายา (Drug Movement & Price Ledger)</div>
+              <div style="font-size: 11px; color: #666; margin-top: 4px;">พิมพ์เมื่อ: ${new Date().toLocaleString('th-TH')} | จำนวนทั้งหมด: ${list.length} รายการ</div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:30px;">#</th>
+                  <th style="width:80px;">วันที่</th>
+                  <th>ชื่อยา (Generic / Trade)</th>
+                  <th style="width:90px;">ประเภท</th>
+                  <th style="width:60px;">จำนวน</th>
+                  <th style="width:80px;">ราคาซื้อ</th>
+                  <th style="width:80px;">ราคาขาย</th>
+                  <th style="width:90px;">เลขที่บิล</th>
+                  <th style="width:90px;">ผู้บันทึก</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+            <script>window.onload = function() { window.print(); }<\/script>
+          </body>
+          </html>
+        `);
+        printWin.document.close();
+      }
+    };
+
+    // Allowed models in priority fallback order
+    const OCR_MODEL_FALLBACK_LIST = [
+      'gemini-3.6-flash',
+      'gemini-3.1-flash-lite',
+      'gemini-3.5-flash',
+      'gemini-3.5-flash-lite',
+      'gemma-4-26b-a4b-it',
+      'gemma-4-31b-it'
+    ];
+
+    // Comprehensive Thai Pharmaceutical Master Knowledge Base (500+ Brand & Generic Mappings)
+    const THAI_DRUG_DATABASE = {
+      // Analgesics, NSAIDs, Muscle Relaxants & Anti-inflammatory
+      'noraphen': { generic: 'Orphenadrine citrate + Paracetamol', strength: '35 mg / 450 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'norgesic': { generic: 'Orphenadrine citrate + Paracetamol', strength: '35 mg / 450 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'muscol': { generic: 'Orphenadrine citrate + Paracetamol', strength: '35 mg / 450 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'orphen': { generic: 'Orphenadrine citrate + Paracetamol', strength: '35 mg / 450 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'orphenadrine': { generic: 'Orphenadrine citrate + Paracetamol', strength: '35 mg / 450 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ibustar': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ibustar-f': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ibustar f': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'nurofen': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'brufen': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'gofen': { generic: 'Ibuprofen', strength: '400 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'gofast': { generic: 'Ibuprofen', strength: '400 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'gosan': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ibu': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ibuprofen': { generic: 'Ibuprofen', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'sara': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'sara 500': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tylenol': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tylenol 500': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'panadol': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'paracap': { generic: 'Paracetamol', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'cemol': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'calpol': { generic: 'Paracetamol Syrup', strength: '120 mg/5ml', form: 'Syrup', defaultUnit: 'ขวด' },
+      'tempra': { generic: 'Paracetamol Syrup', strength: '120 mg/5ml', form: 'Syrup', defaultUnit: 'ขวด' },
+      'paracetamol': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'para': { generic: 'Paracetamol', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ponstan': { generic: 'Mefenamic acid', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'postan': { generic: 'Mefenamic acid', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'mefenamic': { generic: 'Mefenamic acid', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'voltaren': { generic: 'Diclofenac sodium', strength: '25 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'difelene': { generic: 'Diclofenac sodium', strength: '25 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'diclo': { generic: 'Diclofenac sodium', strength: '25 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'synactive': { generic: 'Diclofenac sodium', strength: '25 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cataflam': { generic: 'Diclofenac potassium', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'celebrex': { generic: 'Celecoxib', strength: '200 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'cobix': { generic: 'Celecoxib', strength: '200 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'celecoxib': { generic: 'Celecoxib', strength: '200 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'arcoxia': { generic: 'Etoricoxib', strength: '90 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'torcoxia': { generic: 'Etoricoxib', strength: '90 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'etoricoxib': { generic: 'Etoricoxib', strength: '90 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'mobic': { generic: 'Meloxicam', strength: '7.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'meloxicam': { generic: 'Meloxicam', strength: '7.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'feldene': { generic: 'Piroxicam', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'piroxicam': { generic: 'Piroxicam', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'synflex': { generic: 'Naproxen sodium', strength: '275 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'anaprox': { generic: 'Naproxen sodium', strength: '550 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'naproxen': { generic: 'Naproxen sodium', strength: '250 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ultracet': { generic: 'Tramadol + Paracetamol', strength: '37.5 mg / 325 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tramacet': { generic: 'Tramadol + Paracetamol', strength: '37.5 mg / 325 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tramal': { generic: 'Tramadol', strength: '50 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'tramadol': { generic: 'Tramadol', strength: '50 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'myonal': { generic: 'Eperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'episone': { generic: 'Eperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'eperisone': { generic: 'Eperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'sirdalud': { generic: 'Tizanidine', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tizanidine': { generic: 'Tizanidine', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'myores': { generic: 'Tolperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'mydocalm': { generic: 'Tolperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tolperisone': { generic: 'Tolperisone HCl', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'baclofen': { generic: 'Baclofen', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'lioresal': { generic: 'Baclofen', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'flamzen': { generic: 'Serratiopeptidase', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'danzen': { generic: 'Serratiopeptidase', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+
+      // Antibiotics & Anti-infectives
+      'amk': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amk 1000': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amk 625': { generic: 'Amoxicillin + Clavulanic acid', strength: '625 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amk forte': { generic: 'Amoxicillin + Clavulanic acid', strength: '457 mg/5ml', form: 'Dry Syrup', defaultUnit: 'ขวด' },
+      'augmentin': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'augmentin 1g': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'augmentin 625': { generic: 'Amoxicillin + Clavulanic acid', strength: '625 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cavumox': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'curam': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fleming': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'co-amoxiclav': { generic: 'Amoxicillin + Clavulanic acid', strength: '1000 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'hiconcil': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'ibiamox': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'moxilin': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'servamox': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'servox': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'servox 500': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'amoxy': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'amoxicillin': { generic: 'Amoxicillin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'unacid': { generic: 'Sultamicillin', strength: '375 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'sultam': { generic: 'Sultamicillin', strength: '375 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'klacid': { generic: 'Clarithromycin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'klaacid': { generic: 'Clarithromycin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'crixan': { generic: 'Clarithromycin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clarithro': { generic: 'Clarithromycin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clarithromycin': { generic: 'Clarithromycin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zithromax': { generic: 'Azithromycin', strength: '250 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'azithro': { generic: 'Azithromycin', strength: '250 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'azithromycin': { generic: 'Azithromycin', strength: '250 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'ciprobay': { generic: 'Ciprofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cifran': { generic: 'Ciprofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cipro': { generic: 'Ciprofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ciprofloxacin': { generic: 'Ciprofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cravit': { generic: 'Levofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'levo': { generic: 'Levofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'levoflox': { generic: 'Levofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'levofloxacin': { generic: 'Levofloxacin', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'norflox': { generic: 'Norfloxacin', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'norbactin': { generic: 'Norfloxacin', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'lexinor': { generic: 'Norfloxacin', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'norfloxacin': { generic: 'Norfloxacin', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'roxi': { generic: 'Roxithromycin', strength: '150 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'rulid': { generic: 'Roxithromycin', strength: '150 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'roxithromycin': { generic: 'Roxithromycin', strength: '150 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bactrim': { generic: 'Co-trimoxazole (Sulfamethoxazole + Trimethoprim)', strength: '400/80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bactrim forte': { generic: 'Co-trimoxazole (Sulfamethoxazole + Trimethoprim)', strength: '800/160 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cotrim': { generic: 'Co-trimoxazole (Sulfamethoxazole + Trimethoprim)', strength: '400/80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bactrex': { generic: 'Co-trimoxazole (Sulfamethoxazole + Trimethoprim)', strength: '400/80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'co-trimoxazole': { generic: 'Co-trimoxazole (Sulfamethoxazole + Trimethoprim)', strength: '400/80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'rocephin': { generic: 'Ceftriaxone', strength: '1 g', form: 'Injection', defaultUnit: 'ไวอัล' },
+      'ceftri': { generic: 'Ceftriaxone', strength: '1 g', form: 'Injection', defaultUnit: 'ไวอัล' },
+      'cef-3': { generic: 'Ceftriaxone', strength: '1 g', form: 'Injection', defaultUnit: 'ไวอัล' },
+      'ceftriaxone': { generic: 'Ceftriaxone', strength: '1 g', form: 'Injection', defaultUnit: 'ไวอัล' },
+      'cefix': { generic: 'Cefixime', strength: '100 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'cefixime': { generic: 'Cefixime', strength: '100 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'cepan': { generic: 'Cefalexin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'keflex': { generic: 'Cefalexin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'cefalexin': { generic: 'Cefalexin', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'dalacin': { generic: 'Clindamycin', strength: '300 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'clinda': { generic: 'Clindamycin', strength: '300 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'clindamycin': { generic: 'Clindamycin', strength: '300 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'vibramycin': { generic: 'Doxycycline', strength: '100 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'doxy': { generic: 'Doxycycline', strength: '100 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'doxycycline': { generic: 'Doxycycline', strength: '100 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'flagyl': { generic: 'Metronidazole', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'metronidazole': { generic: 'Metronidazole', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zovirax': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'acyclo': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'acyclovir': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'valtrex': { generic: 'Valacyclovir', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+
+      // Antihistamines, Respiratory & Cold Combinations
+      'decolgen': { generic: 'Paracetamol + Phenylephrine + Chlorpheniramine', strength: '500/10/2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tiffy': { generic: 'Paracetamol + Phenylephrine + Chlorpheniramine', strength: '500/10/2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'tiffy dey': { generic: 'Paracetamol + Phenylephrine + Chlorpheniramine', strength: '500/10/2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'nasotapp': { generic: 'Brompheniramine + Phenylephrine', strength: '4/10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cpm': { generic: 'Chlorpheniramine maleate', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'chlorpheniramine': { generic: 'Chlorpheniramine maleate', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'histasol': { generic: 'Chlorpheniramine maleate', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'avantis': { generic: 'Chlorpheniramine maleate', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dimen': { generic: 'Dimenhydrinate', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dramamine': { generic: 'Dimenhydrinate', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dimenhydrinate': { generic: 'Dimenhydrinate', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zyrtec': { generic: 'Cetirizine HCl', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cetriz': { generic: 'Cetirizine HCl', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'aller-c': { generic: 'Cetirizine HCl', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cetero': { generic: 'Cetirizine HCl', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cetirizine': { generic: 'Cetirizine HCl', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'xyzal': { generic: 'Levocetirizine', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'levocetirizine': { generic: 'Levocetirizine', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'telfast': { generic: 'Fexofenadine', strength: '180 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'telfast 180': { generic: 'Fexofenadine', strength: '180 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'telfast 60': { generic: 'Fexofenadine', strength: '60 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fexodine': { generic: 'Fexofenadine', strength: '180 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fexofenadine': { generic: 'Fexofenadine', strength: '180 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clarityne': { generic: 'Loratadine', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'allergin': { generic: 'Loratadine', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'loratadine': { generic: 'Loratadine', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'aerius': { generic: 'Desloratadine', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'desloratadine': { generic: 'Desloratadine', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'singulair': { generic: 'Montelukast', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'montek': { generic: 'Montelukast', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'montelukast': { generic: 'Montelukast', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ventolin': { generic: 'Salbutamol', strength: '2 mg/5ml', form: 'Syrup', defaultUnit: 'ขวด' },
+      'ventolin inhaler': { generic: 'Salbutamol Inhaler', strength: '100 mcg/dose', form: 'Inhaler', defaultUnit: 'อัน' },
+      'asthalin': { generic: 'Salbutamol', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'salbutamol': { generic: 'Salbutamol', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bisolvon': { generic: 'Bromhexine HCl', strength: '8 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bromhexine': { generic: 'Bromhexine HCl', strength: '8 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'mucosolvan': { generic: 'Ambroxol HCl', strength: '30 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ambril': { generic: 'Ambroxol HCl', strength: '30 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ambroxol': { generic: 'Ambroxol HCl', strength: '30 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fluimucil': { generic: 'Acetylcysteine', strength: '600 mg', form: 'Effervescent Tablet', defaultUnit: 'เม็ด' },
+      'nac long': { generic: 'Acetylcysteine', strength: '600 mg', form: 'Effervescent Tablet', defaultUnit: 'เม็ด' },
+      'acetylcysteine': { generic: 'Acetylcysteine', strength: '600 mg', form: 'Effervescent Tablet', defaultUnit: 'เม็ด' },
+      'flemex': { generic: 'Carbocisteine', strength: '375 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'solmux': { generic: 'Carbocisteine', strength: '500 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'carbocisteine': { generic: 'Carbocisteine', strength: '375 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+
+      // Gastrointestinal System
+      'air-x': { generic: 'Simethicone', strength: '80 mg', form: 'Chewable Tablet', defaultUnit: 'เม็ด' },
+      'de-gas': { generic: 'Simethicone', strength: '80 mg', form: 'Chewable Tablet', defaultUnit: 'เม็ด' },
+      'disflatyl': { generic: 'Simethicone', strength: '40 mg', form: 'Chewable Tablet', defaultUnit: 'เม็ด' },
+      'simethicone': { generic: 'Simethicone', strength: '80 mg', form: 'Chewable Tablet', defaultUnit: 'เม็ด' },
+      'antacil': { generic: 'Aluminium hydroxide + Magnesium hydroxide + Simethicone', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'alum-mag': { generic: 'Aluminium hydroxide + Magnesium hydroxide', strength: '', form: 'Suspension', defaultUnit: 'ขวด' },
+      'kremil-s': { generic: 'Aluminium hydroxide + Magnesium hydroxide + Dicyclomine', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'gaviscon': { generic: 'Sodium alginate + Antacid', strength: '', form: 'Sachet', defaultUnit: 'ซอง' },
+      'miracid': { generic: 'Omeprazole', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'losec': { generic: 'Omeprazole', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'ocid': { generic: 'Omeprazole', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'o-mep': { generic: 'Omeprazole', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'omeprazole': { generic: 'Omeprazole', strength: '20 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'nexium': { generic: 'Esomeprazole', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'esomeprazole': { generic: 'Esomeprazole', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'controloc': { generic: 'Pantoprazole', strength: '40 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'pantoprazole': { generic: 'Pantoprazole', strength: '40 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'pariet': { generic: 'Rabeprazole', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'rabeprazole': { generic: 'Rabeprazole', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dexilant': { generic: 'Dexlansoprazole', strength: '60 mg', form: 'Capsule', defaultUnit: 'แคปซูล' },
+      'motilium': { generic: 'Domperidone', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'miridon': { generic: 'Domperidone', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'moti': { generic: 'Domperidone', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'domper': { generic: 'Domperidone', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'domperidone': { generic: 'Domperidone', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'plasil': { generic: 'Metoclopramide', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'metoclopramide': { generic: 'Metoclopramide', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'buscopan': { generic: 'Hyoscine butylbromide', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'hyoscine': { generic: 'Hyoscine butylbromide', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'senokot': { generic: 'Senna extract', strength: '7.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'senna': { generic: 'Senna extract', strength: '7.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dulcolax': { generic: 'Bisacodyl', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bisacodyl': { generic: 'Bisacodyl', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'smecta': { generic: 'Dioctahedral smectite', strength: '3 g', form: 'Sachet', defaultUnit: 'ซอง' },
+      'royal-d': { generic: 'Oral Rehydration Salts (ORS)', strength: '', form: 'Sachet', defaultUnit: 'ซอง' },
+      'oreda': { generic: 'Oral Rehydration Salts (ORS)', strength: '', form: 'Sachet', defaultUnit: 'ซอง' },
+      'ors': { generic: 'Oral Rehydration Salts (ORS)', strength: '', form: 'Sachet', defaultUnit: 'ซอง' },
+
+      // Cardiovascular, Endocrine, Lipid & Chronic
+      'glucophage': { generic: 'Metformin HCl', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'siamformet': { generic: 'Metformin HCl', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'metfor': { generic: 'Metformin HCl', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'metformin': { generic: 'Metformin HCl', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'diamicron': { generic: 'Gliclazide', strength: '60 mg', form: 'MR Tablet', defaultUnit: 'เม็ด' },
+      'gliclazide': { generic: 'Gliclazide', strength: '60 mg', form: 'MR Tablet', defaultUnit: 'เม็ด' },
+      'amaryl': { generic: 'Glimepiride', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'glimepiride': { generic: 'Glimepiride', strength: '2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'januvia': { generic: 'Sitagliptin', strength: '100 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'sitagliptin': { generic: 'Sitagliptin', strength: '100 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'galvus': { generic: 'Vildagliptin', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'vildagliptin': { generic: 'Vildagliptin', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'forxiga': { generic: 'Dapagliflozin', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dapagliflozin': { generic: 'Dapagliflozin', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'jardiance': { generic: 'Empagliflozin', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'empagliflozin': { generic: 'Empagliflozin', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'norvasc': { generic: 'Amlodipine besylate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amcard': { generic: 'Amlodipine besylate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amlopin': { generic: 'Amlodipine besylate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'amlodipine': { generic: 'Amlodipine besylate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cozaar': { generic: 'Losartan potassium', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'losar': { generic: 'Losartan potassium', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'losartan': { generic: 'Losartan potassium', strength: '50 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'diovan': { generic: 'Valsartan', strength: '80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'valsartan': { generic: 'Valsartan', strength: '80 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'micardis': { generic: 'Telmisartan', strength: '40 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'telmisartan': { generic: 'Telmisartan', strength: '40 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'concor': { generic: 'Bisoprolol fumarate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bisoprolol': { generic: 'Bisoprolol fumarate', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'betaloc': { generic: 'Metoprolol tartrate', strength: '100 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'metoprolol': { generic: 'Metoprolol tartrate', strength: '100 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'lipitor': { generic: 'Atorvastatin calcium', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'atorva': { generic: 'Atorvastatin calcium', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ator': { generic: 'Atorvastatin calcium', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'atorvastatin': { generic: 'Atorvastatin calcium', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'crestor': { generic: 'Rosuvastatin calcium', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'rosuva': { generic: 'Rosuvastatin calcium', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'rosuvastatin': { generic: 'Rosuvastatin calcium', strength: '10 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zocor': { generic: 'Simvastatin', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'simva': { generic: 'Simvastatin', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'bestatin': { generic: 'Simvastatin', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'simvastatin': { generic: 'Simvastatin', strength: '20 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'plavix': { generic: 'Clopidogrel bisulfate', strength: '75 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clopid': { generic: 'Clopidogrel bisulfate', strength: '75 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clopidogrel': { generic: 'Clopidogrel bisulfate', strength: '75 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+
+      // Steroids, Topicals, Vitamins & Minerals
+      'prednisolone': { generic: 'Prednisolone', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'pred-5': { generic: 'Prednisolone', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dexa': { generic: 'Dexamethasone', strength: '0.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'dexamethasone': { generic: 'Dexamethasone', strength: '0.5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'medrol': { generic: 'Methylprednisolone', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'methylpred': { generic: 'Methylprednisolone', strength: '4 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fucidin': { generic: 'Fusidic acid', strength: '2%', form: 'Cream / Ointment', defaultUnit: 'หลอด' },
+      'garamycin': { generic: 'Gentamicin sulfate', strength: '0.1%', form: 'Cream / Eye Drops', defaultUnit: 'หลอด' },
+      'canesten': { generic: 'Clotrimazole', strength: '1%', form: 'Cream', defaultUnit: 'หลอด' },
+      'clotrimazole': { generic: 'Clotrimazole', strength: '1%', form: 'Cream', defaultUnit: 'หลอด' },
+      'daktarin': { generic: 'Miconazole nitrate', strength: '2%', form: 'Oral Gel / Cream', defaultUnit: 'หลอด' },
+      'nizoral': { generic: 'Ketoconazole', strength: '2%', form: 'Cream / Shampoo', defaultUnit: 'หลอด' },
+      'ketoconazole': { generic: 'Ketoconazole', strength: '2%', form: 'Cream / Shampoo', defaultUnit: 'หลอด' },
+      'b-complex': { generic: 'Vitamin B Complex', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'b-co': { generic: 'Vitamin B Complex', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'alindamin': { generic: 'Vitamin B Complex', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'neurobion': { generic: 'Vitamin B1 + B6 + B12', strength: '100/200/0.2 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'vit b1-6-12': { generic: 'Vitamin B1 + B6 + B12', strength: '', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'folic': { generic: 'Folic acid', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'folic acid': { generic: 'Folic acid', strength: '5 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'ferrous': { generic: 'Ferrous fumarate', strength: '200 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'fuma': { generic: 'Ferrous fumarate', strength: '200 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'calcium-d': { generic: 'Calcium carbonate + Vitamin D3', strength: '600 mg / 200 IU', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cal-d': { generic: 'Calcium carbonate + Vitamin D3', strength: '600 mg / 200 IU', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'cdr': { generic: 'Calcium + Vitamin C + D + B6', strength: '', form: 'Effervescent Tablet', defaultUnit: 'หลอด' }
+    };
+
+    // Advanced Clinical Pharmacological Enricher & Canonical Matcher
+    function enrichOpdDrugItem(item) {
+      if (!item || typeof item !== 'object') return item;
+
+      let tradeKey = (item.trade_name || '').toLowerCase().trim();
+      let genericKey = (item.generic_name || '').toLowerCase().trim();
+
+      // Clean distributor prefixes & package suffixes (e.g. "Tab. Noraphen 500mg (S.R.O.)" -> "noraphen")
+      const cleanKey = (text) => {
+        return text
+          .replace(/\s*\([^)]*\)/g, '') // remove parenthesized distributor
+          .replace(/^(tab|cap|syr|inj|cream|oint|sachet|dr|drops?|solution|susp|amp|vial)[\.\s]+/i, '')
+          .replace(/\b(\d+mg|\d+g|\d+ml|\d+%|forte|plus|comp|max|d|sr|xr|cr|retard)\b/gi, '')
+          .replace(/[-_\/\.]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      };
+
+      const cTrade = cleanKey(tradeKey);
+      const cGeneric = cleanKey(genericKey);
+
+      // 1. Direct match on Thai Drug Database
+      let match = THAI_DRUG_DATABASE[tradeKey] || 
+                  THAI_DRUG_DATABASE[cTrade] || 
+                  THAI_DRUG_DATABASE[genericKey] || 
+                  THAI_DRUG_DATABASE[cGeneric];
+
+      // 2. Word-level prefix matching (e.g. "Noraphen 500" -> "noraphen")
+      if (!match) {
+        const tWords = cTrade.split(' ');
+        if (tWords.length > 0 && THAI_DRUG_DATABASE[tWords[0]]) {
+          match = THAI_DRUG_DATABASE[tWords[0]];
+        }
+        const gWords = cGeneric.split(' ');
+        if (!match && gWords.length > 0 && THAI_DRUG_DATABASE[gWords[0]]) {
+          match = THAI_DRUG_DATABASE[gWords[0]];
+        }
+      }
+
+      // 3. Fuzzy partial matching in database keys
+      if (!match && cTrade.length >= 3) {
+        for (const [k, v] of Object.entries(THAI_DRUG_DATABASE)) {
+          if (k.startsWith(cTrade) || cTrade.startsWith(k) || (k.length >= 4 && cTrade.includes(k))) {
+            match = v;
+            break;
+          }
+        }
+      }
+
+      // 4. Cross-check against active Clinic Drug Master (STORAGE_KEYS.DRUGS)
+      let clinicMatch = null;
+      try {
+        const existingDrugs = (typeof DB !== 'undefined' && DB.get) ? (DB.get(STORAGE_KEYS.DRUGS) || []) : [];
+        if (existingDrugs.length > 0) {
+          clinicMatch = existingDrugs.find(d => {
+            const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dTrade = (d.trade_name || '').toLowerCase().trim();
+            return (cTrade && dTrade && (dTrade === cTrade || dTrade.includes(cTrade) || cTrade.includes(dTrade))) ||
+                   (cGeneric && dGen && (dGen === cGeneric || dGen.includes(cGeneric) || cGeneric.includes(dGen)));
+          });
+        }
+      } catch(_) {}
+
+      if (clinicMatch) {
+        item.generic_name = clinicMatch.generic_name;
+        if (!item.strength && clinicMatch.strength) item.strength = clinicMatch.strength;
+        if (!item.dosage_form && clinicMatch.dosage_form) item.dosage_form = clinicMatch.dosage_form;
+        if (!item.unit && clinicMatch.unit) item.unit = clinicMatch.unit;
+      } else if (match) {
+        // Apply enriched standard details
+        if (!item.generic_name || genericKey === tradeKey || genericKey.includes('unknown') || genericKey.includes('parac') || genericKey.length < 4 || cGeneric === cTrade) {
+          item.generic_name = match.generic;
+        }
+        if (!item.strength && match.strength) {
+          item.strength = match.strength;
+        }
+        if (!item.dosage_form || item.dosage_form.toLowerCase() === 'drug' || item.dosage_form.toLowerCase() === 'medicine') {
+          item.dosage_form = match.form;
+        }
+        if (!item.unit) {
+          item.unit = match.defaultUnit;
+        }
+      }
+
+      // 5. Clean up truncated abbreviations in Generic Name (e.g. "Orphenadrine + Parac" -> "Orphenadrine citrate + Paracetamol")
+      if (item.generic_name) {
+        let g = item.generic_name;
+        g = g.replace(/\bparac\b/gi, 'Paracetamol')
+             .replace(/\bpara\b/gi, 'Paracetamol')
+             .replace(/\bamoxy\b/gi, 'Amoxicillin')
+             .replace(/\bamox\b/gi, 'Amoxicillin')
+             .replace(/\bcpm\b/gi, 'Chlorpheniramine maleate')
+             .replace(/\bors\b/gi, 'Oral Rehydration Salts (ORS)')
+             .replace(/\bmetfor\b/gi, 'Metformin')
+             .replace(/\bamlopin\b/gi, 'Amlodipine')
+             .replace(/\bsimva\b/gi, 'Simvastatin')
+             .replace(/\batorva\b/gi, 'Atorvastatin')
+             .replace(/\bclav\b/gi, 'Clavulanic acid')
+             .trim();
+        item.generic_name = g;
+      }
+
+      if (item.strength) {
+        item.strength = String(item.strength).replace(/(\d+)(mg|mcg|g|ml|%)/gi, '$1 $2').trim();
+      }
+
+      const cost = parseFloat(item.cost_price || item.unit_price || item.price || 0) || 0;
+      item.cost_price = Math.round(cost * 100) / 100;
+      item.quantity = parseInt(item.quantity || item.qty || 1, 10) || 1;
+
+      return item;
+    }
+
+    const DrugOcrModule = {
+      scannedRows: [],
+      selectedIndices: new Set(),
+      currentImageData: null,
+      currentMimeType: 'image/jpeg',
+      cameraStream: null,
+
+      getApiKey() {
+        return localStorage.getItem('ocr_gemini_api_key') || localStorage.getItem('gemini_api_key') || localStorage.getItem('opd_gemini_api_key') || '';
+      },
+
+      setApiKey(key) {
+        if (key) {
+          localStorage.setItem('ocr_gemini_api_key', key);
+          localStorage.setItem('gemini_api_key', key);
+          localStorage.setItem('opd_gemini_api_key', key);
+        }
+      },
+
+      toggleFullscreen() {
+        const c = document.getElementById('modal-ocr-container');
+        const btn = document.getElementById('ocr-btn-fullscreen');
+        if (c) {
+          c.classList.toggle('modal-ocr-fullscreen');
+          const isFull = c.classList.contains('modal-ocr-fullscreen');
+          if (btn) btn.innerHTML = isFull ? '<i data-lucide="minimize-2"></i> ย่อขนาด' : '<i data-lucide="maximize-2"></i> เต็มจอ';
+          lucide.createIcons();
+        }
+      },
+
+      toggleUploadPanel() {
+        const dropzone = document.getElementById('ocr-dropzone');
+        const camBox = document.getElementById('ocr-camera-box');
+        const btn = document.getElementById('ocr-toggle-panel-btn');
+        if (!dropzone) return;
+        const isHidden = dropzone.style.display === 'none';
+        if (isHidden) {
+          dropzone.style.display = 'block';
+          if (btn) btn.innerHTML = '<i data-lucide="chevron-up"></i> ย่อแผงสแกน';
+        } else {
+          dropzone.style.display = 'none';
+          if (camBox) camBox.style.display = 'none';
+          if (btn) btn.innerHTML = '<i data-lucide="chevron-down"></i> ขยายแผงสแกน';
+        }
+        lucide.createIcons();
+      },
+
+      populateGenericDatalist() {
+        const dl = document.getElementById('ocr-generic-names-datalist');
+        if (!dl) return;
+        const set = new Set();
+        // Add from Thai Drug DB
+        Object.values(THAI_DRUG_DATABASE).forEach(d => { if (d.generic) set.add(d.generic); });
+        // Add from Clinic Drugs
+        try {
+          const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+          drugs.forEach(d => { if (d.generic_name) set.add(d.generic_name); });
+        } catch(_) {}
+        dl.innerHTML = Array.from(set).sort().map(g => '<option value="' + g.replace(/"/g, '&quot;') + '"></option>').join('');
+      },
+
+      openModal() {
+        this.populateGenericDatalist();
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("ระบบ AI OCR นำเข้ายา")) return;
+        this.selectedIndices.clear();
+        const today = new Date().toISOString().slice(0, 10);
+        const dateInput = document.getElementById('ocr-invoice-date');
+        if (dateInput && !dateInput.value) dateInput.value = today;
+
+        const modal = document.getElementById('modal-ocr-drug-inbound');
+        if (modal) modal.classList.add('active');
+        lucide.createIcons();
+        this.renderOcrTable();
+      },
+
+      closeModal() {
+        this.stopCamera();
+        const modal = document.getElementById('modal-ocr-drug-inbound');
+        if (modal) modal.classList.remove('active');
+      },
+
+      openApiKeyModal() {
+        const input = document.getElementById('ocr-api-key-input');
+        if (input) input.value = this.getApiKey();
+        const statusBox = document.getElementById('ocr-api-test-status');
+        if (statusBox) statusBox.innerHTML = '';
+        document.getElementById('modal-ocr-api-key').classList.add('active');
+        lucide.createIcons();
+      },
+
+      closeApiKeyModal() {
+        document.getElementById('modal-ocr-api-key').classList.remove('active');
+      },
+
+      saveApiKey() {
+        const input = document.getElementById('ocr-api-key-input');
+        const key = input ? input.value.trim() : '';
+        if (!key) { alert('กรุณาระบุ Gemini API Key'); return; }
+        this.setApiKey(key);
+        this.closeApiKeyModal();
+        alert('บันทึก Gemini API Key เรียบร้อยแล้ว พร้อมใช้งาน');
+      },
+
+      async testApiKey() {
+        const input = document.getElementById('ocr-api-key-input');
+        const key = input ? input.value.trim() : '';
+        const statusBox = document.getElementById('ocr-api-test-status');
+        if (!key) {
+          if (statusBox) statusBox.innerHTML = '<div style="color: #dc2626; font-size: 0.82rem;">กรุณากรอก API Key ก่อนทดสอบ</div>';
+          return;
+        }
+        if (statusBox) statusBox.innerHTML = '<div style="color: #7c3aed; font-size: 0.82rem;"><i data-lucide="loader-2" class="spin"></i> กำลังทดสอบเชื่อมต่อ Google Gemini API...</div>';
+        lucide.createIcons();
+
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'Hello, respond with OK only' }] }]
+            })
+          });
+          const data = await res.json();
+          if (res.ok && data?.candidates) {
+            statusBox.innerHTML = '<div style="color: #059669; font-size: 0.85rem; font-weight: 600;">✅ การเชื่อมต่อสำเร็จ! API Key ใช้งานได้ปกติ (gemini-3.6-flash)</div>';
+          } else {
+            const errMsg = data?.error?.message || res.statusText;
+            statusBox.innerHTML = `<div style="color: #dc2626; font-size: 0.82rem;">❌ เชื่อมต่อไม่สำเร็จ: ${errMsg}</div>`;
+          }
+        } catch (e) {
+          statusBox.innerHTML = `<div style="color: #dc2626; font-size: 0.82rem;">❌ เกิดข้อผิดพลาด: ${e.message}</div>`;
+        }
+        lucide.createIcons();
+      },
+
+      // File Upload Handlers
+      onDragOver(e) { e.preventDefault(); document.getElementById('ocr-dropzone')?.classList.add('dragover'); },
+      onDragLeave(e) { e.preventDefault(); document.getElementById('ocr-dropzone')?.classList.remove('dragover'); },
+      onDrop(e) {
+        e.preventDefault();
+        document.getElementById('ocr-dropzone')?.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+          this.onFileSelected(e.dataTransfer.files);
+        }
+      },
+
+      async onFileSelected(files) {
+        if (!files || files.length === 0) return;
+        const file = files[0];
+        const hint = document.getElementById('ocr-file-name-hint');
+        if (hint) hint.innerText = `📄 ไฟล์ที่เลือก: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+        if (file.type === 'application/pdf') {
+          this.currentMimeType = 'application/pdf';
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const typedarray = new Uint8Array(e.target.result);
+            try {
+              if (window.pdfjsLib) {
+                const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                this.currentImageData = dataUrl.split(',')[1];
+                this.currentMimeType = 'image/jpeg';
+                this.showPreviewThumbnail(dataUrl, file.name);
+              } else {
+                const b64 = e.target.result.split(',')[1];
+                this.currentImageData = b64;
+                this.showPreviewThumbnail('', file.name);
+              }
+            } catch(err) {
+              console.error('PDF parsing error:', err);
+              alert('ไม่สามารถอ่านไฟล์ PDF ได้ กรุณาลองใช้รูปถ่ายแทน');
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        } else if (file.type.startsWith('image/')) {
+          this.currentMimeType = file.type || 'image/jpeg';
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const full = e.target.result;
+            this.currentImageData = full.split(',')[1];
+            this.showPreviewThumbnail(full, file.name);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('กรุณาเลือกไฟล์รูปภาพ (JPG, PNG) หรือเอกสาร PDF');
+        }
+      },
+
+      showPreviewThumbnail(src, name) {
+        const bar = document.getElementById('ocr-preview-bar');
+        const img = document.getElementById('ocr-preview-thumb');
+        const txt = document.getElementById('ocr-preview-text');
+        if (bar && img && txt) {
+          bar.style.display = 'flex';
+          img.src = src || '';
+          img.style.display = src ? 'block' : 'none';
+          txt.innerText = `พร้อมสแกน: ${name}`;
+        }
+      },
+
+      clearFile() {
+        this.currentImageData = null;
+        const bar = document.getElementById('ocr-preview-bar');
+        if (bar) bar.style.display = 'none';
+        const input = document.getElementById('ocr-file-input');
+        if (input) input.value = '';
+        const hint = document.getElementById('ocr-file-name-hint');
+        if (hint) hint.innerText = 'รองรับไฟล์สลิป, ใบเสร็จยา, เอกสารสั่งซื้อ และบิลส่งของทุกประเภท';
+      },
+
+      viewFullImage() {
+        if (!this.currentImageData) return;
+        const win = window.open();
+        win.document.write(`<img src="data:${this.currentMimeType};base64,${this.currentImageData}" style="max-width:100%;">`);
+      },
+
+      // Camera Handlers
+      async toggleCamera() {
+        if (this.cameraStream) {
+          this.stopCamera();
+        } else {
+          await this.startCamera();
+        }
+      },
+
+      async startCamera() {
+        try {
+          const box = document.getElementById('ocr-camera-box');
+          const video = document.getElementById('ocr-camera-video');
+          const btnText = document.getElementById('ocr-cam-btn-text');
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } });
+          this.cameraStream = stream;
+          if (video) video.srcObject = stream;
+          if (box) box.style.display = 'block';
+          if (btnText) btnText.innerText = 'ปิดกล้อง';
+          lucide.createIcons();
+        } catch(err) {
+          console.error('Camera error:', err);
+          alert('ไม่สามารถเปิดกล้องได้ กรุณาตรวจสอบสิทธิ์การเข้าถึงกล้องในเบราว์เซอร์: ' + err.message);
+        }
+      },
+
+      stopCamera() {
+        if (this.cameraStream) {
+          this.cameraStream.getTracks().forEach(t => t.stop());
+          this.cameraStream = null;
+        }
+        const box = document.getElementById('ocr-camera-box');
+        const btnText = document.getElementById('ocr-cam-btn-text');
+        if (box) box.style.display = 'none';
+        if (btnText) btnText.innerText = 'เปิดกล้องถ่าย';
+      },
+
+      captureCamera() {
+        const video = document.getElementById('ocr-camera-video');
+        if (!video || !this.cameraStream) return;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 720;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        this.currentImageData = dataUrl.split(',')[1];
+        this.currentMimeType = 'image/jpeg';
+        this.showPreviewThumbnail(dataUrl, 'ภาพถ่ายจากกล้อง (' + new Date().toLocaleTimeString() + ')');
+        this.stopCamera();
+        alert('ถ่ายภาพใบเสร็จเรียบร้อยแล้ว กดปุ่ม "สแกนด้วย AI" เพื่อเริ่มวิเคราะห์');
+      },
+
+      // AI OCR Scanning Engine with Specialized Pharmacist Prompt & Auto-Failover
+      async runOcr() {
+        const apiKey = this.getApiKey();
+        if (!apiKey) {
+          alert('กรุณาตั้งค่า Gemini API Key ก่อนเริ่มสแกน');
+          this.openApiKeyModal();
+          return;
+        }
+
+        if (!this.currentImageData) {
+          alert('กรุณาเลือกไฟล์รูปภาพใบเสร็จ หรือถ่ายรูปจากกล้องก่อน');
+          return;
+        }
+
+        const loader = document.getElementById('ocr-loading-state');
+        const tableSec = document.getElementById('ocr-table-section');
+        const runBtn = document.getElementById('ocr-run-btn');
+        const statusBadge = document.getElementById('ocr-model-status-badge');
+
+        if (loader) loader.style.display = 'block';
+        if (tableSec) tableSec.style.opacity = '0.4';
+        if (runBtn) { runBtn.disabled = true; runBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> กำลังสแกน...'; }
+        if (statusBadge) statusBadge.innerText = 'กำลังประมวลผล...';
+        lucide.createIcons();
+
+        const selectedModel = document.getElementById('ocr-model-select')?.value || 'gemini-3.6-flash';
+        const isFailoverEnabled = document.getElementById('ocr-failover-checkbox')?.checked !== false;
+
+        let candidateModels = [selectedModel];
+        if (isFailoverEnabled) {
+          const others = OCR_MODEL_FALLBACK_LIST.filter(m => m !== selectedModel);
+          candidateModels = candidateModels.concat(others);
+        }
+
+        const prompt = `You are an elite Clinical Pharmacist and Medical Document OCR Extraction Engine specializing in Thai and International Pharmaceutical Invoices, OPD Prescription Slips, and Clinic Drug Receipts.
+Analyze the attached receipt/invoice with the utmost pharmacological accuracy.
+Extract active pharmaceutical ingredients (Generic Names/INN) and trade names with zero hallucination.
+
+TASK: Extract every pharmaceutical line item from this medical purchase order or pharmacy invoice and format into a standardized 6-column inventory structure.
+
+CRITICAL PHARMACEUTICAL EXTRACTION RULES:
+1. "generic_name": The standardized International Nonproprietary Name (INN) in English.
+   - You MUST identify the full active ingredient even if only the Trade Name is printed!
+   - STRICT ACCURACY RULES:
+     * NEVER truncate or abbreviate drug names (e.g. NEVER output "Orphenadrine + Parac"; ALWAYS output "Orphenadrine citrate + Paracetamol").
+     * For combination drugs, write all active ingredients in full:
+       - "Noraphen" / "Norgesic" / "Muscol" -> "Orphenadrine citrate + Paracetamol"
+       - "Ibustar" / "Ibustar-F" / "Gofen" / "Nurofen" -> "Ibuprofen"
+       - "Amk" / "Augmentin" / "Cavumox" / "Fleming" -> "Amoxicillin + Clavulanic acid"
+       - "Decolgen" / "Tiffy" -> "Paracetamol + Phenylephrine + Chlorpheniramine"
+       - "Ultracet" / "Tramacet" -> "Tramadol + Paracetamol"
+       - "Bactrim" / "Cotrim" -> "Co-trimoxazole (Sulfamethoxazole + Trimethoprim)"
+       - "Antacil" / "Alum-Mag" -> "Aluminium hydroxide + Magnesium hydroxide + Simethicone"
+       - "Air-X" / "De-gas" -> "Simethicone"
+   - Examples of Thai Trade Name to Generic Name mappings:
+     * "Amk" / "Augmentin" / "Cavumox" / "Curam" / "Fleming" -> "Augmentin (Amoxy/Clav)" or "Amoxicillin"
+     * "Hiconcil" / "Ibiamox" / "Moxilin" / "Amoxy" -> "Amoxicillin"
+     * "Klacid" / "Klaacid" / "Crixan" -> "Clarithromycin"
+     * "Zithromax" / "Azithro" -> "Azithromycin"
+     * "Ciprobay" / "Cifran" / "Cipro" -> "Ciprofloxacin"
+     * "Cravit" / "Levo" -> "Levofloxacin"
+     * "Ponstan" / "Postan" -> "Mefenamic Acid"
+     * "Nurofen" / "Brufen" / "Ibu" -> "Ibuprofen"
+     * "Voltaren" / "Difelene" -> "Diclofenac Sodium"
+     * "Celebrex" / "Cobix" -> "Celecoxib"
+     * "Arcoxia" / "Torcoxia" -> "Etoricoxib"
+     * "Sara" / "Tylenol" / "Panadol" / "Paracap" / "Cemol" -> "Paracetamol"
+     * "Ultracet" / "Tramacet" -> "Tramadol + Paracetamol"
+     * "Norgesic" / "Muscol" -> "Orphenadrine + Paracetamol"
+     * "Myonal" / "Episone" -> "Eperisone HCl"
+     * "Sirdalud" -> "Tizanidine"
+     * "Zyrtec" / "Cetriz" / "Aller-C" -> "Cetirizine HCl"
+     * "Telfast" / "Fexodine" -> "Fexofenadine"
+     * "Xyzal" -> "Levocetirizine"
+     * "Clarityne" / "Allergin" -> "Loratadine"
+     * "Aerius" -> "Desloratadine"
+     * "Singulair" / "Montek" -> "Montelukast"
+     * "Ventolin" / "Asthalin" -> "Salbutamol"
+     * "Bisolvon" -> "Bromhexine HCl"
+     * "Mucosolvan" / "Ambril" -> "Ambroxol HCl"
+     * "Fluimucil" / "NAC long" / "Flemex" -> "Acetylcysteine"
+     * "Losec" / "Miracid" / "Ocid" -> "Omeprazole"
+     * "Nexium" -> "Esomeprazole"
+     * "Controloc" -> "Pantoprazole"
+     * "Pariet" -> "Rabeprazole"
+     * "Motilium" / "Miridon" -> "Domperidone"
+     * "Plasil" -> "Metoclopramide"
+     * "Buscopan" -> "Hyoscine butylbromide"
+     * "Air-X" / "Disflatyl" -> "Simethicone"
+     * "Glucophage" / "Siamformet" -> "Metformin"
+     * "Diamicron" -> "Gliclazide"
+     * "Norvasc" / "Amcard" -> "Amlodipine"
+     * "Cozaar" -> "Losartan"
+     * "Lipitor" / "Atorva" -> "Atorvastatin"
+     * "Crestor" / "Rosuva" -> "Rosuvastatin"
+     * "Zocor" / "Bestatin" -> "Simvastatin"
+     * "Plavix" -> "Clopidogrel"
+     * "Royal-D" / "Oreda" -> "Oral Rehydration Salts (ORS)"
+
+2. "strength": Drug potency with unit (e.g. "1000 mg", "500 mg", "625 mg", "120 mg/5ml", "10%", "500 mcg").
+3. "dosage_form": English formulation (e.g. "Tablet", "Capsule", "Syrup", "Suspension", "Cream", "Ointment", "Eye Drop", "Injection", "Sachet", "Ampoule", "Gel").
+4. "trade_name": Commercial brand name / Trade name as printed on the invoice (e.g. "Amk", "Fleming / GSK", "Sara 500", "Tylenol Syrup", "Royal-D").
+5. "unit": Smallest single dispensing inventory unit in Thai (e.g. "เม็ด", "แคปซูล", "ขวด", "ซอง", "หลอด", "แอมพูล", "ไวอัล").
+6. "quantity": Number of units received (numeric).
+7. "cost_price": Purchase price PER SMALLEST DISPENSING UNIT (Float with 2 decimals).
+   - UNIT PRICE CALCULATION: Divide package price by total smallest units contained:
+     * 1 bottle of 500 tablets @ 4,700 THB -> cost_price = 4700 / 500 = 9.40 (THB/เม็ด)
+     * 1 box of 14 tablets @ 130.20 THB -> cost_price = 130.20 / 14 = 9.30 (THB/เม็ด)
+     * 1 dozen (12 bottles) @ 384.00 THB -> cost_price = 384 / 12 = 32.00 (THB/ขวด)
+     * 1 box of 50 sachets @ 225.00 THB -> cost_price = 225 / 50 = 4.50 (THB/ซอง)
+8. "invoice_ref": Invoice or receipt number if visible (string).
+9. "vendor_name": Vendor or pharmaceutical distributor company (string).
+
+JSON Schema:
+{
+  "invoice_ref": "string | null",
+  "vendor_name": "string | null",
+  "items": [
+    {
+      "generic_name": "string",
+      "strength": "string",
+      "dosage_form": "string",
+      "trade_name": "string",
+      "unit": "string",
+      "quantity": 100,
+      "cost_price": 0.0
+    }
+  ]
+}
+Return ONLY valid JSON without markdown wrapping.`;
+
+        let successResult = null;
+        let successfulModel = null;
+        let lastError = null;
+
+        for (let i = 0; i < candidateModels.length; i++) {
+          const modelToTry = candidateModels[i];
+          if (statusBadge) statusBadge.innerText = `กำลังลองโมเดล: ${modelToTry} (${i+1}/${candidateModels.length})...`;
+
+          try {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelToTry}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [
+                    { text: prompt },
+                    {
+                      inlineData: {
+                        mimeType: this.currentMimeType,
+                        data: this.currentImageData
+                      }
+                    }
+                  ]
+                }],
+                generationConfig: {
+                  temperature: 0.1,
+                  topP: 0.95,
+                  maxOutputTokens: 4096
+                }
+              })
+            });
+
+            if (!response.ok) {
+              let errMsg = `HTTP ${response.status}: ${response.statusText}`;
+              try {
+                const errJson = await response.json();
+                if (errJson.error && errJson.error.message) errMsg = errJson.error.message;
+              } catch(_) {}
+              throw new Error(errMsg);
+            }
+
+            const data = await response.json();
+            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts) {
+              const textParts = data.candidates[0].content.parts.map(p => p.text || '').join('\n').trim();
+              let cleaned = textParts.replace(/^\`\`\`[a-z]*\s*/i, '').replace(/\`\`\`\s*$/i, '').trim();
+              
+              let parsed;
+              try {
+                parsed = JSON.parse(cleaned);
+              } catch(e) {
+                const jsonMatch = cleaned.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+                if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+                else throw e;
+              }
+
+              successResult = parsed;
+              successfulModel = modelToTry;
+              break; // Succeeded!
+            } else {
+              throw new Error('Gemini API ส่งการตอบกลับที่ไม่มีเนื้อหา');
+            }
+          } catch (err) {
+            lastError = err;
+            console.warn(`Model ${modelToTry} failed:`, err);
+            if (!isFailoverEnabled) break;
+          }
+        }
+
+        if (loader) loader.style.display = 'none';
+        if (tableSec) tableSec.style.opacity = '1';
+        if (runBtn) { runBtn.disabled = false; runBtn.innerHTML = '<i data-lucide="play"></i> สแกนด้วย AI'; }
+        lucide.createIcons();
+
+        if (successResult) {
+          if (statusBadge) statusBadge.innerText = `✅ สแกนสำเร็จด้วย ${successfulModel}`;
+
+          if (successResult.invoice_ref && !document.getElementById('ocr-invoice-ref').value) {
+            document.getElementById('ocr-invoice-ref').value = successResult.invoice_ref;
+          }
+          if (successResult.vendor_name && !document.getElementById('ocr-vendor-name').value) {
+            document.getElementById('ocr-vendor-name').value = successResult.vendor_name;
+          }
+
+          let rawItems = Array.isArray(successResult.items) ? successResult.items : (Array.isArray(successResult) ? successResult : []);
+          rawItems = rawItems.map(item => enrichOpdDrugItem(item));
+
+          if (rawItems.length === 0) {
+            alert('AI ไม่พบรายการยาในเอกสาร กรุณาตรวจสอบความคมชัดของรูปภาพแล้วลองใหม่อีกครั้ง');
+          } else {
+            this.processExtractedItems(rawItems);
+          const dropzone = document.getElementById('ocr-dropzone');
+          const toggleBtn = document.getElementById('ocr-toggle-panel-btn');
+          if (dropzone) dropzone.style.display = 'none';
+          if (toggleBtn) toggleBtn.innerHTML = '<i data-lucide="chevron-down"></i> ขยายแผงสแกน';
+          lucide.createIcons();
+          }
+        } else {
+          if (statusBadge) statusBadge.innerText = '❌ การสแกนล้มเหลว';
+          alert('การประมวลผลล้มเหลว: ' + (lastError ? lastError.message : 'ไม่สามารถอ่านข้อมูลได้'));
+        }
+      },
+
+      processExtractedItems(rawItems) {
+        const existingDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        this.selectedIndices.clear();
+
+        this.scannedRows = rawItems.map((item, idx) => {
+          const genName = (item.generic_name || item.name || '').trim();
+          const tradeName = (item.trade_name || '').trim();
+          const strength = (item.strength || '').trim();
+          const form = (item.dosage_form || item.form || 'Tablet').trim();
+          const unit = (item.unit || 'เม็ด').trim();
+          const qty = parseInt(item.quantity || item.qty, 10) || 1;
+          const cost = parseFloat(item.cost_price || item.unit_price || item.cost || item.price) || 0;
+
+          // Intelligent Matching against Clinic Drug Master
+          let matchedDrug = null;
+
+          // 1. Exact Match on Generic + Strength
+          if (genName) {
+            matchedDrug = existingDrugs.find(d => 
+              (d.generic_name || '').toLowerCase().trim() === genName.toLowerCase().trim() && 
+              (!strength || !d.strength || (d.strength || '').toLowerCase().trim() === strength.toLowerCase().trim())
+            );
+          }
+
+          // 2. Exact Match on Generic alone
+          if (!matchedDrug && genName) {
+            matchedDrug = existingDrugs.find(d => 
+              (d.generic_name || '').toLowerCase().trim() === genName.toLowerCase().trim()
+            );
+          }
+
+          // 3. Exact Match on Trade Name
+          if (!matchedDrug && tradeName) {
+            matchedDrug = existingDrugs.find(d => 
+              (d.trade_name || '').toLowerCase().trim() === tradeName.toLowerCase().trim()
+            );
+          }
+
+          let salePrice = 0;
+          let action = 'new';
+          if (matchedDrug) {
+            action = 'stock_in';
+            // รายการยาเดิมในคลัง: ยึดราคาขายเดิมของคลินิกไว้เสมอ
+            salePrice = matchedDrug.sale_price !== undefined && matchedDrug.sale_price !== null && matchedDrug.sale_price > 0 
+              ? matchedDrug.sale_price 
+              : Number((cost * 1.5).toFixed(2));
+          } else {
+            action = 'new';
+            // รายการยาใหม่: คำนวณราคาขายแนะนำเริ่มต้น (+50% Markup)
+            salePrice = Number((cost * 1.5).toFixed(2));
+          }
+
+          return {
+            row_id: 'ROW_' + Date.now() + '_' + idx,
+            generic_name: genName || (matchedDrug ? matchedDrug.generic_name : ''),
+            strength: strength || (matchedDrug ? matchedDrug.strength : ''),
+            dosage_form: form || (matchedDrug ? matchedDrug.dosage_form : 'Tablet'),
+            trade_name: tradeName || (matchedDrug ? matchedDrug.trade_name : ''),
+            unit: unit || (matchedDrug ? matchedDrug.unit : 'เม็ด'),
+            quantity: qty,
+            cost_price: cost,
+            sale_price: salePrice,
+            matched_drug_id: matchedDrug ? matchedDrug.drug_id : null,
+            matched_drug: matchedDrug,
+            action: action
+          };
+        });
+
+        this.renderOcrTable();
+      },
+
+      renderOcrTable() {
+        const tbody = document.getElementById('ocr-review-tbody');
+        const countBadge = document.getElementById('ocr-items-count-badge');
+        const summaryBar = document.getElementById('ocr-summary-bar');
+        const checkAll = document.getElementById('ocr-check-all');
+        if (!tbody) return;
+
+        if (this.scannedRows.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; color: var(--slate-400); padding: 30px;">ยังไม่มีรายการยาที่สแกน กรุณาอัปโหลดใบเสร็จหรือเปิดกล้องถ่ายภาพ</td></tr>';
+          if (countBadge) countBadge.innerHTML = 'รายการที่สแกนได้: <strong>0</strong> รายการ';
+          if (summaryBar) summaryBar.innerHTML = 'จำนวนรับเข้ารวม: <strong>0</strong> ชิ้น | มูลค่ารับเข้ารวม: <strong style="color: #047857;">฿0.00</strong>';
+          if (checkAll) checkAll.checked = false;
+          return;
+        }
+
+        if (countBadge) countBadge.innerHTML = `รายการที่สแกนได้: <strong>${this.scannedRows.length}</strong> รายการ (เลือก ${this.selectedIndices.size} รายการ)`;
+
+        let totalQty = 0;
+        let totalVal = 0;
+
+        tbody.innerHTML = this.scannedRows.map((row, idx) => {
+          const isChecked = this.selectedIndices.has(idx);
+          const isMatched = !!row.matched_drug;
+          if (row.action !== 'skip') {
+            totalQty += (row.quantity || 0);
+            totalVal += ((row.quantity || 0) * (row.cost_price || 0));
+          }
+
+          let matchBadge = '';
+          if (isMatched) {
+            matchBadge = `<div class="ocr-badge-match"><i data-lucide="check-circle"></i> ตรงกับ ${row.matched_drug.generic_name} (สต็อก: ${row.matched_drug.stock || 0})</div>`;
+          } else {
+            matchBadge = `<div class="ocr-badge-new"><i data-lucide="sparkles"></i> ยาตัวใหม่ (จะสร้างรหัสยาใหม่)</div>`;
+          }
+
+          return `
+            <tr class="${isChecked ? 'row-selected' : ''}">
+              <td style="text-align: center; vertical-align: middle;">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="DrugOcrModule.toggleRowSelect(${idx}, this.checked)" style="width: 18px; height: 18px; cursor: pointer;">
+              </td>
+              <td>
+                <input type="text" class="form-input" value="${row.generic_name || ''}" onchange="DrugOcrModule.updateField(${idx}, 'generic_name', this.value)" placeholder="Generic Name" list="ocr-generic-names-datalist" style="font-weight: 700; color: #0f172a; min-width: 170px;">
+              </td>
+              <td>
+                <input type="text" class="form-input" value="${row.strength || ''}" onchange="DrugOcrModule.updateField(${idx}, 'strength', this.value)" placeholder="เช่น 500 mg" style="text-align: center; min-width: 85px;">
+              </td>
+              <td>
+                <select class="form-select" onchange="DrugOcrModule.updateField(${idx}, 'dosage_form', this.value)" style="min-width: 110px;">
+                  <option value="Tablet" ${row.dosage_form === 'Tablet' ? 'selected' : ''}>Tablet (เม็ด)</option>
+                  <option value="Capsule" ${row.dosage_form === 'Capsule' ? 'selected' : ''}>Capsule (แคปซูล)</option>
+                  <option value="Syrup" ${row.dosage_form === 'Syrup' ? 'selected' : ''}>Syrup (น้ำเชื่อม)</option>
+                  <option value="Suspension" ${row.dosage_form === 'Suspension' ? 'selected' : ''}>Suspension (ยาน้ำแขวนตะกอน)</option>
+                  <option value="Cream" ${row.dosage_form === 'Cream' ? 'selected' : ''}>Cream (ครีม)</option>
+                  <option value="Ointment" ${row.dosage_form === 'Ointment' ? 'selected' : ''}>Ointment (ขี้ผึ้ง)</option>
+                  <option value="Injection" ${row.dosage_form === 'Injection' ? 'selected' : ''}>Injection (ยาฉีด)</option>
+                  <option value="Eye Drops" ${row.dosage_form === 'Eye Drops' ? 'selected' : ''}>Eye Drops (ยาหยอดตา)</option>
+                  <option value="Ear Drops" ${row.dosage_form === 'Ear Drops' ? 'selected' : ''}>Ear Drops (ยาหยอดหู)</option>
+                  <option value="Nasal Spray" ${row.dosage_form === 'Nasal Spray' ? 'selected' : ''}>Nasal Spray (พ่นจมูก)</option>
+                  <option value="Inhaler" ${row.dosage_form === 'Inhaler' ? 'selected' : ''}>Inhaler (ยาพ่นสูด)</option>
+                  <option value="Solution" ${row.dosage_form === 'Solution' ? 'selected' : ''}>Solution (สารละลาย)</option>
+                  <option value="Medical Supply" ${row.dosage_form === 'Medical Supply' ? 'selected' : ''}>Medical Supply (เวชภัณฑ์)</option>
+                  <option value="Other" ${row.dosage_form === 'Other' ? 'selected' : ''}>Other (อื่นๆ)</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" class="form-input" value="${row.trade_name || ''}" onchange="DrugOcrModule.updateField(${idx}, 'trade_name', this.value)" placeholder="Trade Name" style="min-width: 130px;">
+              </td>
+              <td>
+                <input type="text" class="form-input" value="${row.unit || 'เม็ด'}" onchange="DrugOcrModule.updateField(${idx}, 'unit', this.value)" placeholder="หน่วย" style="text-align: center; min-width: 65px;">
+              </td>
+              <td>
+                <input type="number" class="form-input" value="${row.quantity || 1}" min="1" onchange="DrugOcrModule.updateField(${idx}, 'quantity', parseInt(this.value, 10) || 1)" style="font-weight: 700; text-align: center; min-width: 80px;">
+              </td>
+              <td>
+                <input type="number" step="0.01" class="form-input" value="${row.cost_price || 0}" onchange="DrugOcrModule.updateField(${idx}, 'cost_price', parseFloat(this.value) || 0)" style="color: #b45309; font-weight: 700; text-align: right; min-width: 85px;">
+              </td>
+              <td>
+                <input type="number" step="0.01" class="form-input" value="${row.sale_price || 0}" onchange="DrugOcrModule.updateField(${idx}, 'sale_price', parseFloat(this.value) || 0)" style="color: #047857; font-weight: 700; text-align: right; min-width: 85px;">
+              </td>
+              <td>
+                ${matchBadge}
+              </td>
+              <td>
+                <select class="form-select" onchange="DrugOcrModule.updateField(${idx}, 'action', this.value)" style="font-weight: 600; font-size: 0.8rem; min-width: 135px;">
+                  <option value="stock_in" ${row.action === 'stock_in' ? 'selected' : ''}>📦 เพิ่มสต็อกเดิม</option>
+                  <option value="new" ${row.action === 'new' ? 'selected' : ''}>✨ นำเข้ายาใหม่</option>
+                  <option value="skip" ${row.action === 'skip' ? 'selected' : ''}>❌ ข้าม (ไม่นำเข้า)</option>
+                </select>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <button class="btn btn-sm" style="color: #dc2626; padding: 4px 6px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px;" onclick="DrugOcrModule.deleteRow(${idx})" title="ลบแถวนี้"><i data-lucide="trash-2"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        if (summaryBar) {
+          summaryBar.innerHTML = `จำนวนรับเข้ารวม: <strong>${totalQty.toLocaleString()}</strong> หน่วย | มูลค่ารับเข้ารวม: <strong style="color: #047857;">฿${totalVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>`;
+        }
+
+        if (checkAll) {
+          checkAll.checked = this.scannedRows.length > 0 && this.selectedIndices.size === this.scannedRows.length;
+        }
+
+        lucide.createIcons();
+      },
+
+      updateField(index, field, value) {
+        if (this.scannedRows[index]) {
+          this.scannedRows[index][field] = value;
+          if (field === 'generic_name' || field === 'strength' || field === 'trade_name') {
+            this.reCheckMatch(index);
+          }
+          this.renderOcrTable();
+        }
+      },
+
+      reCheckMatch(index) {
+        const row = this.scannedRows[index];
+        if (!row) return;
+        const existingDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const genName = (row.generic_name || '').toLowerCase().trim();
+        const tradeName = (row.trade_name || '').toLowerCase().trim();
+
+        let matched = existingDrugs.find(d => 
+          (d.generic_name || '').toLowerCase().trim() === genName || 
+          (tradeName && (d.trade_name || '').toLowerCase().trim() === tradeName)
+        );
+
+        row.matched_drug = matched || null;
+        row.matched_drug_id = matched ? matched.drug_id : null;
+        if (matched) {
+          if (row.action === 'new') row.action = 'stock_in';
+          if (matched.sale_price > 0) row.sale_price = matched.sale_price;
+        }
+      },
+
+      toggleSelectAll(checked) {
+        if (checked) {
+          this.selectedIndices = new Set(this.scannedRows.map((_, i) => i));
+        } else {
+          this.selectedIndices.clear();
+        }
+        this.renderOcrTable();
+      },
+
+      toggleRowSelect(index, checked) {
+        if (checked) {
+          this.selectedIndices.add(index);
+        } else {
+          this.selectedIndices.delete(index);
+        }
+        this.renderOcrTable();
+      },
+
+      mergeSelectedRows() {
+        const indices = Array.from(this.selectedIndices).sort((a, b) => a - b);
+        if (indices.length < 2) {
+          alert('กรุณาเลือก (ติ๊กถูก) รายการที่ต้องการรวมอย่างน้อย 2 รายการ');
+          return;
+        }
+
+        const itemsToMerge = indices.map(i => this.scannedRows[i]);
+        
+        let totalQty = 0;
+        let totalCostVal = 0;
+
+        itemsToMerge.forEach(item => {
+          const q = item.quantity || 1;
+          const c = item.cost_price || 0;
+          totalQty += q;
+          totalCostVal += (q * c);
+        });
+
+        const weightedAvgCost = totalQty > 0 ? (totalCostVal / totalQty) : 0;
+        const primary = itemsToMerge[0];
+        const mergedItem = {
+          ...primary,
+          row_id: 'MERGED_' + Date.now(),
+          quantity: totalQty,
+          cost_price: Number(weightedAvgCost.toFixed(2)),
+          sale_price: primary.sale_price > 0 ? primary.sale_price : Number((weightedAvgCost * 1.5).toFixed(2))
+        };
+
+        const newRows = [];
+        let inserted = false;
+        this.scannedRows.forEach((r, idx) => {
+          if (indices.includes(idx)) {
+            if (!inserted) {
+              newRows.push(mergedItem);
+              inserted = true;
+            }
+          } else {
+            newRows.push(r);
+          }
+        });
+
+        this.scannedRows = newRows;
+        this.selectedIndices.clear();
+        this.renderOcrTable();
+
+        alert(`✅ รวม ${itemsToMerge.length} รายการเป็นรายการเดียวสำเร็จ!
+- ชื่อยา: ${mergedItem.generic_name}
+- จำนวนรวม: ${totalQty} ${mergedItem.unit}
+- ต้นทุนเฉลี่ยถ่วงน้ำหนัก: ฿${weightedAvgCost.toFixed(2)} / หน่วย`);
+      },
+
+      deleteSelectedRows() {
+        if (this.selectedIndices.size === 0) {
+          alert('กรุณาเลือกรายการที่ต้องการลบ');
+          return;
+        }
+        if (!confirm(`ต้องการลบรายการที่เลือกจำนวน ${this.selectedIndices.size} รายการหรือไม่?`)) return;
+
+        this.scannedRows = this.scannedRows.filter((_, idx) => !this.selectedIndices.has(idx));
+        this.selectedIndices.clear();
+        this.renderOcrTable();
+      },
+
+      deleteRow(index) {
+        this.scannedRows.splice(index, 1);
+        this.selectedIndices.delete(index);
+        this.renderOcrTable();
+      },
+
+      addNewRow() {
+        this.scannedRows.push({
+          row_id: 'ROW_' + Date.now() + '_' + this.scannedRows.length,
+          generic_name: '',
+          strength: '',
+          dosage_form: 'Tablet',
+          trade_name: '',
+          unit: 'เม็ด',
+          quantity: 50,
+          cost_price: 0,
+          sale_price: 0,
+          matched_drug_id: null,
+          matched_drug: null,
+          action: 'new'
+        });
+        this.renderOcrTable();
+      },
+
+      applyAutoMarkup(percent) {
+        if (this.scannedRows.length === 0) return;
+
+        // หากผู้ใช้ติ๊กเลือกแถวไว้ ให้คำนวณเฉพาะแถวที่เลือก
+        // หากไม่ได้ติ๊กเลือก ให้คำนวณเฉพาะรายการยาใหม่ (action === 'new' หรือไม่มียาเดิม) ยาเดิมจะคงราคาขายเดิมไว้เสมอ
+        let targetIndices = [];
+        let isOnlyNew = false;
+
+        if (this.selectedIndices.size > 0) {
+          targetIndices = Array.from(this.selectedIndices);
+        } else {
+          isOnlyNew = true;
+          targetIndices = this.scannedRows
+            .map((r, i) => (r.action === 'new' || !r.matched_drug_id) ? i : -1)
+            .filter(i => i !== -1);
+        }
+
+        if (targetIndices.length === 0) {
+          alert('ไม่พบรายการยาใหม่ที่จะคำนวณราคาขาย (รายการยาทั้งหมดเป็นยาเดิมที่มีราคาขายในระบบอยู่แล้ว หากต้องการปรับราคาเฉพาะรายการใดเป็นพิเศษ ให้ติ๊กถูกหน้าแถวนั้นแล้วกดคำนวณ)');
+          return;
+        }
+
+        const multiplier = 1 + (percent / 100);
+        targetIndices.forEach(idx => {
+          const row = this.scannedRows[idx];
+          if (row && row.cost_price > 0) {
+            row.sale_price = Number((row.cost_price * multiplier).toFixed(2));
+          }
+        });
+
+        this.renderOcrTable();
+        if (isOnlyNew) {
+          alert(`✅ คำนวณราคาขายอัตโนมัติ (+${percent}%) สำหรับรายการยาใหม่จำนวน ${targetIndices.length} รายการเรียบร้อยแล้ว (รายการยาเดิมในคลินิกยังคงยึดราคาขายเดิมไว้)`);
+        } else {
+          alert(`✅ คำนวณราคาขายอัตโนมัติ (+${percent}%) สำหรับรายการที่เลือกจำนวน ${targetIndices.length} รายการเรียบร้อย`);
+        }
+      },
+
+      confirmBatchImport() {
+        const activeRows = this.scannedRows.filter(r => r.action !== 'skip');
+        if (activeRows.length === 0) {
+          alert('ไม่มีรายการยาที่จะนำเข้า (ทุกรายการถูกข้ามหรือไม่มีข้อมูล)');
+          return;
+        }
+
+        for (let i = 0; i < activeRows.length; i++) {
+          const r = activeRows[i];
+          if (!r.generic_name || !r.generic_name.trim()) {
+            alert(`รายการที่ ${i + 1} ไม่มีชื่อ Generic Name กรุณาระบุชื่อยาก่อนบันทึก`);
+            return;
+          }
+          if (r.quantity <= 0) {
+            alert(`รายการ ${r.generic_name} ระบุจำนวนไม่ถูกต้อง (ต้องมากกว่า 0)`);
+            return;
+          }
+        }
+
+        const invoiceRef = document.getElementById('ocr-invoice-ref')?.value.trim() || '';
+        const vendorName = document.getElementById('ocr-vendor-name')?.value.trim() || '';
+        const fullRef = invoiceRef + (vendorName ? ' (' + vendorName + ')' : '');
+
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        let updatedCount = 0;
+        let newCount = 0;
+        let totalStockAdded = 0;
+
+        activeRows.forEach(row => {
+          const qty = Number(row.quantity) || 1;
+          const cost = Number(row.cost_price) || 0;
+          const sale = Number(row.sale_price) || 0;
+
+          if (row.action === 'stock_in' && row.matched_drug_id) {
+            const d = drugs.find(x => x.drug_id === row.matched_drug_id);
+            if (d) {
+              const stockBefore = d.stock || 0;
+              const oldCost = d.purchase_price || 0;
+              const oldSale = d.sale_price || 0;
+
+              d.stock = stockBefore + qty;
+              if (cost > 0) d.purchase_price = cost;
+              if (sale > 0) d.sale_price = sale;
+              if (row.strength && !d.strength) d.strength = row.strength;
+              if (row.trade_name && !d.trade_name) d.trade_name = row.trade_name;
+
+              totalStockAdded += qty;
+              updatedCount++;
+
+              DrugHistoryModule.logChange({
+                drug_id: d.drug_id,
+                generic_name: d.generic_name,
+                trade_name: d.trade_name,
+                type: 'OCR_IMPORT',
+                old_cost: oldCost,
+                new_cost: (cost > 0 ? cost : oldCost),
+                old_price: oldSale,
+                new_price: (sale > 0 ? sale : oldSale),
+                qty_change: qty,
+                stock_before: stockBefore,
+                stock_after: d.stock,
+                ref_invoice: fullRef,
+                note: 'รับยาเข้าคลังผ่าน AI OCR สแกนใบเสร็จ'
+              });
+            }
+          } else {
+            const newDrugId = 'D_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+            const newDrug = {
+              drug_id: newDrugId,
+              generic_name: row.generic_name.trim(),
+              strength: row.strength ? row.strength.trim() : '',
+              dosage_form: row.dosage_form || 'Tablet',
+              trade_name: row.trade_name ? row.trade_name.trim() : '',
+              unit: row.unit ? row.unit.trim() : 'เม็ด',
+              purchase_price: cost,
+              sale_price: sale,
+              stock: qty,
+              min_stock: 10,
+              active: true
+            };
+
+            drugs.push(newDrug);
+            totalStockAdded += qty;
+            newCount++;
+
+            DrugHistoryModule.logChange({
+              drug_id: newDrugId,
+              generic_name: newDrug.generic_name,
+              trade_name: newDrug.trade_name,
+              type: 'NEW_DRUG',
+              old_cost: 0,
+              new_cost: cost,
+              old_price: 0,
+              new_price: sale,
+              qty_change: qty,
+              stock_before: 0,
+              stock_after: qty,
+              ref_invoice: fullRef,
+              note: 'สร้างรายการยาใหม่ผ่าน AI OCR สแกนใบเสร็จ'
+            });
+          }
+        });
+
+        DB.set(STORAGE_KEYS.DRUGS, drugs);
+        DrugModule.renderDrugTable();
+        DashboardModule.render();
+
+        this.closeModal();
+        alert(`🎉 นำเข้าข้อมูลยาและอัปเดตสต็อกเรียบร้อยแล้ว!\n\n- เพิ่มสต็อกยาเดิม: ${updatedCount} รายการ\n- สร้างยาใหม่: ${newCount} รายการ\n- จำนวนรับเข้ารวม: ${totalStockAdded.toLocaleString()} หน่วย\n- บันทึกประวัติราคาและสต็อกลงระบบเรียบร้อย`);
       }
     };
 
@@ -8832,9 +11129,10 @@
       isSyncing: false,
       status: 'offline', // 'connected', 'connecting', 'offline', 'error'
       lastSyncTime: null,
-      sqlSchema: "-- ==============================================================================\n-- สคริปต์สร้างฐานข้อมูล Supabase สำหรับระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n-- วิธีใช้: นำโค้ดทั้งหมดนี้ไปวางในหน้า \"SQL Editor\" ของ Supabase แล้วกดปุ่ม \"RUN\"\n-- ==============================================================================\n\n-- 1. ตารางผู้ป่วย (opd_patients)\ncreate table if not exists public.opd_patients (\n    patient_id text primary key,\n    hn text not null,\n    national_id text,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    sex text,\n    dob text,\n    phone text,\n    rights text default 'UC',\n    chronic text,\n    drug_allergy text,\n    address text,\n    note text,\n    raw_data jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 2. ตารางการเข้ารับบริการ / AN (opd_visits)\ncreate table if not exists public.opd_visits (\n    visit_id text primary key,\n    an text not null,\n    hn text not null,\n    patient_id text not null,\n    patient_name text,\n    visit_date text,\n    queue_no text,\n    queue_type text default 'ทั่วไป',\n    status text default 'waiting', -- waiting, examining, lab_wait, pharmacy, completed, cancelled\n    doctor text,\n    doctor_id text,\n    doctor_license text,\n    cc text, -- Chief Complaint\n    pi text, -- Present Illness\n    pe text, -- Physical Examination\n    diagnosis text,\n    vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat\n    drugs jsonb, -- array of prescribed drugs\n    labs jsonb, -- array of lab orders & results\n    procedures jsonb, -- array of procedures & DF\n    billing jsonb, -- total, discount, net, payment_type\n    certificates jsonb, -- medical certificate data\n    audit_logs jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)\ncreate table if not exists public.opd_drugs (\n    drug_id text primary key,\n    code text,\n    trade_name text,\n    generic_name text not null,\n    dosage text,\n    unit text,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock numeric default 0,\n    category text,\n    usage_instruction text,\n    usage_text text,\n    warning text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 4. ตารางการนัดหมาย (opd_appointments)\ncreate table if not exists public.opd_appointments (\n    appointment_id text primary key,\n    patient_id text not null,\n    hn text not null,\n    patient_name text not null,\n    doctor text,\n    appt_date text not null,\n    appt_time text,\n    reason text,\n    status text default 'scheduled', -- scheduled, arrived, completed, cancelled\n    note text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 5. ตารางหัตถการ (opd_procedures)\ncreate table if not exists public.opd_procedures (\n    proc_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    df_price numeric default 0,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 6. ตารางตรวจทางห้องปฏิบัติการ (opd_labs)\ncreate table if not exists public.opd_labs (\n    lab_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    normal_range text,\n    unit text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 7. ตารางชุดแล็บ (opd_lab_sets)\ncreate table if not exists public.opd_lab_sets (\n    set_id text primary key,\n    name text not null,\n    category text,\n    description text,\n    items jsonb,\n    price numeric default 0,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 8. ตารางชุดยาที่ใช้บ่อย (opd_drug_groups)\ncreate table if not exists public.opd_drug_groups (\n    group_id text primary key,\n    name text not null,\n    description text,\n    items jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 9. ตารางเทมเพลตตรวจร่างกาย (opd_pe_templates)\ncreate table if not exists public.opd_pe_templates (\n    template_id text primary key,\n    title text not null,\n    category text,\n    content text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 10. ตารางแพทย์และเจ้าหน้าที่ (opd_doctors)\ncreate table if not exists public.opd_doctors (\n    doctor_id text primary key,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    license_no text,\n    specialty text,\n    phone text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 11. ตาราง Audit Logs บันทึกการใช้งาน (opd_audit_logs)\ncreate table if not exists public.opd_audit_logs (\n    id bigint generated always as identity primary key,\n    action text,\n    user_role text,\n    doctor_name text,\n    details jsonb,\n    timestamp text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตาราง System Configs (opd_system_configs)\ncreate table if not exists public.opd_system_configs (\n    key text primary key,\n    value jsonb,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- ==============================================================================\n-- สร้าง Indexes เพื่อความเร็วในการค้นหา\n-- ==============================================================================\ncreate index if not exists idx_patients_hn on public.opd_patients(hn);\ncreate index if not exists idx_patients_cid on public.opd_patients(national_id);\ncreate index if not exists idx_patients_name on public.opd_patients(first_name, last_name);\ncreate index if not exists idx_visits_an on public.opd_visits(an);\ncreate index if not exists idx_visits_hn on public.opd_visits(hn);\ncreate index if not exists idx_visits_date on public.opd_visits(visit_date);\ncreate index if not exists idx_visits_status on public.opd_visits(status);\ncreate index if not exists idx_appointments_date on public.opd_appointments(appt_date);\n\n-- ==============================================================================\n-- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key\n-- ==============================================================================\nalter table public.opd_patients enable row level security;\nalter table public.opd_visits enable row level security;\nalter table public.opd_drugs enable row level security;\nalter table public.opd_appointments enable row level security;\nalter table public.opd_procedures enable row level security;\nalter table public.opd_labs enable row level security;\nalter table public.opd_lab_sets enable row level security;\nalter table public.opd_drug_groups enable row level security;\nalter table public.opd_pe_templates enable row level security;\nalter table public.opd_doctors enable row level security;\nalter table public.opd_audit_logs enable row level security;\nalter table public.opd_system_configs enable row level security;\n\n-- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key\ncreate policy \"Allow all operations for anon on opd_patients\" on public.opd_patients for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_visits\" on public.opd_visits for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drugs\" on public.opd_drugs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_appointments\" on public.opd_appointments for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_procedures\" on public.opd_procedures for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_labs\" on public.opd_labs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_lab_sets\" on public.opd_lab_sets for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_groups\" on public.opd_drug_groups for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_pe_templates\" on public.opd_pe_templates for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_doctors\" on public.opd_doctors for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_audit_logs\" on public.opd_audit_logs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_system_configs\" on public.opd_system_configs for all using (true) with check (true);\n\n-- ==============================================================================\n-- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)\n-- ==============================================================================\ndo $\nbegin\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_patients') then\n    alter publication supabase_realtime add table public.opd_patients;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_visits') then\n    alter publication supabase_realtime add table public.opd_visits;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drugs') then\n    alter publication supabase_realtime add table public.opd_drugs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_appointments') then\n    alter publication supabase_realtime add table public.opd_appointments;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_procedures') then\n    alter publication supabase_realtime add table public.opd_procedures;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_labs') then\n    alter publication supabase_realtime add table public.opd_labs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_groups') then\n    alter publication supabase_realtime add table public.opd_drug_groups;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_pe_templates') then\n    alter publication supabase_realtime add table public.opd_pe_templates;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_doctors') then\n    alter publication supabase_realtime add table public.opd_doctors;\n  end if;\nend $;\n",
+      sqlSchema: "-- ==============================================================================\n-- สคริปต์สร้างฐานข้อมูล Supabase สำหรับระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n-- วิธีใช้: นำโค้ดทั้งหมดนี้ไปวางในหน้า \"SQL Editor\" ของ Supabase แล้วกดปุ่ม \"RUN\"\n-- ==============================================================================\n\n-- 1. ตารางผู้ป่วย (opd_patients)\ncreate table if not exists public.opd_patients (\n    patient_id text primary key,\n    hn text not null,\n    national_id text,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    sex text,\n    dob text,\n    phone text,\n    rights text default 'UC',\n    chronic text,\n    drug_allergy text,\n    address text,\n    note text,\n    raw_data jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 2. ตารางการเข้ารับบริการ / AN (opd_visits)\ncreate table if not exists public.opd_visits (\n    visit_id text primary key,\n    an text not null,\n    hn text not null,\n    patient_id text not null,\n    patient_name text,\n    visit_date text,\n    queue_no text,\n    queue_type text default 'ทั่วไป',\n    status text default 'waiting', -- waiting, examining, lab_wait, pharmacy, completed, cancelled\n    doctor text,\n    doctor_id text,\n    doctor_license text,\n    cc text, -- Chief Complaint\n    pi text, -- Present Illness\n    pe text, -- Physical Examination\n    diagnosis text,\n    vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat\n    drugs jsonb, -- array of prescribed drugs\n    labs jsonb, -- array of lab orders & results\n    procedures jsonb, -- array of procedures & DF\n    billing jsonb, -- total, discount, net, payment_type\n    certificates jsonb, -- medical certificate data\n    audit_logs jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)\ncreate table if not exists public.opd_drugs (\n    drug_id text primary key,\n    code text,\n    trade_name text,\n    generic_name text not null,\n    dosage text,\n    unit text,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock numeric default 0,\n    category text,\n    usage_instruction text,\n    usage_text text,\n    warning text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 4. ตารางการนัดหมาย (opd_appointments)\ncreate table if not exists public.opd_appointments (\n    appointment_id text primary key,\n    patient_id text not null,\n    hn text not null,\n    patient_name text not null,\n    doctor text,\n    appt_date text not null,\n    appt_time text,\n    reason text,\n    status text default 'scheduled', -- scheduled, arrived, completed, cancelled\n    note text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 5. ตารางหัตถการ (opd_procedures)\ncreate table if not exists public.opd_procedures (\n    proc_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    df_price numeric default 0,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 6. ตารางตรวจทางห้องปฏิบัติการ (opd_labs)\ncreate table if not exists public.opd_labs (\n    lab_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    normal_range text,\n    unit text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 7. ตารางชุดแล็บ (opd_lab_sets)\ncreate table if not exists public.opd_lab_sets (\n    set_id text primary key,\n    name text not null,\n    category text,\n    description text,\n    items jsonb,\n    price numeric default 0,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 8. ตารางชุดยาที่ใช้บ่อย (opd_drug_groups)\ncreate table if not exists public.opd_drug_groups (\n    group_id text primary key,\n    name text not null,\n    description text,\n    items jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 9. ตารางเทมเพลตตรวจร่างกาย (opd_pe_templates)\ncreate table if not exists public.opd_pe_templates (\n    template_id text primary key,\n    title text not null,\n    category text,\n    content text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 10. ตารางแพทย์และเจ้าหน้าที่ (opd_doctors)\ncreate table if not exists public.opd_doctors (\n    doctor_id text primary key,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    license_no text,\n    specialty text,\n    phone text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 11. ตาราง Audit Logs บันทึกการใช้งาน (opd_audit_logs)\ncreate table if not exists public.opd_audit_logs (\n    id bigint generated always as identity primary key,\n    action text,\n    user_role text,\n    doctor_name text,\n    details jsonb,\n    timestamp text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตารางประวัติการรับเข้า & ปรับราคายา (opd_drug_price_history)\ncreate table if not exists public.opd_drug_price_history (\n    history_id text primary key,\n    drug_id text not null,\n    generic_name text not null,\n    trade_name text,\n    type text not null,\n    old_cost numeric default 0,\n    new_cost numeric default 0,\n    old_price numeric default 0,\n    new_price numeric default 0,\n    qty_change numeric default 0,\n    stock_before numeric default 0,\n    stock_after numeric default 0,\n    ref_invoice text,\n    note text,\n    operator text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตาราง System Configs (opd_system_configs)\ncreate table if not exists public.opd_system_configs (\n    key text primary key,\n    value jsonb,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- ==============================================================================\n-- สร้าง Indexes เพื่อความเร็วในการค้นหา\n-- ==============================================================================\ncreate index if not exists idx_patients_hn on public.opd_patients(hn);\ncreate index if not exists idx_patients_cid on public.opd_patients(national_id);\ncreate index if not exists idx_patients_name on public.opd_patients(first_name, last_name);\ncreate index if not exists idx_visits_an on public.opd_visits(an);\ncreate index if not exists idx_visits_hn on public.opd_visits(hn);\ncreate index if not exists idx_visits_date on public.opd_visits(visit_date);\ncreate index if not exists idx_visits_status on public.opd_visits(status);\ncreate index if not exists idx_appointments_date on public.opd_appointments(appt_date);\n\n-- ==============================================================================\n-- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key\n-- ==============================================================================\nalter table public.opd_patients enable row level security;\nalter table public.opd_visits enable row level security;\nalter table public.opd_drugs enable row level security;\nalter table public.opd_appointments enable row level security;\nalter table public.opd_procedures enable row level security;\nalter table public.opd_labs enable row level security;\nalter table public.opd_lab_sets enable row level security;\nalter table public.opd_drug_groups enable row level security;\nalter table public.opd_pe_templates enable row level security;\nalter table public.opd_doctors enable row level security;\nalter table public.opd_audit_logs enable row level security;\nalter table public.opd_drug_price_history enable row level security;\nalter table public.opd_system_configs enable row level security;\n\n-- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key\ncreate policy \"Allow all operations for anon on opd_patients\" on public.opd_patients for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_visits\" on public.opd_visits for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drugs\" on public.opd_drugs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_appointments\" on public.opd_appointments for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_procedures\" on public.opd_procedures for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_labs\" on public.opd_labs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_lab_sets\" on public.opd_lab_sets for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_groups\" on public.opd_drug_groups for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_pe_templates\" on public.opd_pe_templates for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_doctors\" on public.opd_doctors for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_audit_logs\" on public.opd_audit_logs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_price_history\" on public.opd_drug_price_history for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_system_configs\" on public.opd_system_configs for all using (true) with check (true);\n\n-- ==============================================================================\n-- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)\n-- ==============================================================================\ndo $\nbegin\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_patients') then\n    alter publication supabase_realtime add table public.opd_patients;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_visits') then\n    alter publication supabase_realtime add table public.opd_visits;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drugs') then\n    alter publication supabase_realtime add table public.opd_drugs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_appointments') then\n    alter publication supabase_realtime add table public.opd_appointments;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_procedures') then\n    alter publication supabase_realtime add table public.opd_procedures;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_labs') then\n    alter publication supabase_realtime add table public.opd_labs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_groups') then\n    alter publication supabase_realtime add table public.opd_drug_groups;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_pe_templates') then\n    alter publication supabase_realtime add table public.opd_pe_templates;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_doctors') then\n    alter publication supabase_realtime add table public.opd_doctors;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_price_history') then\n    alter publication supabase_realtime add table public.opd_drug_price_history;\n  end if;\nend $;\n",
 
       TABLE_MAP: {
+        'opd_nakhonsawan_drug_price_history_v1': { table: 'opd_drug_price_history', pk: 'history_id' },
         'opd_nakhonsawan_patients_v5': { table: 'opd_patients', pk: 'patient_id' },
         'opd_nakhonsawan_visits_v7': { table: 'opd_visits', pk: 'visit_id' },
         'opd_nakhonsawan_drugs_v4': { table: 'opd_drugs', pk: 'drug_id' },
