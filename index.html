@@ -1566,8 +1566,8 @@
       <section class="tab-pane" id="tab-doctors">
         <div class="page-header">
           <div>
-            <h2 class="page-title"><i data-lucide="user-cog"></i> ทะเบียนแพทย์ & บุคลากรผู้ปฏิบัติงาน (Doctor & Staff Master)</h2>
-            <p class="page-subtitle">จัดการรายชื่อแพทย์, พยาบาลวิชาชีพ, ผู้ช่วยพยาบาล และเจ้าหน้าที่สำหรับลงบันทึกและคิดค่า DF <span class="badge badge-warning">เฉพาะ Admin เท่านั้น</span></p>
+            <h2 class="page-title"><i data-lucide="user-cog"></i> ทะเบียนแพทย์ & รายชื่อผู้ปฏิบัติงาน (Doctor & Staff for DF)</h2>
+            <p class="page-subtitle">จัดการรายชื่อแพทย์ผู้ตรวจ และรายชื่อพยาบาล/ผู้ช่วยสำหรับลงบันทึกและคิดค่า DF (ระบบทำงานบนคอมพิวเตอร์เฉพาะแพทย์) <span class="badge badge-warning">เฉพาะ Admin เท่านั้น</span></p>
           </div>
           <div class="header-actions">
             <button class="btn btn-primary" onclick="DoctorModule.openNewModal()"><i data-lucide="user-plus"></i> เพิ่มแพทย์ / บุคลากรใหม่</button>
@@ -3271,7 +3271,8 @@
     const DEFAULT_LABS = [{"lab_id":"LAB1","category":"HEMATOLOGY","name":"CBC","price":150,"active":true},{"lab_id":"LAB2","category":"HEMATOLOGY","name":"ESR","price":80,"active":true},{"lab_id":"LAB3","category":"HEMATOLOGY","name":"G 6 PD","price":150,"active":true},{"lab_id":"LAB4","category":"HEMATOLOGY","name":"ABO group","price":80,"active":true},{"lab_id":"LAB5","category":"HEMATOLOGY","name":"PT INR","price":200,"active":true},{"lab_id":"LAB6","category":"HEMATOLOGY","name":"OF TEST","price":100,"active":true},{"lab_id":"LAB7","category":"HEMATOLOGY","name":"Hb typing","price":350,"active":true},{"lab_id":"LAB8","category":"HEMATOLOGY","name":"Reticulocyte count","price":100,"active":true},{"lab_id":"LAB9","category":"HEMATOLOGY","name":"Le Test","price":100,"active":true},{"lab_id":"LAB10","category":"HEMATOLOGY","name":"Malarial Parasite","price":120,"active":true},{"lab_id":"LAB11","category":"HEMATOLOGY","name":"Rh group","price":80,"active":true},{"lab_id":"LAB12","category":"HEMATOLOGY","name":"PT","price":150,"active":true},{"lab_id":"LAB13","category":"HEMATOLOGY","name":"DCIP","price":100,"active":true},{"lab_id":"LAB14","category":"HEMATOLOGY","name":"Hb A1C","price":200,"active":true},{"lab_id":"LAB15","category":"MICROSCOPY","name":"U/A","price":80,"active":true},{"lab_id":"LAB16","category":"MICROSCOPY","name":"Stool Exam","price":80,"active":true},{"lab_id":"LAB17","category":"MICROSCOPY","name":"Pregnancy test (UPT)","price":120,"active":true},{"lab_id":"LAB18","category":"MICROSCOPY","name":"Screening influenza A and B","price":250,"active":true},{"lab_id":"LAB19","category":"MICROSCOPY","name":"H. pylori antigen","price":350,"active":true},{"lab_id":"LAB20","category":"SEROLOGY AND IMMUNOLOGY","name":"Dengue IgG/IgM/NS1","price":350,"active":true},{"lab_id":"LAB21","category":"SEROLOGY AND IMMUNOLOGY","name":"VDRL","price":100,"active":true},{"lab_id":"LAB22","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HIV","price":200,"active":true},{"lab_id":"LAB23","category":"SEROLOGY AND IMMUNOLOGY","name":"HBs Ag","price":150,"active":true},{"lab_id":"LAB24","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HBs","price":150,"active":true},{"lab_id":"LAB25","category":"SEROLOGY AND IMMUNOLOGY","name":"Anti-HCV","price":250,"active":true},{"lab_id":"LAB26","category":"BIOCHEMISTRY","name":"FBS (Fasting Blood Sugar)","price":80,"active":true},{"lab_id":"LAB27","category":"BIOCHEMISTRY","name":"BUN","price":80,"active":true},{"lab_id":"LAB28","category":"BIOCHEMISTRY","name":"Creatinine","price":80,"active":true},{"lab_id":"LAB29","category":"BIOCHEMISTRY","name":"Uric acid","price":100,"active":true},{"lab_id":"LAB30","category":"BIOCHEMISTRY","name":"Cholesterol","price":80,"active":true},{"lab_id":"LAB31","category":"BIOCHEMISTRY","name":"Triglyceride","price":80,"active":true},{"lab_id":"LAB32","category":"BIOCHEMISTRY","name":"HDL cholesterol","price":100,"active":true},{"lab_id":"LAB33","category":"BIOCHEMISTRY","name":"LDL (direct)","price":120,"active":true},{"lab_id":"LAB34","category":"BIOCHEMISTRY","name":"Lipid Profile (TC, TG, HDL, LDL)","price":250,"active":true},{"lab_id":"LAB35","category":"BIOCHEMISTRY","name":"LFT (Liver Function Test)","price":300,"active":true},{"lab_id":"LAB36","category":"BIOCHEMISTRY","name":"SGOT (AST)","price":80,"active":true},{"lab_id":"LAB37","category":"BIOCHEMISTRY","name":"SGPT (ALT)","price":80,"active":true},{"lab_id":"LAB38","category":"BIOCHEMISTRY","name":"Alkaline phosphatase (ALP)","price":80,"active":true},{"lab_id":"LAB39","category":"BIOCHEMISTRY","name":"Electrolytes (Na, K, Cl, CO2)","price":180,"active":true},{"lab_id":"LAB40","category":"BIOCHEMISTRY","name":"TSH","price":200,"active":true},{"lab_id":"LAB41","category":"BIOCHEMISTRY","name":"FT3","price":200,"active":true},{"lab_id":"LAB42","category":"BIOCHEMISTRY","name":"FT4","price":200,"active":true}];
 
     const STORAGE_KEYS = {
-    DRUG_PRICE_HISTORY: 'opd_nakhonsawan_drug_price_history_v1',
+      STOCK_TRANSACTIONS: 'opd_nakhonsawan_stock_tx_v1',
+      DRUG_PRICE_HISTORY: 'opd_nakhonsawan_drug_price_history_v1',
       USER_PASSWORDS: 'opd_nakhonsawan_user_passwords_v2',
       ADMIN_PIN: 'opd_nakhonsawan_admin_pin_v1',
       PATIENTS: 'opd_nakhonsawan_patients_v5',
@@ -3513,16 +3514,22 @@
         if (!localStorage.getItem(STORAGE_KEYS.PE_TEMPLATES)) this.set(STORAGE_KEYS.PE_TEMPLATES, [{"template_id":"PE_1","title":"ตรวจปกติทุกระบบ (Normal PE)","category":"ทั่วไป","content":"HEENT: not pale, no jaundice, pharynx not injected. Heart: regular, normal S1S2, no murmur. Lungs: clear, equal breath sounds, no adventitious sounds. Abd: soft, non-tender, normal active bowel sounds. Ext: no edema, good capillary refill."},{"template_id":"PE_2","title":"คออักเสบ / ไข้หวัด (URI / Pharyngitis)","category":"ทางเดินหายใจ","content":"HEENT: mild injected pharynx, tonsils 1+ not enlarged, no exudate, no cervical lymphadenopathy. Heart: regular rhythm, normal S1S2. Lungs: clear to auscultation, no wheezing, no crepitation. Abd: soft, non-tender."},{"template_id":"PE_3","title":"หลอดลมอักเสบ / หอบหืด (Bronchitis / Asthma)","category":"ทางเดินหายใจ","content":"HEENT: mildly injected pharynx. Heart: regular rhythm. Lungs: occasional rhonchi / wheezing both lower lungs, prolonged expiratory phase. Abd: soft, not distended, non-tender."},{"template_id":"PE_4","title":"โรคกระเพาะ / แน่นท้อง (Dyspepsia / Gastritis)","category":"ทางเดินอาหาร","content":"HEENT: normal. Heart & Lungs: clear, normal. Abd: soft, mild tenderness at epigastrium, no guarding, no rebound tenderness, normal active bowel sounds."},{"template_id":"PE_5","title":"อุจจาระร่วงเฉียบพลัน (Acute Diarrhea / AGE)","category":"ทางเดินอาหาร","content":"HEENT: dry lips, tongue not dry. Heart: normal S1S2. Lungs: clear. Abd: soft, generalized mild tenderness, hyperactive bowel sounds, no peritoneal signs. Ext: good skin turgor."},{"template_id":"PE_6","title":"ปวดเมื่อยกล้ามเนื้อ (Myalgia / Back Pain)","category":"กล้ามเนื้อและกระดูก","content":"Musculoskeletal: tenderness over trapezius / lumbar paraspinal muscles, full range of motion, no joint swelling, no erythema, no deformity. Neuro: motor power grade V, sensation intact."},{"template_id":"PE_7","title":"ตรวจสุขภาพทั่วไป (General Health Checkup)","category":"ตรวจสุขภาพ","content":"General: good consciousness, well-oriented, not pale, no jaundice. Heart: regular rhythm, no murmur. Lungs: clear both lung fields. Abd: soft, no hepatosplenomegaly. Ext: no edema."}]);
         if (!localStorage.getItem(STORAGE_KEYS.DOCTORS)) this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
         
-        // Auto migrate any existing visits with procedures missing performer or df_price
+        // Auto migrate any existing visits with procedures missing performer or df_price, and standardize doctor/performer names
         visits = this.get(STORAGE_KEYS.VISITS);
         let visitMigrated = false;
         const allProcs = this.get(STORAGE_KEYS.PROCEDURES);
         visits.forEach(v => {
+          if (v.doctor && v.doctor.includes('กชณัฐ') && v.doctor !== 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน') {
+            v.doctor = 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน';
+            visitMigrated = true;
+          }
           if (Array.isArray(v.procedures) && v.procedures.length > 0) {
             v.procedures.forEach(pr => {
-              if (!pr.performer_name) {
-                pr.performer_name = v.doctor || "นพ. กชณัฐ พันธุ์วรรธนะสิน";
-                visitMigrated = true;
+              if (!pr.performer_name || pr.performer_name.includes('กชณัฐ')) {
+                if (pr.performer_name !== 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน') {
+                  pr.performer_name = 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน';
+                  visitMigrated = true;
+                }
               }
               if (pr.df_price === undefined || pr.df_price === null) {
                 const foundMaster = allProcs.find(x => x.name === pr.name || x.proc_id === pr.proc_id);
@@ -3617,28 +3624,31 @@
       init() {
         const saved = localStorage.getItem(STORAGE_KEYS.USER_ROLE);
         if (saved) this.currentRole = saved;
-        const docs = DB.get(STORAGE_KEYS.DOCTORS);
-        this.activeDoctor = docs[0] || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        // บุคลากรที่ใช้งานคอมพิวเตอร์มีเฉพาะแพทย์เท่านั้น รายชื่อที่เหลือเป็นชื่อสำหรับลง DF
+        const realDoctor = docs.find(d => (d.title && d.title.includes('แพทย์')) || d.doctor_id === 'DOC1' || (d.license_no && !d.license_no.startsWith('พ.') && d.license_no !== '-')) || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
+        this.activeDoctor = realDoctor;
         this.updateRoleUI();
       },
 
       getActiveDoctorName() {
-        const d = this.activeDoctor || LoginModule.activeDoctor || (DB.get(STORAGE_KEYS.DOCTORS)[0]);
-        if (!d) return "นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน";
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const d = this.activeDoctor || docs.find(x => (x.title && x.title.includes('แพทย์')) || x.doctor_id === 'DOC1') || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
         return (d.title || 'นายแพทย์') + ' ' + d.first_name + ' ' + d.last_name;
       },
 
       getActiveDoctorLicense() {
-        const d = this.activeDoctor || LoginModule.activeDoctor || (DB.get(STORAGE_KEYS.DOCTORS)[0]);
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const d = this.activeDoctor || docs.find(x => (x.title && x.title.includes('แพทย์')) || x.doctor_id === 'DOC1') || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
         return d ? (d.license_no || '69870') : '69870';
       },
 
       getRoleName(role) {
         if (role === 'ADMIN') return 'ผู้ดูแลระบบ (Admin)';
         if (role === 'DOCTOR') {
-          const d = this.activeDoctor || LoginModule.activeDoctor;
-          if (d) return 'นพ. ' + d.first_name + ' (ว. ' + (d.license_no || '69870') + ')';
-          return 'แพทย์ (Doctor)';
+          const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+          const d = this.activeDoctor || docs.find(x => (x.title && x.title.includes('แพทย์')) || x.doctor_id === 'DOC1') || { first_name: "กชณัฐ", license_no: "69870" };
+          return 'นพ. ' + (d.first_name || 'กชณัฐ') + ' (ว. ' + (d.license_no || '69870') + ')';
         }
         return 'ผู้ช่วย / เจ้าหน้าที่ (Staff)';
       },
@@ -4028,8 +4038,8 @@
         document.getElementById('stat-today-appointments').textContent = todayApps.length;
         document.getElementById('badge-appoint-count').textContent = todayApps.length;
 
-        // Calculate Revenue ONLY from TODAY's visits
-        const todayRevenue = todayVisits.reduce((sum, v) => sum + (v.billing?.total || 0), 0);
+        // Calculate Revenue ONLY from TODAY's PAID visits
+        const todayRevenue = todayVisits.filter(v => v.status === 'CLOSED' || v.billing?.paid).reduce((sum, v) => sum + (v.billing?.total || 0), 0);
         document.getElementById('stat-today-revenue').textContent = '฿' + todayRevenue.toLocaleString();
 
         const lowStockDrugs = drugs.filter(d => (d.stock || 0) <= (d.min_stock || 10));
@@ -4592,7 +4602,24 @@
         fromV.prescriptions.forEach(p => {
           State.selectedVisit.prescriptions.push({ ...p });
           const d = drugs.find(x => x.drug_id === p.drug_id);
-          if (d) d.stock = Math.max(0, (d.stock || 0) - p.qty);
+          if (d) {
+            const stockBefore = d.stock || 0;
+            d.stock = Math.max(0, stockBefore - p.qty);
+            StockModule.recordStockTx({
+              drug_id: d.drug_id,
+              generic_name: d.generic_name,
+              trade_name: d.trade_name || '',
+              visit_id: State.selectedVisit.visit_id,
+              type: 'SALE',
+              qty: p.qty,
+              cost_price: d.purchase_price || 0,
+              sale_price: p.unit_price || 0,
+              stock_before: stockBefore,
+              stock_after: d.stock,
+              reference_no: State.selectedVisit.an || '',
+              note: 'สั่งจ่ายยาผ่าน Re-med จาก Visit ' + (fromV.an || '')
+            });
+          }
         });
         DB.set(STORAGE_KEYS.DRUGS, drugs);
         this.closeRemedModal();
@@ -4611,16 +4638,34 @@
 
         g.items.forEach(item => {
           const d = drugs.find(x => x.drug_id === item.drug_id);
+          const qty = item.qty || 10;
           State.selectedVisit.prescriptions.push({
             drug_id: item.drug_id,
             generic_name: item.generic_name,
             trade_name: item.trade_name || '',
-            qty: item.qty || 10,
+            qty: qty,
             sig: item.sig || '',
             unit_price: d ? d.sale_price : 0,
-            amount: (d ? d.sale_price : 0) * (item.qty || 10)
+            amount: (d ? d.sale_price : 0) * qty
           });
-          if (d) d.stock = Math.max(0, (d.stock || 0) - (item.qty || 10));
+          if (d) {
+            const stockBefore = d.stock || 0;
+            d.stock = Math.max(0, stockBefore - qty);
+            StockModule.recordStockTx({
+              drug_id: d.drug_id,
+              generic_name: d.generic_name,
+              trade_name: d.trade_name || '',
+              visit_id: State.selectedVisit.visit_id,
+              type: 'SALE',
+              qty: qty,
+              cost_price: d.purchase_price || 0,
+              sale_price: d.sale_price || 0,
+              stock_before: stockBefore,
+              stock_after: d.stock,
+              reference_no: State.selectedVisit.an || '',
+              note: 'สั่งจ่ายชุดยา: ' + g.name
+            });
+          }
         });
         DB.set(STORAGE_KEYS.DRUGS, drugs);
         this.renderPrescriptionTable();
@@ -4670,7 +4715,7 @@
           hn: patient.hn,
           patient_name: (patient.title || '') + patient.first_name + ' ' + patient.last_name,
           visit_date: new Date().toISOString().slice(0, 16).replace('T', ' '),
-          doctor: "นพ. กชณัฐ พันธุ์วรรธนะสิน",
+          doctor: AuthModule.getActiveDoctorName(),
           service_type: document.getElementById('nv-service-type').value,
           vitals: { ...lastVitals, bp: "", pr: "", temp: "" },
           chief_complaint: document.getElementById('nv-cc').value.trim() || "มาตรวจรักษาทั่วไป",
@@ -5177,8 +5222,25 @@
 
         const drugs = DB.get(STORAGE_KEYS.DRUGS);
         const drugObj = drugs.find(x => x.drug_id === d.drug_id);
-        if (drugObj) drugObj.stock = Math.max(0, (drugObj.stock || 0) - qty);
-        DB.set(STORAGE_KEYS.DRUGS, drugs);
+        if (drugObj) {
+          const stockBefore = drugObj.stock || 0;
+          drugObj.stock = Math.max(0, stockBefore - qty);
+          DB.set(STORAGE_KEYS.DRUGS, drugs);
+          StockModule.recordStockTx({
+            drug_id: drugObj.drug_id,
+            generic_name: drugObj.generic_name,
+            trade_name: drugObj.trade_name || '',
+            visit_id: State.selectedVisit.visit_id,
+            type: 'SALE',
+            qty: qty,
+            cost_price: drugObj.purchase_price || 0,
+            sale_price: d.sale_price || 0,
+            stock_before: stockBefore,
+            stock_after: drugObj.stock,
+            reference_no: State.selectedVisit.an || '',
+            note: 'สั่งจ่ายยาสำหรับ Visit ' + (State.selectedVisit.an || '')
+          });
+        }
 
         this.closeAddDrugModal();
         this.renderPrescriptionTable();
@@ -5188,8 +5250,35 @@
       updateDrugQty(idx, val) {
         if (State.selectedVisit?.prescriptions[idx]) {
           const item = State.selectedVisit.prescriptions[idx];
-          item.qty = parseInt(val, 10) || 1;
+          const oldQty = item.qty || 0;
+          const newQty = parseInt(val, 10) || 1;
+          const diff = newQty - oldQty;
+          item.qty = newQty;
           item.amount = item.qty * item.unit_price;
+
+          if (diff !== 0 && item.drug_id) {
+            const drugs = DB.get(STORAGE_KEYS.DRUGS);
+            const drugObj = drugs.find(x => x.drug_id === item.drug_id);
+            if (drugObj) {
+              const stockBefore = drugObj.stock || 0;
+              drugObj.stock = Math.max(0, stockBefore - diff);
+              DB.set(STORAGE_KEYS.DRUGS, drugs);
+              StockModule.recordStockTx({
+                drug_id: drugObj.drug_id,
+                generic_name: drugObj.generic_name,
+                trade_name: drugObj.trade_name || '',
+                visit_id: State.selectedVisit.visit_id,
+                type: diff > 0 ? 'SALE' : 'RETURN',
+                qty: Math.abs(diff),
+                cost_price: drugObj.purchase_price || 0,
+                sale_price: item.unit_price || 0,
+                stock_before: stockBefore,
+                stock_after: drugObj.stock,
+                reference_no: State.selectedVisit.an || '',
+                note: (diff > 0 ? 'ปรับเพิ่มจำนวนยาใน Visit' : 'ปรับลดจำนวนยาใน Visit')
+              });
+            }
+          }
           this.renderPrescriptionTable();
         }
       },
@@ -5198,8 +5287,25 @@
         const item = State.selectedVisit.prescriptions[idx];
         const drugs = DB.get(STORAGE_KEYS.DRUGS);
         const drugObj = drugs.find(x => x.drug_id === item.drug_id);
-        if (drugObj) drugObj.stock = (drugObj.stock || 0) + item.qty;
-        DB.set(STORAGE_KEYS.DRUGS, drugs);
+        if (drugObj) {
+          const stockBefore = drugObj.stock || 0;
+          drugObj.stock = stockBefore + item.qty;
+          DB.set(STORAGE_KEYS.DRUGS, drugs);
+          StockModule.recordStockTx({
+            drug_id: drugObj.drug_id,
+            generic_name: drugObj.generic_name,
+            trade_name: drugObj.trade_name || '',
+            visit_id: State.selectedVisit.visit_id,
+            type: 'RETURN',
+            qty: item.qty,
+            cost_price: drugObj.purchase_price || 0,
+            sale_price: item.unit_price || 0,
+            stock_before: stockBefore,
+            stock_after: drugObj.stock,
+            reference_no: State.selectedVisit.an || '',
+            note: 'ลบรายการยาออกจาก Visit ' + (State.selectedVisit.an || '')
+          });
+        }
 
         State.selectedVisit.prescriptions.splice(idx, 1);
         this.renderPrescriptionTable();
@@ -5290,6 +5396,34 @@
         const an = State.selectedVisit.an || '';
         const name = State.selectedVisit.patient_name || '';
         if (!confirm('⚠️ ยืนยันการลบ Visit ' + an + ' (' + name + ') หรือไม่?\nข้อมูลการตรวจและค่าใช้จ่ายของ Visit นี้จะถูกลบออกจากระบบอย่างถาวร')) return;
+
+        // คืนสต็อกยาทั้งหมดที่สั่งจ่ายใน Visit นี้กลับเข้าคลัง
+        const prescriptions = State.selectedVisit.prescriptions || [];
+        if (prescriptions.length > 0) {
+          const drugs = DB.get(STORAGE_KEYS.DRUGS);
+          prescriptions.forEach(p => {
+            const d = drugs.find(x => x.drug_id === p.drug_id);
+            if (d) {
+              const stockBefore = d.stock || 0;
+              d.stock = stockBefore + (p.qty || 0);
+              StockModule.recordStockTx({
+                drug_id: d.drug_id,
+                generic_name: d.generic_name,
+                trade_name: d.trade_name || '',
+                visit_id: State.selectedVisit.visit_id,
+                type: 'RETURN_CANCEL_VISIT',
+                qty: p.qty || 0,
+                cost_price: d.purchase_price || 0,
+                sale_price: p.unit_price || 0,
+                stock_before: stockBefore,
+                stock_after: d.stock,
+                reference_no: an,
+                note: 'คืนสต็อกยาจากการลบ Visit ' + an
+              });
+            }
+          });
+          DB.set(STORAGE_KEYS.DRUGS, drugs);
+        }
 
         const visitId = State.selectedVisit.visit_id;
         DB.deleteItem(STORAGE_KEYS.VISITS, visitId, 'visit_id');
@@ -5539,18 +5673,36 @@
         const drugs = DB.get(STORAGE_KEYS.DRUGS);
         const d = drugs.find(x => x.drug_id === drugId);
         const price = d ? d.sale_price : 0;
+        const itemQty = qty || 10;
 
         State.selectedVisit.prescriptions.push({
           drug_id: drugId,
           generic_name: genericName,
           trade_name: tradeName,
-          qty: qty || 10,
+          qty: itemQty,
           sig: sig || '',
           unit_price: price,
-          amount: price * (qty || 10)
+          amount: price * itemQty
         });
 
-        if (d) d.stock = Math.max(0, (d.stock || 0) - (qty || 10));
+        if (d) {
+          const stockBefore = d.stock || 0;
+          d.stock = Math.max(0, stockBefore - itemQty);
+          StockModule.recordStockTx({
+            drug_id: d.drug_id,
+            generic_name: d.generic_name,
+            trade_name: d.trade_name || '',
+            visit_id: State.selectedVisit.visit_id,
+            type: 'SALE',
+            qty: itemQty,
+            cost_price: d.purchase_price || 0,
+            sale_price: price,
+            stock_before: stockBefore,
+            stock_after: d.stock,
+            reference_no: State.selectedVisit.an || '',
+            note: 'สั่งจ่ายยาจากประวัติผู้ป่วย: ' + genericName
+          });
+        }
         DB.set(STORAGE_KEYS.DRUGS, drugs);
 
         VisitModule.renderPrescriptionTable();
@@ -6272,6 +6424,34 @@
 
         if (!confirm('⚠️ ยืนยันการลบ Visit ' + (v.an || '') + ' (' + (v.patient_name || '') + ') หรือไม่?\nการกระทำนี้ไม่สามารถย้อนกลับได้')) return;
 
+        // คืนสต็อกยาทั้งหมดที่สั่งจ่ายใน Visit นี้กลับเข้าคลัง
+        const prescriptions = v.prescriptions || [];
+        if (prescriptions.length > 0) {
+          const drugs = DB.get(STORAGE_KEYS.DRUGS);
+          prescriptions.forEach(p => {
+            const d = drugs.find(x => x.drug_id === p.drug_id);
+            if (d) {
+              const stockBefore = d.stock || 0;
+              d.stock = stockBefore + (p.qty || 0);
+              StockModule.recordStockTx({
+                drug_id: d.drug_id,
+                generic_name: d.generic_name,
+                trade_name: d.trade_name || '',
+                visit_id: v.visit_id,
+                type: 'RETURN_CANCEL_VISIT',
+                qty: p.qty || 0,
+                cost_price: d.purchase_price || 0,
+                sale_price: p.unit_price || 0,
+                stock_before: stockBefore,
+                stock_after: d.stock,
+                reference_no: v.an || '',
+                note: 'คืนสต็อกยาจากการลบ Visit ' + (v.an || '')
+              });
+            }
+          });
+          DB.set(STORAGE_KEYS.DRUGS, drugs);
+        }
+
         DB.deleteItem(STORAGE_KEYS.VISITS, visitId, 'visit_id');
 
         const logs = DB.get(STORAGE_KEYS.AUDIT_LOGS) || [];
@@ -6350,33 +6530,37 @@
         lucide.createIcons();
       },
       populateDropdowns() {
-        const docs = DB.get(STORAGE_KEYS.DOCTORS).filter(d => d.active !== false);
-        const optionsHtml = docs.map(d => {
-          const fullName = (d.title || '') + ' ' + d.first_name + ' ' + d.last_name;
-          const lic = d.license_no ? ' (' + (d.license_no.startsWith('ว.') || d.license_no.startsWith('พ.') ? d.license_no : ('ว. ' + d.license_no)) + ')' : '';
+        const allStaff = DB.get(STORAGE_KEYS.DOCTORS).filter(d => d.active !== false);
+        // รายชื่อเฉพาะแพทย์ (สำหรับห้องตรวจ & ใบรับรองแพทย์)
+        const doctorsOnly = allStaff.filter(d => (d.title && d.title.includes('แพทย์')) || d.doctor_id === 'DOC1' || (d.license_no && !d.license_no.startsWith('พ.') && d.license_no !== '-'));
+        const docList = doctorsOnly.length > 0 ? doctorsOnly : allStaff;
+
+        const doctorOptionsHtml = docList.map(d => {
+          const fullName = (d.title || 'นายแพทย์') + ' ' + d.first_name + ' ' + d.last_name;
+          const lic = d.license_no ? ' (' + (d.license_no.startsWith('ว.') ? d.license_no : ('ว. ' + d.license_no)) + ')' : '';
           return '<option value="' + d.doctor_id + '">' + fullName + lic + '</option>';
         }).join('');
 
         // 2. Chart Header Doctor Select
         const chartSelect = document.getElementById('v-chart-doctor-select');
         if (chartSelect) {
-          chartSelect.innerHTML = optionsHtml;
+          chartSelect.innerHTML = doctorOptionsHtml;
           if (State.selectedVisit?.doctor_id) chartSelect.value = State.selectedVisit.doctor_id;
         }
 
         // 3. Certificates Doctor Select
         const certSelect = document.getElementById('cert-doctor-select');
         if (certSelect) {
-          certSelect.innerHTML = optionsHtml;
+          certSelect.innerHTML = doctorOptionsHtml;
           this.updateCertDoctorFields();
         }
 
-        // 4. Performer Select in Visit Chart
+        // 4. Performer Select in Visit Chart (all staff for DF)
         if (typeof VisitModule !== 'undefined' && VisitModule.renderStaffPerformerDropdown) {
           VisitModule.renderStaffPerformerDropdown();
         }
 
-        // 5. Staff Filter in DF Module
+        // 5. Staff Filter in DF Module (all staff for DF)
         if (typeof DFModule !== 'undefined' && DFModule.populateStaffFilter) {
           DFModule.populateStaffFilter();
         }
@@ -6413,11 +6597,12 @@
         const certSelect = document.getElementById('cert-doctor-select');
         if (!certSelect) return;
         const docId = certSelect.value;
-        const d = DB.get(STORAGE_KEYS.DOCTORS).find(x => x.doctor_id === docId) || DB.get(STORAGE_KEYS.DOCTORS)[0];
-        if (d) {
-          const fullName = (d.title || 'นายแพทย์') + ' ' + d.first_name + ' ' + d.last_name;
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const realDoctor = docs.find(x => x.doctor_id === docId) || docs.find(x => (x.title && x.title.includes('แพทย์')) || x.doctor_id === 'DOC1') || docs[0];
+        if (realDoctor) {
+          const fullName = (realDoctor.title || 'นายแพทย์') + ' ' + realDoctor.first_name + ' ' + realDoctor.last_name;
           document.getElementById('cert-doctor-name').value = fullName;
-          document.getElementById('cert-doctor-license').value = d.license_no || '69870';
+          document.getElementById('cert-doctor-license').value = realDoctor.license_no || '69870';
         }
       },
       openNewModal() {
@@ -6501,6 +6686,39 @@
         if (docs.length === 0) { alert('ต้องมีบุคลากรในระบบอย่างน้อย 1 ท่าน'); return; }
         DB.set(STORAGE_KEYS.DOCTORS, docs);
         this.render();
+      }
+    };
+
+    const StockModule = {
+      recordStockTx(entry) {
+        try {
+          const tx = {
+            tx_id: 'STX_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+            drug_id: entry.drug_id || '',
+            generic_name: entry.generic_name || '',
+            trade_name: entry.trade_name || '',
+            visit_id: entry.visit_id || '',
+            type: entry.type || 'SALE', // 'PURCHASE', 'SALE', 'RETURN', 'ADJUST', 'RETURN_CANCEL_VISIT', 'OCR_INBOUND'
+            qty: Number(entry.qty || 0),
+            cost_price: Number(entry.cost_price || 0),
+            sale_price: Number(entry.sale_price || 0),
+            stock_before: Number(entry.stock_before || 0),
+            stock_after: Number(entry.stock_after || 0),
+            reference_no: entry.reference_no || '',
+            note: entry.note || '',
+            operator: entry.operator || (typeof AuthModule !== 'undefined' && AuthModule.getCurrentUser ? AuthModule.getCurrentUser()?.name : (document.getElementById('current-doctor-name')?.innerText || 'ผู้ปฏิบัติงาน')),
+            created_at: new Date().toISOString()
+          };
+          DB.upsertItem(STORAGE_KEYS.STOCK_TRANSACTIONS, tx, 'tx_id');
+          return tx;
+        } catch (e) {
+          console.error('Error recording stock transaction:', e);
+        }
+      },
+      getTransactions(drugId = null) {
+        const txs = DB.get(STORAGE_KEYS.STOCK_TRANSACTIONS) || [];
+        if (!drugId || drugId === 'ALL') return txs;
+        return txs.filter(t => t.drug_id === drugId);
       }
     };
 
@@ -6677,6 +6895,21 @@
             qty_change: qty,
             stock_before: stockBefore,
             stock_after: d.stock,
+            note: 'รับยาเข้าคลังทั่วไป'
+          });
+
+          StockModule.recordStockTx({
+            drug_id: d.drug_id,
+            generic_name: d.generic_name,
+            trade_name: d.trade_name || '',
+            visit_id: '',
+            type: 'PURCHASE',
+            qty: qty,
+            cost_price: (cost > 0 ? cost : oldCost),
+            sale_price: d.sale_price || 0,
+            stock_before: stockBefore,
+            stock_after: d.stock,
+            reference_no: '',
             note: 'รับยาเข้าคลังทั่วไป'
           });
         }
@@ -7884,7 +8117,7 @@ Return ONLY valid JSON without markdown wrapping.`;
                 generationConfig: {
                   temperature: 0.1,
                   topP: 0.95,
-                  maxOutputTokens: 4096
+                  maxOutputTokens: 8192
                 }
               })
             });
@@ -7940,18 +8173,18 @@ Return ONLY valid JSON without markdown wrapping.`;
             document.getElementById('ocr-vendor-name').value = successResult.vendor_name;
           }
 
-          let rawItems = Array.isArray(successResult.items) ? successResult.items : (Array.isArray(successResult) ? successResult : []);
+          let rawItems = Array.isArray(successResult.items) ? successResult.items : (Array.isArray(successResult) ? successResult : (successResult.data || successResult.drugs || []));
           rawItems = rawItems.map(item => enrichOpdDrugItem(item));
 
           if (rawItems.length === 0) {
             alert('AI ไม่พบรายการยาในเอกสาร กรุณาตรวจสอบความคมชัดของรูปภาพแล้วลองใหม่อีกครั้ง');
           } else {
             this.processExtractedItems(rawItems);
-          const dropzone = document.getElementById('ocr-dropzone');
-          const toggleBtn = document.getElementById('ocr-toggle-panel-btn');
-          if (dropzone) dropzone.style.display = 'none';
-          if (toggleBtn) toggleBtn.innerHTML = '<i data-lucide="chevron-down"></i> ขยายแผงสแกน';
-          lucide.createIcons();
+            const dropzone = document.getElementById('ocr-dropzone');
+            const toggleBtn = document.getElementById('ocr-toggle-panel-btn');
+            if (dropzone) dropzone.style.display = 'none';
+            if (toggleBtn) toggleBtn.innerHTML = '<i data-lucide="chevron-down"></i> ขยายแผงสแกน';
+            lucide.createIcons();
           }
         } else {
           if (statusBadge) statusBadge.innerText = '❌ การสแกนล้มเหลว';
@@ -8026,6 +8259,9 @@ Return ONLY valid JSON without markdown wrapping.`;
             action: action
           };
         });
+
+        // เลือกทุกรายการที่สแกนได้โดยอัตโนมัติ เพื่อให้ผู้ใช้ตรวจสอบและกดยืนยันนำเข้าได้ทันที
+        this.scannedRows.forEach((_, idx) => this.selectedIndices.add(idx));
 
         this.renderOcrTable();
       },
@@ -8375,6 +8611,21 @@ Return ONLY valid JSON without markdown wrapping.`;
                 ref_invoice: fullRef,
                 note: 'รับยาเข้าคลังผ่าน AI OCR สแกนใบเสร็จ'
               });
+
+              StockModule.recordStockTx({
+                drug_id: d.drug_id,
+                generic_name: d.generic_name,
+                trade_name: d.trade_name || '',
+                visit_id: '',
+                type: 'OCR_INBOUND',
+                qty: qty,
+                cost_price: (cost > 0 ? cost : oldCost),
+                sale_price: (sale > 0 ? sale : oldSale),
+                stock_before: stockBefore,
+                stock_after: d.stock,
+                reference_no: fullRef,
+                note: 'รับยาเข้าคลังผ่าน AI OCR'
+              });
             }
           } else {
             const newDrugId = 'D_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -8410,6 +8661,21 @@ Return ONLY valid JSON without markdown wrapping.`;
               stock_after: qty,
               ref_invoice: fullRef,
               note: 'สร้างรายการยาใหม่ผ่าน AI OCR สแกนใบเสร็จ'
+            });
+
+            StockModule.recordStockTx({
+              drug_id: newDrugId,
+              generic_name: newDrug.generic_name,
+              trade_name: newDrug.trade_name || '',
+              visit_id: '',
+              type: 'OCR_INBOUND',
+              qty: qty,
+              cost_price: cost,
+              sale_price: sale,
+              stock_before: 0,
+              stock_after: qty,
+              reference_no: fullRef,
+              note: 'สร้างรายการยาใหม่และรับเข้าผ่าน AI OCR'
             });
           }
         });
@@ -8771,6 +9037,14 @@ Return ONLY valid JSON without markdown wrapping.`;
         const visits = DB.get(STORAGE_KEYS.VISITS) || [];
 
         return visits.filter(v => {
+          // ไม่รวม Visit ที่ถูกยกเลิก
+          if (v.status === 'CANCELLED' || v.status === 'cancelled') return false;
+
+          // รายการที่ยังไม่ได้ชำระเงิน (รอตรวจ / กำลังตรวจ / ยังไม่ปิดบิล) จะไม่ขึ้นในรายงานสรุปรายวัน
+          // ต้องได้รับการชำระเงินแล้วเท่านั้น (billing.paid === true หรือ status === 'CLOSED' โดยที่ paid ไม่ใช่ false)
+          const isPaid = (v.billing && v.billing.paid === true) || (v.status === 'CLOSED' && (!v.billing || v.billing.paid !== false));
+          if (!isPaid) return false;
+
           const vDate = (v.visit_date || '').slice(0, 10);
           if (fromDate && vDate < fromDate) return false;
           if (toDate && vDate > toDate) return false;
@@ -9282,6 +9556,34 @@ Return ONLY valid JSON without markdown wrapping.`;
         return raw.slice(0, 10);
       },
 
+      canonicalStaffName(rawName) {
+        if (!rawName) return 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน';
+        const str = String(rawName).trim();
+        if (str.includes('กชณัฐ')) {
+          return 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน';
+        }
+        if (str.includes('กาญจนา')) {
+          return 'ผช. กาญจนา บุญมา';
+        }
+        if (str.includes('พิมลดา') || str.includes('ศิรัญญา')) {
+          const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+          const matched = docs.find(d => d.first_name && str.includes(d.first_name));
+          if (matched) return ((matched.title ? matched.title + ' ' : '') + matched.first_name + ' ' + matched.last_name).trim();
+          return 'พว. ศิรัญญา โพธิ์นาค';
+        }
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const cleanRaw = str.replace(/^(นพ\.|นายแพทย์|พญ\.|แพทย์หญิง|พว\.|ผช\.|ภก\.|ภญ\.|ทพ\.|ทพญ\.|จนท\.|นาย|นาง|น\.ส\.)\s*/g, '').trim();
+        const matched = docs.find(d => {
+          const fullName = ((d.title ? d.title + ' ' : '') + d.first_name + ' ' + d.last_name).trim();
+          const cleanDoc = (d.first_name + ' ' + d.last_name).trim();
+          return str === fullName || cleanRaw === cleanDoc || (d.first_name && cleanRaw.includes(d.first_name));
+        });
+        if (matched) {
+          return ((matched.title ? matched.title + ' ' : '') + matched.first_name + ' ' + matched.last_name).trim();
+        }
+        return str;
+      },
+
       getFilteredData() {
         const startVal = document.getElementById('df-filter-date-start')?.value || '';
         const endVal = document.getElementById('df-filter-date-end')?.value || '';
@@ -9298,12 +9600,13 @@ Return ONLY valid JSON without markdown wrapping.`;
           if (startVal && vDate && vDate < startVal) return;
           if (endVal && vDate && vDate > endVal) return;
 
-          const defaultDoc = v.doctor || (docs[0] ? (docs[0].title ? docs[0].title + ' ' : '') + docs[0].first_name + ' ' + docs[0].last_name : 'แพทย์ผู้ตรวจ');
+          const defaultDoc = v.doctor || (docs[0] ? (docs[0].title ? docs[0].title + ' ' : '') + docs[0].first_name + ' ' + docs[0].last_name : 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน');
           const procs = Array.isArray(v.procedures) ? v.procedures : [];
           let hasExplicitConsultation = false;
 
           procs.forEach(p => {
-            const performer = p.performer_name || defaultDoc;
+            const rawPerformer = p.performer_name || defaultDoc;
+            const performer = this.canonicalStaffName(rawPerformer);
             const isConsult = (p.proc_id === 'PR001' || p.proc_id === 'PROC1' || (p.category && p.category.includes('ตรวจ')) || (p.name && (p.name.includes('ตรวจรักษา') || p.name.includes('ตรวจโรค') || p.name.includes('Consultation') || p.name.includes('ตรวจสุขภาพ'))));
             if (isConsult) hasExplicitConsultation = true;
 
@@ -9412,14 +9715,15 @@ Return ONLY valid JSON without markdown wrapping.`;
         const staffMap = new Map();
 
         transactions.forEach(t => {
-          if (!staffMap.has(t.staff)) {
-            const cleanStaff = t.staff.replace(/^(นพ\.|นายแพทย์|พญ\.|แพทย์หญิง|พว\.|ผช\.|ภก\.|ภญ\.|ทพ\.|ทพญ\.|จนท\.|นาย|นาง|น\.ส\.)\s*/g, '').trim();
+          const canonical = this.canonicalStaffName(t.staff);
+          if (!staffMap.has(canonical)) {
+            const cleanStaff = canonical.replace(/^(นพ\.|นายแพทย์|พญ\.|แพทย์หญิง|พว\.|ผช\.|ภก\.|ภญ\.|ทพ\.|ทพญ\.|จนท\.|นาย|นาง|น\.ส\.)\s*/g, '').trim();
             const docObj = docs.find(d => {
-              const fullName = (d.title ? d.title + ' ' : '') + d.first_name + ' ' + d.last_name;
-              return fullName === t.staff || t.staff.includes(d.first_name) || cleanStaff.includes(d.first_name);
+              const fullName = ((d.title ? d.title + ' ' : '') + d.first_name + ' ' + d.last_name).trim();
+              return fullName === canonical || canonical.includes(d.first_name) || cleanStaff.includes(d.first_name);
             });
-            staffMap.set(t.staff, {
-              name: t.staff,
+            staffMap.set(canonical, {
+              name: canonical,
               title: docObj?.title || '',
               specialty: docObj?.specialty || 'แพทย์ / บุคลากรทางการแพทย์',
               license_no: docObj?.license_no || '',
@@ -9429,7 +9733,7 @@ Return ONLY valid JSON without markdown wrapping.`;
               clinic: 0
             });
           }
-          const s = staffMap.get(t.staff);
+          const s = staffMap.get(canonical);
           s.count += 1;
           s.revenue += t.price;
           s.df += t.df_amount;
@@ -11129,9 +11433,10 @@ Return ONLY valid JSON without markdown wrapping.`;
       isSyncing: false,
       status: 'offline', // 'connected', 'connecting', 'offline', 'error'
       lastSyncTime: null,
-      sqlSchema: "-- ==============================================================================\n-- สคริปต์สร้างฐานข้อมูล Supabase สำหรับระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n-- วิธีใช้: นำโค้ดทั้งหมดนี้ไปวางในหน้า \"SQL Editor\" ของ Supabase แล้วกดปุ่ม \"RUN\"\n-- ==============================================================================\n\n-- 1. ตารางผู้ป่วย (opd_patients)\ncreate table if not exists public.opd_patients (\n    patient_id text primary key,\n    hn text not null,\n    national_id text,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    sex text,\n    dob text,\n    phone text,\n    rights text default 'UC',\n    chronic text,\n    drug_allergy text,\n    address text,\n    note text,\n    raw_data jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 2. ตารางการเข้ารับบริการ / AN (opd_visits)\ncreate table if not exists public.opd_visits (\n    visit_id text primary key,\n    an text not null,\n    hn text not null,\n    patient_id text not null,\n    patient_name text,\n    visit_date text,\n    queue_no text,\n    queue_type text default 'ทั่วไป',\n    status text default 'waiting', -- waiting, examining, lab_wait, pharmacy, completed, cancelled\n    doctor text,\n    doctor_id text,\n    doctor_license text,\n    cc text, -- Chief Complaint\n    pi text, -- Present Illness\n    pe text, -- Physical Examination\n    diagnosis text,\n    vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat\n    drugs jsonb, -- array of prescribed drugs\n    labs jsonb, -- array of lab orders & results\n    procedures jsonb, -- array of procedures & DF\n    billing jsonb, -- total, discount, net, payment_type\n    certificates jsonb, -- medical certificate data\n    audit_logs jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)\ncreate table if not exists public.opd_drugs (\n    drug_id text primary key,\n    code text,\n    trade_name text,\n    generic_name text not null,\n    dosage text,\n    unit text,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock numeric default 0,\n    category text,\n    usage_instruction text,\n    usage_text text,\n    warning text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 4. ตารางการนัดหมาย (opd_appointments)\ncreate table if not exists public.opd_appointments (\n    appointment_id text primary key,\n    patient_id text not null,\n    hn text not null,\n    patient_name text not null,\n    doctor text,\n    appt_date text not null,\n    appt_time text,\n    reason text,\n    status text default 'scheduled', -- scheduled, arrived, completed, cancelled\n    note text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 5. ตารางหัตถการ (opd_procedures)\ncreate table if not exists public.opd_procedures (\n    proc_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    df_price numeric default 0,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 6. ตารางตรวจทางห้องปฏิบัติการ (opd_labs)\ncreate table if not exists public.opd_labs (\n    lab_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    normal_range text,\n    unit text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 7. ตารางชุดแล็บ (opd_lab_sets)\ncreate table if not exists public.opd_lab_sets (\n    set_id text primary key,\n    name text not null,\n    category text,\n    description text,\n    items jsonb,\n    price numeric default 0,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 8. ตารางชุดยาที่ใช้บ่อย (opd_drug_groups)\ncreate table if not exists public.opd_drug_groups (\n    group_id text primary key,\n    name text not null,\n    description text,\n    items jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 9. ตารางเทมเพลตตรวจร่างกาย (opd_pe_templates)\ncreate table if not exists public.opd_pe_templates (\n    template_id text primary key,\n    title text not null,\n    category text,\n    content text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 10. ตารางแพทย์และเจ้าหน้าที่ (opd_doctors)\ncreate table if not exists public.opd_doctors (\n    doctor_id text primary key,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    license_no text,\n    specialty text,\n    phone text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 11. ตาราง Audit Logs บันทึกการใช้งาน (opd_audit_logs)\ncreate table if not exists public.opd_audit_logs (\n    id bigint generated always as identity primary key,\n    action text,\n    user_role text,\n    doctor_name text,\n    details jsonb,\n    timestamp text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตารางประวัติการรับเข้า & ปรับราคายา (opd_drug_price_history)\ncreate table if not exists public.opd_drug_price_history (\n    history_id text primary key,\n    drug_id text not null,\n    generic_name text not null,\n    trade_name text,\n    type text not null,\n    old_cost numeric default 0,\n    new_cost numeric default 0,\n    old_price numeric default 0,\n    new_price numeric default 0,\n    qty_change numeric default 0,\n    stock_before numeric default 0,\n    stock_after numeric default 0,\n    ref_invoice text,\n    note text,\n    operator text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตาราง System Configs (opd_system_configs)\ncreate table if not exists public.opd_system_configs (\n    key text primary key,\n    value jsonb,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- ==============================================================================\n-- สร้าง Indexes เพื่อความเร็วในการค้นหา\n-- ==============================================================================\ncreate index if not exists idx_patients_hn on public.opd_patients(hn);\ncreate index if not exists idx_patients_cid on public.opd_patients(national_id);\ncreate index if not exists idx_patients_name on public.opd_patients(first_name, last_name);\ncreate index if not exists idx_visits_an on public.opd_visits(an);\ncreate index if not exists idx_visits_hn on public.opd_visits(hn);\ncreate index if not exists idx_visits_date on public.opd_visits(visit_date);\ncreate index if not exists idx_visits_status on public.opd_visits(status);\ncreate index if not exists idx_appointments_date on public.opd_appointments(appt_date);\n\n-- ==============================================================================\n-- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key\n-- ==============================================================================\nalter table public.opd_patients enable row level security;\nalter table public.opd_visits enable row level security;\nalter table public.opd_drugs enable row level security;\nalter table public.opd_appointments enable row level security;\nalter table public.opd_procedures enable row level security;\nalter table public.opd_labs enable row level security;\nalter table public.opd_lab_sets enable row level security;\nalter table public.opd_drug_groups enable row level security;\nalter table public.opd_pe_templates enable row level security;\nalter table public.opd_doctors enable row level security;\nalter table public.opd_audit_logs enable row level security;\nalter table public.opd_drug_price_history enable row level security;\nalter table public.opd_system_configs enable row level security;\n\n-- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key\ncreate policy \"Allow all operations for anon on opd_patients\" on public.opd_patients for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_visits\" on public.opd_visits for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drugs\" on public.opd_drugs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_appointments\" on public.opd_appointments for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_procedures\" on public.opd_procedures for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_labs\" on public.opd_labs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_lab_sets\" on public.opd_lab_sets for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_groups\" on public.opd_drug_groups for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_pe_templates\" on public.opd_pe_templates for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_doctors\" on public.opd_doctors for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_audit_logs\" on public.opd_audit_logs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_price_history\" on public.opd_drug_price_history for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_system_configs\" on public.opd_system_configs for all using (true) with check (true);\n\n-- ==============================================================================\n-- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)\n-- ==============================================================================\ndo $\nbegin\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_patients') then\n    alter publication supabase_realtime add table public.opd_patients;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_visits') then\n    alter publication supabase_realtime add table public.opd_visits;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drugs') then\n    alter publication supabase_realtime add table public.opd_drugs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_appointments') then\n    alter publication supabase_realtime add table public.opd_appointments;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_procedures') then\n    alter publication supabase_realtime add table public.opd_procedures;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_labs') then\n    alter publication supabase_realtime add table public.opd_labs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_groups') then\n    alter publication supabase_realtime add table public.opd_drug_groups;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_pe_templates') then\n    alter publication supabase_realtime add table public.opd_pe_templates;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_doctors') then\n    alter publication supabase_realtime add table public.opd_doctors;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_price_history') then\n    alter publication supabase_realtime add table public.opd_drug_price_history;\n  end if;\nend $;\n",
+      sqlSchema: "-- ==============================================================================\n-- สคริปต์สร้างฐานข้อมูล Supabase สำหรับระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n-- วิธีใช้: นำโค้ดทั้งหมดนี้ไปวางในหน้า \"SQL Editor\" ของ Supabase แล้วกดปุ่ม \"RUN\"\n-- ==============================================================================\n\n-- 1. ตารางผู้ป่วย (opd_patients)\ncreate table if not exists public.opd_patients (\n    patient_id text primary key,\n    hn text not null,\n    national_id text,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    sex text,\n    dob text,\n    phone text,\n    rights text default 'UC',\n    chronic text,\n    drug_allergy text,\n    address text,\n    note text,\n    raw_data jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 2. ตารางการเข้ารับบริการ / AN (opd_visits)\ncreate table if not exists public.opd_visits (\n    visit_id text primary key,\n    an text not null,\n    hn text not null,\n    patient_id text not null,\n    patient_name text,\n    visit_date text,\n    queue_no text,\n    queue_type text default 'ทั่วไป',\n    status text default 'waiting', -- waiting, examining, lab_wait, pharmacy, completed, cancelled\n    doctor text,\n    doctor_id text,\n    doctor_license text,\n    cc text, -- Chief Complaint\n    pi text, -- Present Illness\n    pe text, -- Physical Examination\n    diagnosis text,\n    vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat\n    drugs jsonb, -- array of prescribed drugs\n    labs jsonb, -- array of lab orders & results\n    procedures jsonb, -- array of procedures & DF\n    billing jsonb, -- total, discount, net, payment_type\n    certificates jsonb, -- medical certificate data\n    audit_logs jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)\ncreate table if not exists public.opd_drugs (\n    drug_id text primary key,\n    code text,\n    trade_name text,\n    generic_name text not null,\n    dosage text,\n    unit text,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock numeric default 0,\n    category text,\n    usage_instruction text,\n    usage_text text,\n    warning text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 4. ตารางการนัดหมาย (opd_appointments)\ncreate table if not exists public.opd_appointments (\n    appointment_id text primary key,\n    patient_id text not null,\n    hn text not null,\n    patient_name text not null,\n    doctor text,\n    appt_date text not null,\n    appt_time text,\n    reason text,\n    status text default 'scheduled', -- scheduled, arrived, completed, cancelled\n    note text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 5. ตารางหัตถการ (opd_procedures)\ncreate table if not exists public.opd_procedures (\n    proc_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    df_price numeric default 0,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 6. ตารางตรวจทางห้องปฏิบัติการ (opd_labs)\ncreate table if not exists public.opd_labs (\n    lab_id text primary key,\n    code text,\n    name text not null,\n    category text,\n    price numeric default 0,\n    normal_range text,\n    unit text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 7. ตารางชุดแล็บ (opd_lab_sets)\ncreate table if not exists public.opd_lab_sets (\n    set_id text primary key,\n    name text not null,\n    category text,\n    description text,\n    items jsonb,\n    price numeric default 0,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 8. ตารางชุดยาที่ใช้บ่อย (opd_drug_groups)\ncreate table if not exists public.opd_drug_groups (\n    group_id text primary key,\n    name text not null,\n    description text,\n    items jsonb,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 9. ตารางเทมเพลตตรวจร่างกาย (opd_pe_templates)\ncreate table if not exists public.opd_pe_templates (\n    template_id text primary key,\n    title text not null,\n    category text,\n    content text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 10. ตารางแพทย์และเจ้าหน้าที่ (opd_doctors)\ncreate table if not exists public.opd_doctors (\n    doctor_id text primary key,\n    title text,\n    first_name text not null,\n    last_name text not null,\n    license_no text,\n    specialty text,\n    phone text,\n    active boolean default true,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 11. ตาราง Audit Logs บันทึกการใช้งาน (opd_audit_logs)\ncreate table if not exists public.opd_audit_logs (\n    id bigint generated always as identity primary key,\n    action text,\n    user_role text,\n    doctor_name text,\n    details jsonb,\n    timestamp text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 12. ตารางประวัติการรับเข้า & ปรับราคายา (opd_drug_price_history)\ncreate table if not exists public.opd_drug_price_history (\n    history_id text primary key,\n    drug_id text not null,\n    generic_name text not null,\n    trade_name text,\n    type text not null,\n    old_cost numeric default 0,\n    new_cost numeric default 0,\n    old_price numeric default 0,\n    new_price numeric default 0,\n    qty_change numeric default 0,\n    stock_before numeric default 0,\n    stock_after numeric default 0,\n    ref_invoice text,\n    note text,\n    operator text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 13. ตาราง System Configs (opd_system_configs)\ncreate table if not exists public.opd_system_configs (\n    key text primary key,\n    value jsonb,\n    updated_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- 14. ตารางความเคลื่อนไหวสต็อกยาและเวชภัณฑ์ (opd_stock_transactions)\ncreate table if not exists public.opd_stock_transactions (\n    tx_id text primary key,\n    drug_id text not null,\n    generic_name text,\n    trade_name text,\n    visit_id text,\n    type text not null,\n    qty numeric not null,\n    cost_price numeric default 0,\n    sale_price numeric default 0,\n    stock_before numeric default 0,\n    stock_after numeric default 0,\n    reference_no text,\n    note text,\n    operator text,\n    created_at timestamp with time zone default timezone('utc'::text, now()) not null\n);\n\n-- ==============================================================================\n-- สร้าง Indexes เพื่อความเร็วในการค้นหา\n-- ==============================================================================\ncreate index if not exists idx_patients_hn on public.opd_patients(hn);\ncreate index if not exists idx_patients_cid on public.opd_patients(national_id);\ncreate index if not exists idx_patients_name on public.opd_patients(first_name, last_name);\ncreate index if not exists idx_visits_an on public.opd_visits(an);\ncreate index if not exists idx_visits_hn on public.opd_visits(hn);\ncreate index if not exists idx_visits_date on public.opd_visits(visit_date);\ncreate index if not exists idx_visits_status on public.opd_visits(status);\ncreate index if not exists idx_appointments_date on public.opd_appointments(appt_date);\ncreate index if not exists idx_drug_history_drug_id on public.opd_drug_price_history(drug_id);\ncreate index if not exists idx_drug_history_created_at on public.opd_drug_price_history(created_at);\ncreate index if not exists idx_stock_tx_drug_id on public.opd_stock_transactions(drug_id);\ncreate index if not exists idx_stock_tx_visit_id on public.opd_stock_transactions(visit_id);\ncreate index if not exists idx_stock_tx_created_at on public.opd_stock_transactions(created_at);\n\n-- ==============================================================================\n-- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key\n-- ==============================================================================\nalter table public.opd_patients enable row level security;\nalter table public.opd_visits enable row level security;\nalter table public.opd_drugs enable row level security;\nalter table public.opd_appointments enable row level security;\nalter table public.opd_procedures enable row level security;\nalter table public.opd_labs enable row level security;\nalter table public.opd_lab_sets enable row level security;\nalter table public.opd_drug_groups enable row level security;\nalter table public.opd_pe_templates enable row level security;\nalter table public.opd_doctors enable row level security;\nalter table public.opd_audit_logs enable row level security;\nalter table public.opd_drug_price_history enable row level security;\nalter table public.opd_system_configs enable row level security;\nalter table public.opd_stock_transactions enable row level security;\n\n-- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key\ncreate policy \"Allow all operations for anon on opd_patients\" on public.opd_patients for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_visits\" on public.opd_visits for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drugs\" on public.opd_drugs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_appointments\" on public.opd_appointments for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_procedures\" on public.opd_procedures for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_labs\" on public.opd_labs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_lab_sets\" on public.opd_lab_sets for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_groups\" on public.opd_drug_groups for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_pe_templates\" on public.opd_pe_templates for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_doctors\" on public.opd_doctors for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_audit_logs\" on public.opd_audit_logs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_drug_price_history\" on public.opd_drug_price_history for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_system_configs\" on public.opd_system_configs for all using (true) with check (true);\ncreate policy \"Allow all operations for anon on opd_stock_transactions\" on public.opd_stock_transactions for all using (true) with check (true);\n\n-- ==============================================================================\n-- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)\n-- ==============================================================================\ndo $\nbegin\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_patients') then\n    alter publication supabase_realtime add table public.opd_patients;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_visits') then\n    alter publication supabase_realtime add table public.opd_visits;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drugs') then\n    alter publication supabase_realtime add table public.opd_drugs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_appointments') then\n    alter publication supabase_realtime add table public.opd_appointments;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_procedures') then\n    alter publication supabase_realtime add table public.opd_procedures;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_labs') then\n    alter publication supabase_realtime add table public.opd_labs;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_groups') then\n    alter publication supabase_realtime add table public.opd_drug_groups;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_pe_templates') then\n    alter publication supabase_realtime add table public.opd_pe_templates;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_doctors') then\n    alter publication supabase_realtime add table public.opd_doctors;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_price_history') then\n    alter publication supabase_realtime add table public.opd_drug_price_history;\n  end if;\n  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_stock_transactions') then\n    alter publication supabase_realtime add table public.opd_stock_transactions;\n  end if;\nend $;\n",
 
       TABLE_MAP: {
+        'opd_nakhonsawan_stock_tx_v1': { table: 'opd_stock_transactions', pk: 'tx_id' },
         'opd_nakhonsawan_drug_price_history_v1': { table: 'opd_drug_price_history', pk: 'history_id' },
         'opd_nakhonsawan_patients_v5': { table: 'opd_patients', pk: 'patient_id' },
         'opd_nakhonsawan_visits_v7': { table: 'opd_visits', pk: 'visit_id' },
@@ -11558,18 +11863,25 @@ Return ONLY valid JSON without markdown wrapping.`;
       notifyRealtimeUpdate(table, record) {
         if (State.currentTab === 'tab-dashboard') DashboardModule.render();
         if (State.currentTab === 'tab-patients') PatientModule.render();
-        if (State.currentTab === 'tab-opd') VisitModule.render();
+        if (State.currentTab === 'tab-opd') {
+          // อัปเดตเฉพาะคิวฝั่งซ้าย เพื่อไม่ให้รบกวนแพทย์ขณะพิมพ์ตรวจรักษา
+          VisitModule.renderVisitList();
+        }
         if (State.currentTab === 'tab-an-master') AnMasterModule.render();
         if (State.currentTab === 'tab-appointments') AppointmentModule.render();
         if (State.currentTab === 'tab-drugs') DrugModule.render();
         if (State.currentTab === 'tab-procedures') ProcedureModule.render();
         if (State.currentTab === 'tab-labs') LabModule.render();
+        if (State.currentTab === 'tab-reports') ReportModule.render();
+        if (State.currentTab === 'tab-billing') BillingModule.render();
+        if (State.currentTab === 'tab-doctors') DoctorModule.render();
 
         const tableNamesTh = {
           'opd_patients': 'ข้อมูลผู้ป่วย',
           'opd_visits': 'การเปิด AN / ตรวจรักษา',
           'opd_drugs': 'คลังยา',
-          'opd_appointments': 'การนัดหมาย'
+          'opd_appointments': 'การนัดหมาย',
+          'opd_stock_transactions': 'การเคลื่อนไหวสต็อก'
         };
         const thName = tableNamesTh[table] || table;
         this.showSyncToast(`⚡ อัปเดต ${thName} จากอุปกรณ์อื่นแล้ว`);

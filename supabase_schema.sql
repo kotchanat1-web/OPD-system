@@ -200,6 +200,25 @@ create table if not exists public.opd_system_configs (
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- 14. ตารางความเคลื่อนไหวสต็อกยาและเวชภัณฑ์ (opd_stock_transactions)
+create table if not exists public.opd_stock_transactions (
+    tx_id text primary key,
+    drug_id text not null,
+    generic_name text,
+    trade_name text,
+    visit_id text,
+    type text not null, -- 'PURCHASE', 'SALE', 'RETURN', 'ADJUST', 'RETURN_CANCEL_VISIT', 'OCR_INBOUND'
+    qty numeric not null,
+    cost_price numeric default 0,
+    sale_price numeric default 0,
+    stock_before numeric default 0,
+    stock_after numeric default 0,
+    reference_no text, -- AN or Invoice No.
+    note text,
+    operator text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- ==============================================================================
 -- สร้าง Indexes เพื่อความเร็วในการค้นหา
 -- ==============================================================================
@@ -213,6 +232,9 @@ create index if not exists idx_visits_status on public.opd_visits(status);
 create index if not exists idx_appointments_date on public.opd_appointments(appt_date);
 create index if not exists idx_drug_history_drug_id on public.opd_drug_price_history(drug_id);
 create index if not exists idx_drug_history_created_at on public.opd_drug_price_history(created_at);
+create index if not exists idx_stock_tx_drug_id on public.opd_stock_transactions(drug_id);
+create index if not exists idx_stock_tx_visit_id on public.opd_stock_transactions(visit_id);
+create index if not exists idx_stock_tx_created_at on public.opd_stock_transactions(created_at);
 
 -- ==============================================================================
 -- เปิดใช้งาน Row Level Security (RLS) พร้อม Allow All สำหรับใช้งานผ่าน Anon Key
@@ -230,6 +252,7 @@ alter table public.opd_doctors enable row level security;
 alter table public.opd_audit_logs enable row level security;
 alter table public.opd_drug_price_history enable row level security;
 alter table public.opd_system_configs enable row level security;
+alter table public.opd_stock_transactions enable row level security;
 
 -- สร้าง Policy ให้อ่าน/เขียน/แก้ไขได้สะดวกผ่าน Anon Key
 create policy "Allow all operations for anon on opd_patients" on public.opd_patients for all using (true) with check (true);
@@ -245,6 +268,7 @@ create policy "Allow all operations for anon on opd_doctors" on public.opd_docto
 create policy "Allow all operations for anon on opd_audit_logs" on public.opd_audit_logs for all using (true) with check (true);
 create policy "Allow all operations for anon on opd_drug_price_history" on public.opd_drug_price_history for all using (true) with check (true);
 create policy "Allow all operations for anon on opd_system_configs" on public.opd_system_configs for all using (true) with check (true);
+create policy "Allow all operations for anon on opd_stock_transactions" on public.opd_stock_transactions for all using (true) with check (true);
 
 -- ==============================================================================
 -- เปิดใช้งาน Realtime Broadcast สำหรับตารางหลัก (เพื่อให้ทุกเครื่องอัปเดตทันที)
@@ -280,5 +304,8 @@ begin
   end if;
   if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_drug_price_history') then
     alter publication supabase_realtime add table public.opd_drug_price_history;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'opd_stock_transactions') then
+    alter publication supabase_realtime add table public.opd_stock_transactions;
   end if;
 end $$;
