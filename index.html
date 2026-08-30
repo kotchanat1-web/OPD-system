@@ -2220,7 +2220,7 @@
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
             <button class="btn btn-primary" onclick="CloudSyncModule.saveConfig()"><i data-lucide="save"></i> บันทึกและเชื่อมต่อ Cloud</button>
-            <button class="btn btn-emerald" id="btn-seed-cloud" onclick="CloudSyncModule.initialSeedToCloud()"><i data-lucide="upload-cloud"></i> อัปโหลดข้อมูลตั้งต้นขึ้น Cloud (Initial Seed 669 ผู้ป่วย + คลังยา)</button>
+            <button class="btn btn-emerald" id="btn-seed-cloud" onclick="CloudSyncModule.pushAllToCloud()"><i data-lucide="upload-cloud"></i> ⚡ ซิงค์ข้อมูลทั้งหมดขึ้น Cloud (Push to Cloud)</button>
             <button class="btn btn-outline" onclick="CloudSyncModule.pullLatestFromCloud(true)"><i data-lucide="download-cloud"></i> ดึงข้อมูลล่าสุดจาก Cloud (Full Pull)</button>
             <button class="btn btn-secondary" onclick="CloudSyncModule.toggleSqlHelper()"><i data-lucide="code"></i> ดูคำสั่งสร้างตาราง SQL Schema</button>
           </div>
@@ -11781,21 +11781,51 @@ Return ONLY valid JSON without markdown wrapping.`;
         const cardEl = document.getElementById('cloud-status-info-card');
         if (!cardEl) return;
 
+        const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
+        const visits = DB.get(STORAGE_KEYS.VISITS) || [];
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+
+        let lastSyncStr = 'ยังไม่มีประวัติการซิงค์ในรอบนี้';
+        const savedSyncTime = this.lastSyncTime || localStorage.getItem('opd_last_cloud_sync_time');
+        if (savedSyncTime) {
+          const d = new Date(savedSyncTime);
+          if (!isNaN(d.getTime())) {
+            lastSyncStr = d.toLocaleString('th-TH', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            }) + ' น.';
+          }
+        }
+
         if (this.status === 'connected') {
           cardEl.innerHTML = `
-            <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 16px; color: #065f46;">
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <div style="width: 42px; height: 42px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i data-lucide="check-circle" style="color: #059669; width: 24px; height: 24px;"></i>
+            <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 18px; color: #065f46;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                  <div style="width: 44px; height: 44px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
+                    <i data-lucide="check-circle" style="color: #059669; width: 26px; height: 26px;"></i>
                   </div>
                   <div>
-                    <div style="font-weight: 700; font-size: 1rem; color: #065f46;">🟢 เชื่อมต่อ Supabase Cloud สำเร็จ (Realtime Sync พร้อมทำงาน)</div>
-                    <div style="font-size: 0.82rem; color: #047857; margin-top: 2px;">เมื่อเครื่องใดเปิด AN, สั่งยา หรือลงทะเบียนคนไข้ เครื่องอื่นจะอัปเดตอัตโนมัติทันที ⚡</div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                      <span style="font-weight: 700; font-size: 1.05rem; color: #065f46;">🟢 เชื่อมต่อ Supabase Cloud สำเร็จ (Realtime Sync พร้อมทำงาน)</span>
+                      <span class="badge badge-success" style="font-size: 0.76rem;">ออนไลน์ (Live)</span>
+                    </div>
+                    <div style="font-size: 0.84rem; color: #047857; margin: 4px 0 6px;">
+                      เมื่อเครื่องใดเปิด AN, สั่งยา, หรือลงทะเบียนคนไข้ ข้อมูลจะส่งข้ามเครื่องแบบ Realtime ทันที ⚡
+                    </div>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: #065f46; background: rgba(255,255,255,0.6); padding: 6px 12px; border-radius: 6px; border: 1px solid #a7f3d0; margin-top: 6px;">
+                      <div><strong>📊 ข้อมูลในระบบ:</strong> ผู้ป่วย <strong>${patients.length.toLocaleString()}</strong> ราย | การตรวจ/AN <strong>${visits.length.toLocaleString()}</strong> เคส | ยา <strong>${drugs.length.toLocaleString()}</strong> รายการ</div>
+                      <div><strong>⚡ อัปเดต Cloud ล่าสุด:</strong> <span style="font-weight: 700; color: #047857;">${lastSyncStr}</span></div>
+                    </div>
                   </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                  <button class="btn btn-outline btn-sm" onclick="CloudSyncModule.pullLatestFromCloud(true)"><i data-lucide="refresh-cw"></i> ดึงข้อมูลล่าสุด</button>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button class="btn btn-emerald btn-sm" onclick="CloudSyncModule.pushAllToCloud()" title="อัปโหลดข้อมูลทั้งหมดขึ้น Cloud"><i data-lucide="upload-cloud"></i> ซิงค์ขึ้น Cloud</button>
+                  <button class="btn btn-outline btn-sm" onclick="CloudSyncModule.pullLatestFromCloud(true)" title="ดึงข้อมูลล่าสุดจาก Cloud"><i data-lucide="refresh-cw"></i> ดึงข้อมูลล่าสุด</button>
                   <button class="btn btn-danger btn-sm" onclick="CloudSyncModule.disconnect()"><i data-lucide="power"></i> ตัดการเชื่อมต่อ</button>
                 </div>
               </div>
@@ -11810,7 +11840,7 @@ Return ONLY valid JSON without markdown wrapping.`;
                 </div>
                 <div style="flex: 1;">
                   <div style="font-weight: 700; font-size: 0.95rem; color: #92400e;">🟡 ระบบกำลังทำงานในโหมด Local Storage (ใช้งานเฉพาะในเครื่องนี้)</div>
-                  <p style="font-size: 0.82rem; color: #78350f; margin: 2px 0 0;">หากต้องการให้ใช้งานร่วมกันหลายเครื่อง ให้กรอก Supabase URL และ Anon Key ด้านล่าง</p>
+                  <p style="font-size: 0.82rem; color: #78350f; margin: 2px 0 0;">หากต้องการให้ใช้งานร่วมกันหลายเครื่อง ให้กรอก Supabase URL และ Anon Key ด้านล่างแล้วกด "บันทึกและเชื่อมต่อ Cloud"</p>
                 </div>
               </div>
             </div>
@@ -11858,6 +11888,10 @@ Return ONLY valid JSON without markdown wrapping.`;
       handleRealtimeChange(payload) {
         const { table, eventType, new: newRecord, old: oldRecord } = payload;
         console.log(`[Realtime Sync] ${eventType} on ${table}:`, newRecord || oldRecord);
+
+        const now = new Date();
+        this.lastSyncTime = now;
+        localStorage.setItem('opd_last_cloud_sync_time', now.toISOString());
 
         if (table === 'opd_system_configs') {
           if (newRecord && newRecord.key === 'user_passwords' && newRecord.value) {
@@ -11963,17 +11997,21 @@ Return ONLY valid JSON without markdown wrapping.`;
           const batchSize = 100;
           for (let i = 0; i < dataArray.length; i += batchSize) {
             const batch = dataArray.slice(i, i + batchSize);
-            const { error } = await this.client.from(conf.table).upsert(batch);
+            const serialized = batch.map(item => this.serializeForCloud(conf.table, item));
+            const { error } = await this.client.from(conf.table).upsert(serialized);
             if (error) console.error(`Batch sync error on ${conf.table}:`, error);
           }
+          const now = new Date();
+          this.lastSyncTime = now;
+          localStorage.setItem('opd_last_cloud_sync_time', now.toISOString());
         } catch (e) {
           console.error(`Exception during full key sync on ${conf.table}:`, e);
         }
       },
 
-      async initialSeedToCloud() {
+      async pushAllToCloud() {
         if (!this.isReady()) {
-          alert('กรุณาเชื่อมต่อ Supabase Cloud ให้สำเร็จก่อนทำการอัปโหลด');
+          alert('กรุณาเชื่อมต่อ Supabase Cloud ให้สำเร็จก่อนทำการซิงค์ข้อมูล');
           return;
         }
 
@@ -11981,19 +12019,19 @@ Return ONLY valid JSON without markdown wrapping.`;
         const visits = DB.get(STORAGE_KEYS.VISITS) || [];
         const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
 
-        if (!confirm('ยืนยันการอัปโหลดข้อมูลตั้งต้นขึ้น Cloud หรือไม่?\n- ผู้ป่วย: ' + patients.length + ' ราย\n- การตรวจ/AN: ' + visits.length + ' รายการ\n- คลังยา: ' + drugs.length + ' รายการ\n\nข้อมูลจะถูกบันทึกขึ้นฐานข้อมูลออนไลน์ใน Supabase ทันที')) {
+        if (!confirm('⚡ ยืนยันการซิงค์ข้อมูลทั้งหมดในเครื่องขึ้น Cloud หรือไม่?\n\n- ผู้ป่วย: ' + patients.length.toLocaleString() + ' ราย\n- การตรวจ/AN: ' + visits.length.toLocaleString() + ' รายการ\n- คลังยา: ' + drugs.length.toLocaleString() + ' รายการ\n\nข้อมูลทั้งหมดจะถูกซิงค์ขึ้น Supabase Cloud ทันที')) {
           return;
         }
 
         const btn = document.getElementById('btn-seed-cloud');
         if (btn) {
           btn.disabled = true;
-          btn.innerHTML = '<i data-lucide="loader" class="spin"></i> กำลังอัปโหลดข้อมูลขึ้น Cloud...';
+          btn.innerHTML = '<i data-lucide="loader" class="spin"></i> กำลังซิงค์ข้อมูลทั้งหมดขึ้น Cloud...';
           lucide.createIcons();
         }
 
         try {
-          const keysToSeed = [
+          const keysToSync = [
             STORAGE_KEYS.PATIENTS,
             STORAGE_KEYS.DRUGS,
             STORAGE_KEYS.PROCEDURES,
@@ -12003,35 +12041,48 @@ Return ONLY valid JSON without markdown wrapping.`;
             STORAGE_KEYS.PE_TEMPLATES,
             STORAGE_KEYS.DOCTORS,
             STORAGE_KEYS.APPOINTMENTS,
-            STORAGE_KEYS.VISITS
+            STORAGE_KEYS.VISITS,
+            STORAGE_KEYS.STOCK_TRANSACTIONS,
+            STORAGE_KEYS.DRUG_PRICE_HISTORY
           ];
 
-          for (const sKey of keysToSeed) {
+          for (const sKey of keysToSync) {
             const conf = this.TABLE_MAP[sKey];
             if (!conf) continue;
             const data = DB.get(sKey) || [];
             if (data.length > 0) {
-              console.log(`Uploading ${data.length} records to ${conf.table}...`);
+              const serialized = data.map(item => this.serializeForCloud(conf.table, item));
               const batchSize = 100;
-              for (let i = 0; i < data.length; i += batchSize) {
-                const batch = data.slice(i, i + batchSize);
+              for (let i = 0; i < serialized.length; i += batchSize) {
+                const batch = serialized.slice(i, i + batchSize);
                 const { error } = await this.client.from(conf.table).upsert(batch);
                 if (error) throw error;
               }
             }
           }
 
-          alert('🎉 อัปโหลดข้อมูลเริ่มต้น (669 ผู้ป่วย, คลังยา, หัตถการ) ขึ้น Cloud สำเร็จครบถ้วนแล้ว! ทุกอุปกรณ์ที่เปิดผ่าน Vercel จะเห็นข้อมูลเดียวกันทันที');
+          const now = new Date();
+          this.lastSyncTime = now;
+          localStorage.setItem('opd_last_cloud_sync_time', now.toISOString());
+          this.renderCloudInfoCard();
+          this.updateTopbarStatus('connected', 'Cloud Synced');
+
+          this.showSyncToast('✅ ซิงค์ข้อมูลทั้งหมดขึ้น Cloud เรียบร้อยแล้ว');
+          alert('🎉 ซิงค์ข้อมูลทั้งหมดขึ้น Supabase Cloud สำเร็จเรียบร้อยแล้ว!\n(อัปเดตล่าสุด: ' + now.toLocaleString('th-TH') + ')\nทุกอุปกรณ์และเครื่องอื่นๆ จะได้รับข้อมูลที่ตรงกันทันที ⚡');
         } catch (err) {
-          console.error('Error during initial cloud seed:', err);
-          alert('เกิดข้อผิดพลาดในการอัปโหลดข้อมูล:\n' + err.message);
+          console.error('Error during pushAllToCloud:', err);
+          alert('เกิดข้อผิดพลาดในการซิงค์ข้อมูล:\n' + err.message);
         } finally {
           if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="upload-cloud"></i> อัปโหลดข้อมูลตั้งต้นขึ้น Cloud (Initial Seed 669 ผู้ป่วย + คลังยา)';
+            btn.innerHTML = '<i data-lucide="upload-cloud"></i> ⚡ ซิงค์ข้อมูลทั้งหมดขึ้น Cloud (Push to Cloud)';
             lucide.createIcons();
           }
         }
+      },
+
+      initialSeedToCloud() {
+        return this.pushAllToCloud();
       },
 
       async pullLatestFromCloud(showNotification = false) {
@@ -12045,10 +12096,14 @@ Return ONLY valid JSON without markdown wrapping.`;
               DB.set(sKey, deserialized, true);
             }
           }
-          this.lastSyncTime = new Date();
+          const now = new Date();
+          this.lastSyncTime = now;
+          localStorage.setItem('opd_last_cloud_sync_time', now.toISOString());
+          this.renderCloudInfoCard();
           App.renderAll();
           if (showNotification) {
-            alert('📥 ดึงข้อมูลล่าสุดจาก Supabase Cloud ลงเครื่องเรียบร้อยแล้ว!');
+            this.showSyncToast('📥 ดึงข้อมูลล่าสุดจาก Cloud เรียบร้อยแล้ว');
+            alert('📥 ดึงข้อมูลล่าสุดจาก Supabase Cloud ลงเครื่องเรียบร้อยแล้ว!\n(อัปเดตล่าสุด: ' + now.toLocaleString('th-TH') + ')');
           }
         } catch (err) {
           console.error('Error pulling latest from cloud:', err);
