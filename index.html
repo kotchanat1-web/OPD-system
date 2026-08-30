@@ -3493,9 +3493,7 @@
     };
 
     const DEFAULT_STAFF = [
-      {"doctor_id":"DOC1","title":"นายแพทย์","first_name":"กชณัฐ","last_name":"พันธุ์วรรธนะสิน","license_no":"69870","specialty":"เวชปฏิบัติทั่วไป (แพทย์ประจำ)","phone":"098-3825767","active":true},
-      {"doctor_id":"DOC2","title":"พว.","first_name":"พิมลดา","last_name":"ศรีวิไล","license_no":"พ.114589","specialty":"พยาบาลวิชาชีพปฏิบัติการ","phone":"081-4567890","active":true},
-      {"doctor_id":"DOC3","title":"ผช.","first_name":"กาญจนา","last_name":"บุญมา","license_no":"-","specialty":"ผู้ช่วยพยาบาล","phone":"089-1234567","active":true}
+      {"doctor_id":"DOC1","title":"นายแพทย์","first_name":"กชณัฐ","last_name":"พันธุ์วรรธนะสิน","license_no":"69870","specialty":"เวชปฏิบัติทั่วไป (แพทย์ประจำ)","phone":"098-3825767","active":true}
     ];
 
         const DB = {
@@ -6743,19 +6741,32 @@
         } else {
           docs.push(data);
         }
-        DB.upsertItem(STORAGE_KEYS.DOCTORS, data);
+        DB.upsertItem(STORAGE_KEYS.DOCTORS, data, 'doctor_id');
         this.closeModal();
         this.render();
         alert('บันทึกข้อมูลบุคลากร ' + data.title + ' ' + data.first_name + ' ' + data.last_name + ' เรียบร้อย');
       },
-      deleteDoctor(docId) {
+      async deleteDoctor(docId) {
         const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
         const target = docs.find(x => x.doctor_id === docId);
         const name = target ? ((target.title || '') + ' ' + target.first_name + ' ' + target.last_name) : docId;
         if (!confirm(`ต้องการลบรายชื่อ "${name}" ออกจากระบบบุคลากรสำหรับลง DF หรือไม่?`)) return;
+        
         let newDocs = docs.filter(x => x.doctor_id !== docId);
         if (newDocs.length === 0) { alert('ต้องมีแพทย์ในระบบอย่างน้อย 1 ท่าน'); return; }
-        DB.set(STORAGE_KEYS.DOCTORS, newDocs);
+        
+        // 1. Delete from local storage and trigger DB.deleteItem
+        DB.deleteItem(STORAGE_KEYS.DOCTORS, docId, 'doctor_id');
+
+        // 2. Explicitly delete permanently from Supabase Cloud opd_doctors table
+        if (typeof CloudSyncModule !== 'undefined' && CloudSyncModule.isReady()) {
+          try {
+            await CloudSyncModule.client.from('opd_doctors').delete().eq('doctor_id', docId);
+            CloudSyncModule.showSyncToast(`🗑️ ลบข้อมูลบุคลากร "${name}" ออกจาก Cloud เรียบร้อยแล้ว`);
+          } catch(e) {
+            console.error('Error deleting doctor from cloud:', e);
+          }
+        }
         this.render();
       }
     };
@@ -11777,6 +11788,10 @@ Return ONLY valid JSON without markdown wrapping.`;
         }
       },
 
+      updateTopbarStatus(status, text) {
+        return this.updateStatusBadge(status, text);
+      },
+
       renderCloudInfoCard() {
         const cardEl = document.getElementById('cloud-status-info-card');
         if (!cardEl) return;
@@ -12061,17 +12076,31 @@ Return ONLY valid JSON without markdown wrapping.`;
             }
           }
 
+          // Sync system configs & user passwords to Cloud
+          try {
+            if (typeof AuthModule !== 'undefined' && AuthModule.getAllPasswords) {
+              const passwords = AuthModule.getAllPasswords();
+              await this.client.from('opd_system_configs').upsert({
+                key: 'user_passwords',
+                value: passwords,
+                updated_at: new Date().toISOString()
+              });
+            }
+          } catch(e) {
+            console.warn('Config sync warning:', e);
+          }
+
           const now = new Date();
           this.lastSyncTime = now;
           localStorage.setItem('opd_last_cloud_sync_time', now.toISOString());
           this.renderCloudInfoCard();
-          this.updateTopbarStatus('connected', 'Cloud Synced');
+          this.updateStatusBadge('connected', '🟢 Cloud Synced');
 
           this.showSyncToast('✅ ซิงค์ข้อมูลทั้งหมดขึ้น Cloud เรียบร้อยแล้ว');
           alert('🎉 ซิงค์ข้อมูลทั้งหมดขึ้น Supabase Cloud สำเร็จเรียบร้อยแล้ว!\n(อัปเดตล่าสุด: ' + now.toLocaleString('th-TH') + ')\nทุกอุปกรณ์และเครื่องอื่นๆ จะได้รับข้อมูลที่ตรงกันทันที ⚡');
         } catch (err) {
           console.error('Error during pushAllToCloud:', err);
-          alert('เกิดข้อผิดพลาดในการซิงค์ข้อมูล:\n' + err.message);
+          alert('เกิดข้อผิดพลาดในการซิงค์ข้อมูล:\n' + (err.message || err));
         } finally {
           if (btn) {
             btn.disabled = false;
