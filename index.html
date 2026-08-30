@@ -3545,20 +3545,17 @@
 
         if (!localStorage.getItem(STORAGE_KEYS.DRUG_GROUPS)) this.set(STORAGE_KEYS.DRUG_GROUPS, []);
         if (!localStorage.getItem(STORAGE_KEYS.PE_TEMPLATES)) this.set(STORAGE_KEYS.PE_TEMPLATES, [{"template_id":"PE_1","title":"ตรวจปกติทุกระบบ (Normal PE)","category":"ทั่วไป","content":"HEENT: not pale, no jaundice, pharynx not injected. Heart: regular, normal S1S2, no murmur. Lungs: clear, equal breath sounds, no adventitious sounds. Abd: soft, non-tender, normal active bowel sounds. Ext: no edema, good capillary refill."},{"template_id":"PE_2","title":"คออักเสบ / ไข้หวัด (URI / Pharyngitis)","category":"ทางเดินหายใจ","content":"HEENT: mild injected pharynx, tonsils 1+ not enlarged, no exudate, no cervical lymphadenopathy. Heart: regular rhythm, normal S1S2. Lungs: clear to auscultation, no wheezing, no crepitation. Abd: soft, non-tender."},{"template_id":"PE_3","title":"หลอดลมอักเสบ / หอบหืด (Bronchitis / Asthma)","category":"ทางเดินหายใจ","content":"HEENT: mildly injected pharynx. Heart: regular rhythm. Lungs: occasional rhonchi / wheezing both lower lungs, prolonged expiratory phase. Abd: soft, not distended, non-tender."},{"template_id":"PE_4","title":"โรคกระเพาะ / แน่นท้อง (Dyspepsia / Gastritis)","category":"ทางเดินอาหาร","content":"HEENT: normal. Heart & Lungs: clear, normal. Abd: soft, mild tenderness at epigastrium, no guarding, no rebound tenderness, normal active bowel sounds."},{"template_id":"PE_5","title":"อุจจาระร่วงเฉียบพลัน (Acute Diarrhea / AGE)","category":"ทางเดินอาหาร","content":"HEENT: dry lips, tongue not dry. Heart: normal S1S2. Lungs: clear. Abd: soft, generalized mild tenderness, hyperactive bowel sounds, no peritoneal signs. Ext: good skin turgor."},{"template_id":"PE_6","title":"ปวดเมื่อยกล้ามเนื้อ (Myalgia / Back Pain)","category":"กล้ามเนื้อและกระดูก","content":"Musculoskeletal: tenderness over trapezius / lumbar paraspinal muscles, full range of motion, no joint swelling, no erythema, no deformity. Neuro: motor power grade V, sensation intact."},{"template_id":"PE_7","title":"ตรวจสุขภาพทั่วไป (General Health Checkup)","category":"ตรวจสุขภาพ","content":"General: good consciousness, well-oriented, not pale, no jaundice. Heart: regular rhythm, no murmur. Lungs: clear both lung fields. Abd: soft, no hepatosplenomegaly. Ext: no edema."}]);
-        if (!localStorage.getItem(STORAGE_KEYS.DOCTORS)) {
-          this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
-        } else {
-          let currentDocs = this.get(STORAGE_KEYS.DOCTORS);
-          if (!Array.isArray(currentDocs) || currentDocs.length === 0) {
-            this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
-          } else {
-            const hasDoc1 = currentDocs.some(d => d.doctor_id === 'DOC1' || (d.first_name && d.first_name.includes('กชณัฐ')));
-            if (!hasDoc1) {
-              currentDocs.unshift(DEFAULT_STAFF[0]);
-              this.set(STORAGE_KEYS.DOCTORS, currentDocs);
-            }
-          }
+        let currentDocs = this.get(STORAGE_KEYS.DOCTORS);
+        if (!Array.isArray(currentDocs) || currentDocs.length === 0) {
+          currentDocs = [...DEFAULT_STAFF];
         }
+        // Actively remove any legacy staff 'กาญจนา' / 'DOC3'
+        currentDocs = currentDocs.filter(d => d && d.doctor_id !== 'DOC3' && !(d.first_name && d.first_name.includes('กาญจนา')));
+        const hasDoc1 = currentDocs.some(d => d.doctor_id === 'DOC1' || (d.first_name && d.first_name.includes('กชณัฐ')));
+        if (!hasDoc1) {
+          currentDocs.unshift(DEFAULT_STAFF[0]);
+        }
+        this.set(STORAGE_KEYS.DOCTORS, currentDocs, true);
         
         // Auto migrate any existing visits with procedures missing performer or df_price, and standardize doctor/performer names
         visits = this.get(STORAGE_KEYS.VISITS);
@@ -6532,7 +6529,7 @@
     const DoctorModule = {
       render() {
         this.populateDropdowns();
-        const allStaff = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const allStaff = (DB.get(STORAGE_KEYS.DOCTORS) || []).filter(d => d && d.doctor_id !== 'DOC3' && !(d.first_name && d.first_name.includes('กาญจนา')));
 
         // แยกหมวดหมู่: 1. แพทย์ผู้ตรวจรักษา (Doctor) | 2. บุคลากรวิชาชีพอื่น สำหรับจัดสรร DF (Staff for DF)
         const doctors = allStaff.filter(d => (d.title && d.title.includes('แพทย์')) || d.doctor_id === 'DOC1' || (d.license_no && !d.license_no.startsWith('พ.') && d.license_no !== '-'));
@@ -11722,6 +11719,12 @@ Return ONLY valid JSON without markdown wrapping.`;
           // Subscribe to Realtime Postgres Changes
           this.subscribeRealtime();
 
+          // Auto-purge any legacy assistant Kanchana / DOC3 from Supabase Cloud opd_doctors
+          try {
+            await this.client.from('opd_doctors').delete().eq('doctor_id', 'DOC3');
+            await this.client.from('opd_doctors').delete().ilike('first_name', '%กาญจนา%');
+          } catch(e) {}
+
           // Pull any updates from cloud
           this.loadSystemConfigsFromCloud();
           this.pullLatestFromCloud(false);
@@ -12121,7 +12124,10 @@ Return ONLY valid JSON without markdown wrapping.`;
           for (const [sKey, conf] of Object.entries(this.TABLE_MAP)) {
             const { data, error } = await this.client.from(conf.table).select('*').limit(3000);
             if (!error && Array.isArray(data) && data.length > 0) {
-              const deserialized = data.map(row => this.deserializeFromCloud(conf.table, row));
+              let deserialized = data.map(row => this.deserializeFromCloud(conf.table, row));
+              if (conf.table === 'opd_doctors') {
+                deserialized = deserialized.filter(d => d && d.doctor_id !== 'DOC3' && !(d.first_name && d.first_name.includes('กาญจนา')));
+              }
               DB.set(sKey, deserialized, true);
             }
           }
