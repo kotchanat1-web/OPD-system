@@ -910,30 +910,25 @@
       <p style="font-size: 0.8rem; color: #0d9488; font-weight: 600; margin-bottom: 20px;">ระบบบริหารจัดการเวชระเบียนผู้ป่วยนอก (OPD System)</p>
 
       <form id="login-form" onsubmit="event.preventDefault(); LoginModule.handleLogin();" style="text-align: left;">
-        <div class="form-group" style="margin-bottom: 12px;">
+        <div class="form-group" style="margin-bottom: 14px;">
           <label class="form-label" style="font-weight: 600; color: #334155;">เลือกผู้ใช้งาน / ตำแหน่ง (Role):</label>
-          <select id="login-role" class="form-select" style="padding: 10px; font-size: 0.92rem; font-weight: 500;" onchange="LoginModule.onRoleChange()">
-            <option value="DOCTOR">🩺 แพทย์ผู้ปฏิบัติงาน (Doctor)</option>
-            <option value="STAFF">👩‍⚕️ เจ้าหน้าที่ / ผู้ช่วย (Staff)</option>
+          <select id="login-role" class="form-select" style="padding: 10px; font-size: 0.95rem; font-weight: 600;" onchange="LoginModule.onRoleChange()">
+            <option value="DOCTOR">🩺 แพทย์ผู้ปฏิบัติงาน (นพ. กชณัฐ พันธุ์วรรธนะสิน)</option>
+            <option value="STAFF">👩‍⚕️ ผู้ช่วยแพทย์ / เจ้าหน้าที่คลินิก (Staff)</option>
             <option value="ADMIN">🛡️ ผู้ดูแลระบบ (Admin)</option>
           </select>
         </div>
 
-        <div class="form-group" id="login-doctor-select-group" style="margin-bottom: 14px;">
-          <label class="form-label" style="font-weight: 600; color: #0d9488;"><i data-lucide="user-check"></i> เลือกชื่อแพทย์ผู้ตรวจ:</label>
-          <select id="login-doctor-select" class="form-select" style="padding: 10px; font-size: 0.92rem; font-weight: 600; border-color: #0d9488; background: #f0fdfa;"></select>
-        </div>
-
         <div class="form-group" style="margin-bottom: 16px;">
           <label class="form-label" style="font-weight: 600; color: #334155;">รหัสผ่าน (Password / PIN):</label>
-          <input type="password" id="login-password" class="form-input" placeholder="ใส่รหัสผ่าน (เช่น 1234)" style="padding: 10px; font-size: 1rem;" required autofocus>
-          <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: flex; justify-content: space-between;">
+          <input type="password" id="login-password" class="form-input" placeholder="ใส่รหัสผ่าน (ค่าเริ่มต้น: 1234)" style="padding: 10px; font-size: 1rem;" required autofocus>
+          <div style="font-size: 0.76rem; color: #64748b; margin-top: 5px; display: flex; justify-content: space-between;">
             <span>รหัสเริ่มต้น: <strong>1234</strong></span>
-            <span id="role-hint-text">สิทธิ์: ตรวจรักษา/สั่งยา</span>
+            <span id="role-hint-text" style="color: #0d9488; font-weight: 600;">แพทย์: นพ. กชณัฐ พันธุ์วรรธนะสิน</span>
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 11px; font-size: 1rem; font-weight: 600; border-radius: 10px; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; border-radius: 10px; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
           <i data-lucide="log-in"></i> เข้าสู่ระบบ (Sign In)
         </button>
       </form>
@@ -1566,21 +1561,61 @@
       <section class="tab-pane" id="tab-doctors">
         <div class="page-header">
           <div>
-            <h2 class="page-title"><i data-lucide="user-cog"></i> ทะเบียนแพทย์ & รายชื่อผู้ปฏิบัติงาน (Doctor & Staff for DF)</h2>
-            <p class="page-subtitle">จัดการรายชื่อแพทย์ผู้ตรวจ และรายชื่อพยาบาล/ผู้ช่วยสำหรับลงบันทึกและคิดค่า DF (ระบบทำงานบนคอมพิวเตอร์เฉพาะแพทย์) <span class="badge badge-warning">เฉพาะ Admin เท่านั้น</span></p>
+            <h2 class="page-title"><i data-lucide="user-cog"></i> ทะเบียนแพทย์ & บุคลากรสำหรับจัดสรร DF (Doctor & Staff Master)</h2>
+            <p class="page-subtitle">แยกหมวดหมู่ชัดเจนระหว่างแพทย์ผู้ตรวจรักษา (ผู้ใช้คอมพิวเตอร์) และรายชื่อบุคลากรวิชาชีพอื่นสำหรับจัดสรรค่าตอบแทน DF</p>
           </div>
           <div class="header-actions">
-            <button class="btn btn-primary" onclick="DoctorModule.openNewModal()"><i data-lucide="user-plus"></i> เพิ่มแพทย์ / บุคลากรใหม่</button>
+            <button class="btn btn-primary" onclick="DoctorModule.openNewModal()"><i data-lucide="user-plus"></i> เพิ่มรายชื่อบุคลากร (สำหรับลง DF)</button>
           </div>
         </div>
-        <div class="card">
+
+        <!-- หมวดที่ 1: แพทย์ผู้ตรวจรักษา (Doctor) -->
+        <div class="card" style="margin-bottom: 20px; border-top: 4px solid #0d9488;">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 class="card-title" style="color: #0f766e; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="stethoscope"></i> 1. แพทย์ผู้ตรวจรักษา (Doctor - ผู้ใช้งานคอมพิวเตอร์หลัก)
+              </h3>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0;">บัญชีแพทย์ผู้ตรวจรักษาประจำคลินิก สำหรับเปิดห้องตรวจ สั่งยา วินิจฉัยโรค และออกใบรับรองแพทย์</p>
+            </div>
+            <span class="badge badge-primary">ผู้ใช้งานระบบหลัก</span>
+          </div>
           <div class="table-container">
-            <table class="table" id="doctor-master-table">
+            <table class="table" id="doctor-table-doctors-only">
               <thead>
                 <tr>
                   <th>รหัส</th>
                   <th>คำนำหน้า + ชื่อ-นามสกุล</th>
-                  <th>เลขที่ใบประกอบวิชาชีพ (ว./พ.)</th>
+                  <th>เลขที่ใบประกอบวิชาชีพ (ว.)</th>
+                  <th>ตำแหน่ง / วิชาชีพ</th>
+                  <th>เบอร์โทรศัพท์</th>
+                  <th>สถานะ</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- หมวดที่ 2: บุคลากรวิชาชีพอื่น สำหรับคิดค่าตอบแทน DF -->
+        <div class="card" style="border-top: 4px solid #0284c7;">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 class="card-title" style="color: #0369a1; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="users"></i> 2. บุคลากรวิชาชีพอื่น สำหรับจัดสรรค่าตอบแทน DF (Staff for DF Only)
+              </h3>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0;">รายชื่อพยาบาลวิชาชีพ, ผู้ช่วยพยาบาล, และเจ้าหน้าที่ สำหรับเลือกในช่อง "ผู้ทำหัตถการ/ผู้ช่วย" เพื่อคิดค่า DF (ไม่ได้ใช้ล็อกอินคอมพิวเตอร์)</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="DoctorModule.openNewModal()"><i data-lucide="plus"></i> เพิ่มรายชื่อลง DF</button>
+          </div>
+          <div class="table-container">
+            <table class="table" id="doctor-table-staff-df">
+              <thead>
+                <tr>
+                  <th>รหัส</th>
+                  <th>คำนำหน้า + ชื่อ-นามสกุล</th>
+                  <th>เลขที่ใบประกอบวิชาชีพ (พ.)</th>
                   <th>ตำแหน่ง / วิชาชีพ</th>
                   <th>เบอร์โทรศัพท์</th>
                   <th>สถานะ</th>
@@ -3512,7 +3547,20 @@
 
         if (!localStorage.getItem(STORAGE_KEYS.DRUG_GROUPS)) this.set(STORAGE_KEYS.DRUG_GROUPS, []);
         if (!localStorage.getItem(STORAGE_KEYS.PE_TEMPLATES)) this.set(STORAGE_KEYS.PE_TEMPLATES, [{"template_id":"PE_1","title":"ตรวจปกติทุกระบบ (Normal PE)","category":"ทั่วไป","content":"HEENT: not pale, no jaundice, pharynx not injected. Heart: regular, normal S1S2, no murmur. Lungs: clear, equal breath sounds, no adventitious sounds. Abd: soft, non-tender, normal active bowel sounds. Ext: no edema, good capillary refill."},{"template_id":"PE_2","title":"คออักเสบ / ไข้หวัด (URI / Pharyngitis)","category":"ทางเดินหายใจ","content":"HEENT: mild injected pharynx, tonsils 1+ not enlarged, no exudate, no cervical lymphadenopathy. Heart: regular rhythm, normal S1S2. Lungs: clear to auscultation, no wheezing, no crepitation. Abd: soft, non-tender."},{"template_id":"PE_3","title":"หลอดลมอักเสบ / หอบหืด (Bronchitis / Asthma)","category":"ทางเดินหายใจ","content":"HEENT: mildly injected pharynx. Heart: regular rhythm. Lungs: occasional rhonchi / wheezing both lower lungs, prolonged expiratory phase. Abd: soft, not distended, non-tender."},{"template_id":"PE_4","title":"โรคกระเพาะ / แน่นท้อง (Dyspepsia / Gastritis)","category":"ทางเดินอาหาร","content":"HEENT: normal. Heart & Lungs: clear, normal. Abd: soft, mild tenderness at epigastrium, no guarding, no rebound tenderness, normal active bowel sounds."},{"template_id":"PE_5","title":"อุจจาระร่วงเฉียบพลัน (Acute Diarrhea / AGE)","category":"ทางเดินอาหาร","content":"HEENT: dry lips, tongue not dry. Heart: normal S1S2. Lungs: clear. Abd: soft, generalized mild tenderness, hyperactive bowel sounds, no peritoneal signs. Ext: good skin turgor."},{"template_id":"PE_6","title":"ปวดเมื่อยกล้ามเนื้อ (Myalgia / Back Pain)","category":"กล้ามเนื้อและกระดูก","content":"Musculoskeletal: tenderness over trapezius / lumbar paraspinal muscles, full range of motion, no joint swelling, no erythema, no deformity. Neuro: motor power grade V, sensation intact."},{"template_id":"PE_7","title":"ตรวจสุขภาพทั่วไป (General Health Checkup)","category":"ตรวจสุขภาพ","content":"General: good consciousness, well-oriented, not pale, no jaundice. Heart: regular rhythm, no murmur. Lungs: clear both lung fields. Abd: soft, no hepatosplenomegaly. Ext: no edema."}]);
-        if (!localStorage.getItem(STORAGE_KEYS.DOCTORS)) this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
+        if (!localStorage.getItem(STORAGE_KEYS.DOCTORS)) {
+          this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
+        } else {
+          let currentDocs = this.get(STORAGE_KEYS.DOCTORS);
+          if (!Array.isArray(currentDocs) || currentDocs.length === 0) {
+            this.set(STORAGE_KEYS.DOCTORS, DEFAULT_STAFF);
+          } else {
+            const hasDoc1 = currentDocs.some(d => d.doctor_id === 'DOC1' || (d.first_name && d.first_name.includes('กชณัฐ')));
+            if (!hasDoc1) {
+              currentDocs.unshift(DEFAULT_STAFF[0]);
+              this.set(STORAGE_KEYS.DOCTORS, currentDocs);
+            }
+          }
+        }
         
         // Auto migrate any existing visits with procedures missing performer or df_price, and standardize doctor/performer names
         visits = this.get(STORAGE_KEYS.VISITS);
@@ -6486,47 +6534,70 @@
     const DoctorModule = {
       render() {
         this.populateDropdowns();
-        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
-        const tbody = document.querySelector('#doctor-master-table tbody');
-        if (!tbody) return;
+        const allStaff = DB.get(STORAGE_KEYS.DOCTORS) || [];
 
-        if (docs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--slate-400);">ยังไม่มีข้อมูลแพทย์ / บุคลากร</td></tr>';
-          return;
-        }
+        // แยกหมวดหมู่: 1. แพทย์ผู้ตรวจรักษา (Doctor) | 2. บุคลากรวิชาชีพอื่น สำหรับจัดสรร DF (Staff for DF)
+        const doctors = allStaff.filter(d => (d.title && d.title.includes('แพทย์')) || d.doctor_id === 'DOC1' || (d.license_no && !d.license_no.startsWith('พ.') && d.license_no !== '-'));
+        const dfStaff = allStaff.filter(d => !doctors.some(x => x.doctor_id === d.doctor_id));
 
-        tbody.innerHTML = docs.map(d => {
+        const tbodyDocs = document.querySelector('#doctor-table-doctors-only tbody');
+        const tbodyDf = document.querySelector('#doctor-table-staff-df tbody');
+
+        const renderRow = (d, isDoctor = false) => {
           let licDisplay = '-';
           if (d.license_no && d.license_no.trim() !== '' && d.license_no.trim() !== '-') {
             const rawLic = d.license_no.trim();
             if (rawLic.startsWith('ว.') || rawLic.startsWith('พ.') || rawLic.startsWith('ภ.') || rawLic.startsWith('ท.')) {
               licDisplay = rawLic;
+            } else if (isDoctor) {
+              licDisplay = 'ว. ' + rawLic;
             } else if ((d.title || '').includes('พว') || (d.specialty || '').includes('พยาบาล')) {
               licDisplay = 'พ. ' + rawLic;
-            } else if ((d.title || '').includes('ภก') || (d.title || '').includes('ภญ') || (d.specialty || '').includes('เภสัช')) {
-              licDisplay = 'ภ. ' + rawLic;
             } else {
-              licDisplay = 'ว. ' + rawLic;
+              licDisplay = rawLic;
             }
           }
 
-          let badgeClass = 'badge-primary';
+          let badgeClass = isDoctor ? 'badge-primary' : 'badge-emerald';
           const titleOrSpec = ((d.title || '') + ' ' + (d.specialty || '')).toLowerCase();
-          if (titleOrSpec.includes('พว') || titleOrSpec.includes('พยาบาล')) badgeClass = 'badge-emerald';
-          else if (titleOrSpec.includes('ผช') || titleOrSpec.includes('ผู้ช่วย')) badgeClass = 'badge-warning';
+          if (titleOrSpec.includes('ผช') || titleOrSpec.includes('ผู้ช่วย')) badgeClass = 'badge-warning';
           else if (titleOrSpec.includes('ภก') || titleOrSpec.includes('ภญ') || titleOrSpec.includes('เภสัช')) badgeClass = 'badge-purple';
           else if (titleOrSpec.includes('จนท') || titleOrSpec.includes('เจ้าหน้าที่')) badgeClass = 'badge-gray';
+
+          const actionBtns = isDoctor
+            ? `<button class="btn btn-outline btn-sm" onclick="DoctorModule.openEditModal('${d.doctor_id}')"><i data-lucide="edit-2"></i> แก้ไข</button>`
+            : `<div style="display: flex; gap: 4px;">
+                <button class="btn btn-outline btn-sm" onclick="DoctorModule.openEditModal('${d.doctor_id}')"><i data-lucide="edit-2"></i> แก้ไข</button>
+                <button class="btn btn-danger btn-sm" onclick="DoctorModule.deleteDoctor('${d.doctor_id}')" title="ลบรายชื่อ"><i data-lucide="trash-2"></i> ลบ</button>
+               </div>`;
 
           return '<tr>' +
             '<td><span class="badge badge-gray">' + d.doctor_id + '</span></td>' +
             '<td><strong>' + (d.title || '') + ' ' + d.first_name + ' ' + d.last_name + '</strong></td>' +
             '<td><strong style="color: #0f766e;">' + licDisplay + '</strong></td>' +
-            '<td><span class="badge ' + badgeClass + '">' + (d.specialty || 'แพทย์') + '</span></td>' +
+            '<td><span class="badge ' + badgeClass + '">' + (d.specialty || (isDoctor ? 'แพทย์เวชปฏิบัติทั่วไป' : 'บุคลากร')) + '</span></td>' +
             '<td>' + (d.phone || '-') + '</td>' +
             '<td><span class="badge ' + (d.active !== false ? 'badge-success' : 'badge-danger') + '">' + (d.active !== false ? 'ปฏิบัติงาน' : 'ระงับ') + '</span></td>' +
-            '<td><div style="display: flex; gap: 4px;"><button class="btn btn-outline btn-sm" onclick="DoctorModule.openEditModal(\'' + d.doctor_id + '\')"><i data-lucide="edit-2"></i> แก้ไข</button><button class="btn btn-danger btn-sm" onclick="DoctorModule.deleteDoctor(\'' + d.doctor_id + '\')"><i data-lucide="trash-2"></i></button></div></td>' +
+            '<td>' + actionBtns + '</td>' +
           '</tr>';
-        }).join('');
+        };
+
+        if (tbodyDocs) {
+          if (doctors.length === 0) {
+            tbodyDocs.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--slate-400);">ยังไม่มีข้อมูลแพทย์</td></tr>';
+          } else {
+            tbodyDocs.innerHTML = doctors.map(d => renderRow(d, true)).join('');
+          }
+        }
+
+        if (tbodyDf) {
+          if (dfStaff.length === 0) {
+            tbodyDf.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--slate-400); padding: 18px;">ยังไม่มีรายชื่อบุคลากรอื่นสำหรับลง DF (กดปุ่ม "เพิ่มรายชื่อลง DF" เพื่อเพิ่มพยาบาล/ผู้ช่วย/เจ้าหน้าที่)</td></tr>';
+          } else {
+            tbodyDf.innerHTML = dfStaff.map(d => renderRow(d, false)).join('');
+          }
+        }
+
         lucide.createIcons();
       },
       populateDropdowns() {
@@ -6606,18 +6677,16 @@
         }
       },
       openNewModal() {
-        if (!AuthModule.requireAdmin("เพิ่มแพทย์ / บุคลากรใหม่")) return;
         document.getElementById('form-doctor').reset();
         document.getElementById('doc-id').value = '';
         const roleType = document.getElementById('doc-role-type');
-        if (roleType) roleType.value = 'DOCTOR';
-        this.onStaffTypeChange('DOCTOR');
-        document.getElementById('modal-doc-title').innerHTML = '<i data-lucide="user-plus"></i> เพิ่มแพทย์ / บุคลากรผู้ปฏิบัติงานใหม่';
+        if (roleType) roleType.value = 'NURSE';
+        this.onStaffTypeChange('NURSE');
+        document.getElementById('modal-doc-title').innerHTML = '<i data-lucide="user-plus"></i> เพิ่มรายชื่อบุคลากร (สำหรับจัดสรร DF)';
         document.getElementById('modal-doctor-master').classList.add('active');
         lucide.createIcons();
       },
       openEditModal(docId) {
-        if (!AuthModule.requireAdmin("แก้ไขข้อมูลแพทย์ / บุคลากร")) return;
         const d = DB.get(STORAGE_KEYS.DOCTORS).find(x => x.doctor_id === docId);
         if (!d) return;
         document.getElementById('doc-id').value = d.doctor_id;
@@ -6637,14 +6706,14 @@
           }
         }
 
-        document.getElementById('doc-title').value = d.title || 'นายแพทย์';
+        document.getElementById('doc-title').value = d.title || 'พว.';
         document.getElementById('doc-fname').value = d.first_name || '';
         document.getElementById('doc-lname').value = d.last_name || '';
         document.getElementById('doc-license').value = d.license_no || '';
-        document.getElementById('doc-spec').value = d.specialty || 'แพทย์เวชปฏิบัติทั่วไป';
+        document.getElementById('doc-spec').value = d.specialty || 'ผู้ช่วยพยาบาล';
         document.getElementById('doc-phone').value = d.phone || '';
         document.getElementById('doc-active').value = String(d.active !== false);
-        document.getElementById('modal-doc-title').innerHTML = '<i data-lucide="edit-2"></i> แก้ไขข้อมูลแพทย์ / บุคลากร';
+        document.getElementById('modal-doc-title').innerHTML = '<i data-lucide="edit-2"></i> แก้ไขข้อมูลบุคลากร';
         document.getElementById('modal-doctor-master').classList.add('active');
         lucide.createIcons();
       },
@@ -6656,14 +6725,14 @@
         if (!fname || !lname) { alert('กรุณาระบุชื่อและนามสกุล'); return; }
 
         const id = document.getElementById('doc-id').value;
-        const docs = DB.get(STORAGE_KEYS.DOCTORS);
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
         const data = {
           doctor_id: id || ('DOC_' + Date.now()),
           title: document.getElementById('doc-title').value,
           first_name: fname,
           last_name: lname,
           license_no: lic,
-          specialty: document.getElementById('doc-spec').value.trim() || 'แพทย์เวชปฏิบัติทั่วไป',
+          specialty: document.getElementById('doc-spec').value.trim() || 'ผู้ช่วยพยาบาล',
           phone: document.getElementById('doc-phone').value.trim(),
           active: document.getElementById('doc-active').value === 'true'
         };
@@ -6680,11 +6749,13 @@
         alert('บันทึกข้อมูลบุคลากร ' + data.title + ' ' + data.first_name + ' ' + data.last_name + ' เรียบร้อย');
       },
       deleteDoctor(docId) {
-        if (!AuthModule.requireAdmin("ลบข้อมูลบุคลากร")) return;
-        if (!confirm('ต้องการลบข้อมูลบุคลากรท่านนี้หรือไม่?')) return;
-        let docs = DB.get(STORAGE_KEYS.DOCTORS).filter(x => x.doctor_id !== docId);
-        if (docs.length === 0) { alert('ต้องมีบุคลากรในระบบอย่างน้อย 1 ท่าน'); return; }
-        DB.set(STORAGE_KEYS.DOCTORS, docs);
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const target = docs.find(x => x.doctor_id === docId);
+        const name = target ? ((target.title || '') + ' ' + target.first_name + ' ' + target.last_name) : docId;
+        if (!confirm(`ต้องการลบรายชื่อ "${name}" ออกจากระบบบุคลากรสำหรับลง DF หรือไม่?`)) return;
+        let newDocs = docs.filter(x => x.doctor_id !== docId);
+        if (newDocs.length === 0) { alert('ต้องมีแพทย์ในระบบอย่างน้อย 1 ท่าน'); return; }
+        DB.set(STORAGE_KEYS.DOCTORS, newDocs);
         this.render();
       }
     };
@@ -10071,14 +10142,13 @@ Return ONLY valid JSON without markdown wrapping.`;
       init() {
         const logoEl = document.getElementById('login-logo-img');
         if (logoEl) logoEl.src = CLINIC_LOGO;
-        this.populateLoginDoctorDropdown();
 
         const session = sessionStorage.getItem('opd_login_session');
         if (session) {
           try {
             const data = JSON.parse(session);
             AuthModule.currentRole = data.role;
-            this.activeDoctor = data.doctor || this.getDefaultDoctor();
+            this.activeDoctor = this.getDefaultDoctor();
             AuthModule.activeDoctor = this.activeDoctor;
             AuthModule.updateRoleUI();
             this.hideLoginScreen();
@@ -10089,23 +10159,12 @@ Return ONLY valid JSON without markdown wrapping.`;
       },
 
       getDefaultDoctor() {
-        const docs = DB.get(STORAGE_KEYS.DOCTORS);
-        return docs[0] || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
-      },
-
-      populateLoginDoctorDropdown() {
-        const select = document.getElementById('login-doctor-select');
-        if (!select) return;
-        const docs = DB.get(STORAGE_KEYS.DOCTORS).filter(d => d.active !== false);
-        select.innerHTML = docs.map(d => {
-          const fullName = (d.title || 'นายแพทย์') + ' ' + d.first_name + ' ' + d.last_name;
-          const lic = d.license_no ? ' (ว. ' + d.license_no + ')' : '';
-          return '<option value="' + d.doctor_id + '">' + fullName + lic + '</option>';
-        }).join('');
+        const docs = DB.get(STORAGE_KEYS.DOCTORS) || [];
+        const realDoctor = docs.find(d => (d.title && d.title.includes('แพทย์')) || d.doctor_id === 'DOC1' || (d.license_no && !d.license_no.startsWith('พ.') && d.license_no !== '-'));
+        return realDoctor || { doctor_id: "DOC1", title: "นายแพทย์", first_name: "กชณัฐ", last_name: "พันธุ์วรรธนะสิน", license_no: "69870" };
       },
 
       showLoginScreen() {
-        this.populateLoginDoctorDropdown();
         this.onRoleChange();
         const screen = document.getElementById('app-login-screen');
         if (screen) screen.style.display = 'flex';
@@ -10120,21 +10179,17 @@ Return ONLY valid JSON without markdown wrapping.`;
       },
 
       onRoleChange() {
-        const role = document.getElementById('login-role').value;
+        const role = document.getElementById('login-role')?.value || 'DOCTOR';
         const hint = document.getElementById('role-hint-text');
-        const docGroup = document.getElementById('login-doctor-select-group');
+        if (!hint) return;
 
         if (role === 'DOCTOR') {
-          docGroup.style.display = 'block';
-          hint.textContent = 'สิทธิ์: ตรวจรักษา/สั่งยา/ใบรับรอง';
+          hint.textContent = 'แพทย์: นพ. กชณัฐ พันธุ์วรรธนะสิน';
         } else if (role === 'ADMIN') {
-          docGroup.style.display = 'none';
           hint.textContent = 'สิทธิ์: จัดการระบบ/สต็อก/ราคา';
         } else {
-          docGroup.style.display = 'none';
           hint.textContent = 'สิทธิ์: รับคนไข้/คิดเงิน/พิมพ์ฉลาก';
         }
-        lucide.createIcons();
       },
 
       handleLogin() {
@@ -10155,13 +10210,7 @@ Return ONLY valid JSON without markdown wrapping.`;
           return;
         }
 
-        let doctorObj = null;
-        if (role === 'DOCTOR') {
-          const docId = document.getElementById('login-doctor-select').value;
-          doctorObj = DB.get(STORAGE_KEYS.DOCTORS).find(d => d.doctor_id === docId) || this.getDefaultDoctor();
-        } else {
-          doctorObj = this.getDefaultDoctor();
-        }
+        const doctorObj = this.getDefaultDoctor();
 
         this.activeDoctor = doctorObj;
         AuthModule.activeDoctor = doctorObj;
@@ -10176,6 +10225,8 @@ Return ONLY valid JSON without markdown wrapping.`;
 
         AuthModule.updateRoleUI();
         this.hideLoginScreen();
+
+        DashboardModule.render();
 
         const docTitle = doctorObj ? ((doctorObj.title || 'นพ.') + ' ' + doctorObj.first_name + ' ' + doctorObj.last_name) : '';
         alert('ยินดีต้อนรับเข้าสู่ระบบ คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์\n' + (role === 'DOCTOR' ? ('แพทย์ผู้ตรวจ: ' + docTitle + ' (ว. ' + doctorObj.license_no + ')') : ('ตำแหน่ง: ' + AuthModule.getRoleName(role))));
