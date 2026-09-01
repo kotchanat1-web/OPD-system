@@ -44,7 +44,7 @@ create table if not exists public.opd_visits (
     diagnosis text,
     vitals jsonb, -- bp_sys, bp_dia, pr, rr, temp, weight, height, bmi, o2_sat
     drugs jsonb, -- array of prescribed drugs
-    labs jsonb, -- array of lab orders & results
+    labs jsonb, -- array of lab orders & results / attachments
     procedures jsonb, -- array of procedures & DF
     billing jsonb, -- total, discount, net, payment_type
     certificates jsonb, -- medical certificate data
