@@ -1309,7 +1309,10 @@
               <div class="card" style="border-color: #bfdbfe; background: #f0f7ff; margin-top: 10px;">
                 <div class="card-header" style="margin-bottom: 8px;">
                   <h4 class="card-title" style="font-size: 0.92rem; color: #1e3a8a;"><i data-lucide="calendar-clock"></i> นัดหมายตรวจครั้งต่อไป (Next Appointment)</h4>
-                  <button class="btn btn-outline btn-sm" onclick="AppointmentModule.printCurrentSlip()"><i data-lucide="printer"></i> พิมพ์ใบนัดผู้ป่วย</button>
+                  <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-primary btn-sm" onclick="AppointmentModule.saveVisitAppointment()"><i data-lucide="save"></i> บันทึกนัดหมาย</button>
+                    <button class="btn btn-outline btn-sm" onclick="AppointmentModule.printCurrentSlip()"><i data-lucide="printer"></i> พิมพ์ใบนัดผู้ป่วย</button>
+                  </div>
                 </div>
                 <div class="form-row form-row-4" style="align-items: flex-end;">
                   <div class="form-group" style="margin-bottom: 0;">
@@ -1413,6 +1416,9 @@
       <section class="tab-pane" id="tab-appointments">
         <div class="page-header">
           <div><h2 class="page-title"><i data-lucide="calendar-clock"></i> ตารางนัดหมายผู้ป่วย (Appointments)</h2><p class="page-subtitle">จัดการรายการนัด ติดตามผู้ป่วยเรื้อรัง และพิมพ์ใบนัด</p></div>
+          <div class="header-actions">
+            <button class="btn btn-primary" onclick="AppointmentModule.openNewModal()"><i data-lucide="calendar-plus"></i> เพิ่มการนัดหมายใหม่</button>
+          </div>
         </div>
         <div class="card">
           <div class="filter-bar">
@@ -1420,6 +1426,10 @@
             <input type="date" id="app-filter-date" class="form-input" style="width: 160px;" onchange="AppointmentModule.render()">
             <button class="btn btn-secondary btn-sm" onclick="AppointmentModule.setToday()">วันนี้</button>
             <button class="btn btn-outline btn-sm" onclick="AppointmentModule.clearFilter()">ดูทั้งหมด</button>
+            <div class="search-input-wrap" style="margin-left: auto;">
+              <i data-lucide="search"></i>
+              <input type="text" id="app-search-keyword" class="form-input" placeholder="ค้นหา HN หรือ ชื่อผู้ป่วย..." oninput="AppointmentModule.render()">
+            </div>
           </div>
           <div class="table-container">
             <table class="table" id="appointments-master-table">
@@ -2435,6 +2445,88 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="LabSetModule.closeModal()">ยกเลิก</button>
         <button class="btn btn-primary" onclick="LabSetModule.saveSet()"><i data-lucide="save"></i> บันทึกชุด Lab</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Appointment Modal -->
+  <div class="modal-backdrop" id="modal-appointment-new">
+    <div class="modal modal-md" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: #1e3a8a;"><i data-lucide="calendar-plus"></i> บันทึกการนัดหมายผู้ป่วย (New Appointment)</h3>
+        <button class="modal-close" onclick="AppointmentModule.closeNewModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px;">
+        <form id="form-new-appointment" onsubmit="event.preventDefault(); AppointmentModule.saveModalAppointment();">
+          
+          <!-- เลือกผู้ป่วย -->
+          <div class="form-group" style="margin-bottom: 14px; position: relative;">
+            <label class="form-label" style="font-weight: 600;">เลือกผู้ป่วย <span class="required" style="color:#ef4444;">*</span></label>
+            <div class="search-input-wrap">
+              <i data-lucide="user"></i>
+              <input type="text" id="app-new-patient-search" class="form-input" placeholder="พิมพ์ชื่อผู้ป่วย หรือ HN เพื่อค้นหา..." oninput="AppointmentModule.searchPatients(this.value)" autocomplete="off">
+            </div>
+            <input type="hidden" id="app-new-hn">
+            <input type="hidden" id="app-new-name">
+            <div id="app-new-patient-dropdown" style="display: none; max-height: 180px; overflow-y: auto; background: white; border: 1.5px solid var(--primary-300); border-radius: 8px; margin-top: 4px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); position: absolute; z-index: 1050; width: 100%;"></div>
+            <div id="app-new-patient-selected" style="display: none; margin-top: 8px; padding: 10px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 0.88rem; color: #1e40af;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div><i data-lucide="user-check"></i> ผู้ป่วย: <strong id="app-new-patient-display"></strong></div>
+                <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 0.75rem;" onclick="AppointmentModule.clearSelectedPatientModal()">เปลี่ยน</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- วันที่และเวลานัดหมาย (บังคับ) -->
+          <div class="card" style="background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 14px; margin-bottom: 14px; border-radius: 10px;">
+            <label class="form-label" style="font-weight: 600; color: #0f172a; margin-bottom: 6px;">กำหนดวันนัดล่วงหน้า</label>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="AppointmentModule.addDaysModal(7)">+1 สัปดาห์</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="AppointmentModule.addDaysModal(14)">+2 สัปดาห์</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="AppointmentModule.addDaysModal(30)">+1 เดือน</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="AppointmentModule.addDaysModal(60)">+2 เดือน</button>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">วันที่นัด <span class="required" style="color:#ef4444;">* (จำเป็น)</span></label>
+                <input type="date" id="app-new-date" class="form-input" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">เวลานัด <span class="required" style="color:#ef4444;">* (จำเป็น)</span></label>
+                <input type="time" id="app-new-time" class="form-input" value="09:00" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- เหตุผลการนัดหมาย -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" style="font-weight: 600;">เหตุผล / วัตถุประสงค์การนัดหมาย</label>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px;">
+              <button type="button" class="badge badge-primary" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--primary-300);" onclick="AppointmentModule.setReasonModal('ตรวจติดตามอาการ')">+ ตรวจติดตามอาการ</button>
+              <button type="button" class="badge badge-primary" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--primary-300);" onclick="AppointmentModule.setReasonModal('รับยาต่อเนื่อง (Chronic)')">+ รับยาต่อเนื่อง</button>
+              <button type="button" class="badge badge-primary" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--primary-300);" onclick="AppointmentModule.setReasonModal('ฟังผลเลือด / ตรวจ Lab')">+ ฟังผลเลือด / Lab</button>
+              <button type="button" class="badge badge-primary" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--primary-300);" onclick="AppointmentModule.setReasonModal('ฉีดยา / ทำแผล')">+ ฉีดยา / ทำแผล</button>
+            </div>
+            <input type="text" id="app-new-reason" class="form-input" placeholder="เช่น ติดตามผลเลือด, รับยาความดันต่อเนื่อง">
+          </div>
+
+          <!-- แพทย์ผู้นัด & หมายเหตุ -->
+          <div class="form-row form-row-2">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 600;">แพทย์ผู้นัด</label>
+              <select id="app-new-doctor" class="form-select"></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">หมายเหตุเพิ่มเติม</label>
+              <input type="text" id="app-new-note" class="form-input" placeholder="เช่น งดน้ำ-อาหาร 8 ชม.">
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="AppointmentModule.closeNewModal()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" onclick="AppointmentModule.saveModalAppointment()"><i data-lucide="save"></i> บันทึกนัดหมาย</button>
       </div>
     </div>
   </div>
@@ -3705,8 +3797,23 @@
         });
         if (visitMigrated) this.set(STORAGE_KEYS.VISITS, visits);
 
-        // Initialize appointments cleanly with no mock data
-        if (!localStorage.getItem(STORAGE_KEYS.APPOINTMENTS)) this.set(STORAGE_KEYS.APPOINTMENTS, []);
+        // Initialize appointments cleanly with no mock data and purge incomplete ones
+        let storedApps = this.get(STORAGE_KEYS.APPOINTMENTS);
+        if (Array.isArray(storedApps)) {
+          const invalidIds = ['APP_1788751869666', 'APP_1788852384050', 'APP_1788936837185'];
+          const cleaned = storedApps.filter(a => {
+            if (!a) return false;
+            const aid = a.appointment_id || a.app_id;
+            if (invalidIds.includes(aid)) return false;
+            const d = (a.date || a.appt_date || '').trim();
+            return d !== '';
+          });
+          if (cleaned.length !== storedApps.length) {
+            this.set(STORAGE_KEYS.APPOINTMENTS, cleaned, true);
+          }
+        } else {
+          this.set(STORAGE_KEYS.APPOINTMENTS, []);
+        }
         ['opd_nakhonsawan_appointments_v1', 'opd_nakhonsawan_appointments_v2', 'opd_nakhonsawan_appointments_v3', 'opd_nakhonsawan_appointments_v4', 'opd_appointments_data'].forEach(k => localStorage.removeItem(k));
         if (!localStorage.getItem(STORAGE_KEYS.AUDIT_LOGS)) this.set(STORAGE_KEYS.AUDIT_LOGS, []);
       },
@@ -5987,22 +6094,52 @@
     const AppointmentModule = {
       render() {
         const filterDate = document.getElementById('app-filter-date')?.value || '';
-        const apps = DB.get(STORAGE_KEYS.APPOINTMENTS);
+        const searchKeyword = (document.getElementById('app-search-keyword')?.value || '').trim().toLowerCase();
+        const apps = DB.get(STORAGE_KEYS.APPOINTMENTS) || [];
         const tbody = document.querySelector('#appointments-master-table tbody');
         if (!tbody) return;
 
-        const filtered = apps.filter(a => !filterDate || a.date === filterDate);
+        let filtered = apps.filter(a => {
+          const aDate = (a.date || a.appt_date || '').trim();
+          if (!aDate) return false;
+          if (filterDate && aDate !== filterDate) return false;
+          if (searchKeyword) {
+            const matchHn = (a.hn || '').toLowerCase().includes(searchKeyword);
+            const matchName = (a.patient_name || '').toLowerCase().includes(searchKeyword);
+            if (!matchHn && !matchName) return false;
+          }
+          return true;
+        });
+
+        // Sort by date then time
+        filtered.sort((x, y) => {
+          const dx = (x.date || x.appt_date || '') + ' ' + (x.time || x.appt_time || '');
+          const dy = (y.date || y.appt_date || '') + ' ' + (y.time || y.appt_time || '');
+          return dx.localeCompare(dy);
+        });
+
         if (filtered.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--slate-400);">ไม่พบรายการนัดหมาย</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--slate-400); padding: 18px;">ไม่พบรายการนัดหมาย</td></tr>';
           return;
         }
 
-        tbody.innerHTML = filtered.map((a, idx) => 
-          '<tr><td><strong>' + Utils.formatDateShort(a.date) + '</strong></td><td>' + a.time + '</td><td>' + a.hn + '</td>' +
-          '<td><strong>' + a.patient_name + '</strong></td><td><span class="badge badge-primary">OPD</span></td>' +
-          '<td>' + (a.reason || '-') + '</td><td>' + (a.doctor || 'นพ. กชณัฐ') + '</td>' +
-          '<td><button class="btn btn-outline btn-sm" onclick="AppointmentModule.printSlipById(\'' + a.app_id + '\')"><i data-lucide="printer"></i> ใบนัด</button></td></tr>'
-        ).join('');
+        tbody.innerHTML = filtered.map((a) => {
+          const aId = a.appointment_id || a.app_id;
+          const aDate = a.date || a.appt_date || '-';
+          const aTime = a.time || a.appt_time || '09:00';
+          return '<tr>' +
+            '<td><strong>' + (aDate !== '-' ? Utils.formatDateShort(aDate) : '-') + '</strong></td>' +
+            '<td>' + aTime + ' น.</td>' +
+            '<td>' + (a.hn || '-') + '</td>' +
+            '<td><strong>' + (a.patient_name || '-') + '</strong></td>' +
+            '<td><span class="badge badge-primary">OPD</span></td>' +
+            '<td>' + (a.reason || '-') + '</td>' +
+            '<td>' + (a.doctor || 'นพ. กชณัฐ พันธุ์วรรธนะสิน') + '</td>' +
+            '<td><div style="display: flex; gap: 4px;">' +
+              '<button class="btn btn-outline btn-sm" onclick="AppointmentModule.printSlipById(\'' + aId + '\')"><i data-lucide="printer"></i> ใบนัด</button>' +
+              '<button class="btn btn-outline btn-sm" style="color: #ef4444; border-color: #fca5a5;" onclick="AppointmentModule.deleteAppointment(\'' + aId + '\')"><i data-lucide="trash-2"></i> ลบ</button>' +
+            '</div></td></tr>';
+        }).join('');
         lucide.createIcons();
       },
       setToday() {
@@ -6011,6 +6148,8 @@
       },
       clearFilter() {
         document.getElementById('app-filter-date').value = '';
+        const searchEl = document.getElementById('app-search-keyword');
+        if (searchEl) searchEl.value = '';
         this.render();
       },
       addDays(days) {
@@ -6018,37 +6157,256 @@
         d.setDate(d.getDate() + days);
         document.getElementById('v-app-date').value = d.toISOString().slice(0, 10);
       },
-      syncFromVisit(v) {
-        if (!v.appointment?.date) return;
-        const apps = DB.get(STORAGE_KEYS.APPOINTMENTS);
-        const existingIdx = apps.findIndex(a => a.hn === v.hn && a.date === v.appointment.date);
-        const item = {
-          app_id: (existingIdx !== -1) ? apps[existingIdx].app_id : ('APP_' + Date.now()),
-          hn: v.hn,
-          patient_name: v.patient_name,
-          date: v.appointment.date,
-          time: v.appointment.time,
-          reason: v.appointment.reason,
-          doctor: v.doctor,
-          status: "PENDING"
+      saveVisitAppointment() {
+        if (!State.selectedVisit) {
+          alert('กรุณาเลือกผู้ป่วย/Visit ก่อนทำการบันทึกนัดหมาย');
+          return;
+        }
+        const appDate = (document.getElementById('v-app-date')?.value || '').trim();
+        const appTime = (document.getElementById('v-app-time')?.value || '').trim();
+        const appReason = (document.getElementById('v-app-reason')?.value || '').trim();
+
+        if (!appDate) {
+          alert('⚠️ กรุณาระบุ "วันที่นัด" ก่อนทำการบันทึกนัดหมาย');
+          document.getElementById('v-app-date')?.focus();
+          return;
+        }
+        if (!appTime) {
+          alert('⚠️ กรุณาระบุ "เวลานัด" ก่อนทำการบันทึกนัดหมาย');
+          document.getElementById('v-app-time')?.focus();
+          return;
+        }
+
+        const v = State.selectedVisit;
+        v.appointment = {
+          date: appDate,
+          appt_date: appDate,
+          time: appTime,
+          appt_time: appTime,
+          reason: appReason
         };
-        if (existingIdx !== -1) apps[existingIdx] = item;
-        else apps.push(item);
-        DB.set(STORAGE_KEYS.APPOINTMENTS, apps);
+
+        this.syncFromVisit(v);
+
+        // Update visit draft in DB
+        const visits = DB.get(STORAGE_KEYS.VISITS) || [];
+        const idx = visits.findIndex(x => x.visit_id === v.visit_id);
+        if (idx !== -1) visits[idx] = v;
+        DB.upsertItem(STORAGE_KEYS.VISITS, v);
+
+        alert('✅ บันทึกนัดหมายผู้ป่วย "' + v.patient_name + '" วันที่ ' + Utils.formatDateShort(appDate) + ' เวลา ' + appTime + ' น. เรียบร้อยแล้ว');
+      },
+      syncFromVisit(v) {
+        const appDate = v.appointment?.date || v.appointment?.appt_date;
+        if (!appDate) return;
+        const appTime = v.appointment?.time || v.appointment?.appt_time || '09:00';
+        const apps = DB.get(STORAGE_KEYS.APPOINTMENTS) || [];
+        const existingIdx = apps.findIndex(a => a.hn === v.hn && ((a.date && a.date === appDate) || (a.appt_date && a.appt_date === appDate)));
+        const aid = (existingIdx !== -1) ? (apps[existingIdx].appointment_id || apps[existingIdx].app_id) : ('APP_' + Date.now());
+        const item = {
+          app_id: aid,
+          appointment_id: aid,
+          hn: v.hn,
+          patient_id: v.patient_id || v.hn,
+          patient_name: v.patient_name,
+          date: appDate,
+          appt_date: appDate,
+          time: appTime,
+          appt_time: appTime,
+          reason: v.appointment?.reason || '',
+          doctor: v.doctor || 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน',
+          status: "PENDING",
+          note: v.appointment?.note || ''
+        };
+        DB.upsertItem(STORAGE_KEYS.APPOINTMENTS, item, 'appointment_id');
         this.render();
         DashboardModule.render();
       },
       printCurrentSlip() {
         if (!State.selectedVisit) return;
-        const appDate = document.getElementById('v-app-date').value;
-        const appTime = document.getElementById('v-app-time').value;
-        const appReason = document.getElementById('v-app-reason').value;
-        if (!appDate) { alert('กรุณาระบุวันนัดก่อนพิมพ์ใบนัด'); return; }
+        const appDate = (document.getElementById('v-app-date')?.value || '').trim();
+        const appTime = (document.getElementById('v-app-time')?.value || '').trim();
+        const appReason = (document.getElementById('v-app-reason')?.value || '').trim();
+        if (!appDate) { alert('⚠️ กรุณาระบุ "วันที่นัด" ก่อนพิมพ์ใบนัด'); return; }
+        if (!appTime) { alert('⚠️ กรุณาระบุ "เวลานัด" ก่อนพิมพ์ใบนัด'); return; }
+
+        // Auto-save before printing
+        State.selectedVisit.appointment = {
+          date: appDate,
+          appt_date: appDate,
+          time: appTime,
+          appt_time: appTime,
+          reason: appReason
+        };
+        this.syncFromVisit(State.selectedVisit);
+
         this.generateAppointmentPrint(State.selectedVisit.hn, State.selectedVisit.patient_name, appDate, appTime, appReason, State.selectedVisit.doctor);
       },
       printSlipById(appId) {
-        const a = DB.get(STORAGE_KEYS.APPOINTMENTS).find(x => x.app_id === appId);
-        if (a) this.generateAppointmentPrint(a.hn, a.patient_name, a.date, a.time, a.reason, a.doctor);
+        const a = (DB.get(STORAGE_KEYS.APPOINTMENTS) || []).find(x => (x.appointment_id === appId || x.app_id === appId));
+        if (a) {
+          const aDate = a.date || a.appt_date || '';
+          const aTime = a.time || a.appt_time || '09:00';
+          this.generateAppointmentPrint(a.hn, a.patient_name, aDate, aTime, a.reason, a.doctor);
+        }
+      },
+      deleteAppointment(appId) {
+        const apps = DB.get(STORAGE_KEYS.APPOINTMENTS) || [];
+        const a = apps.find(x => (x.appointment_id === appId || x.app_id === appId));
+        if (!a) return;
+        const patName = a.patient_name || a.hn;
+        const aDate = a.date || a.appt_date || '';
+        if (!confirm('ยืนยันต้องการยกเลิก/ลบรายการนัดหมายของ ' + patName + ' (วันที่ ' + (aDate ? Utils.formatDateShort(aDate) : '-') + ') หรือไม่?')) {
+          return;
+        }
+        DB.deleteItem(STORAGE_KEYS.APPOINTMENTS, appId, 'appointment_id');
+        const remaining = (DB.get(STORAGE_KEYS.APPOINTMENTS) || []).filter(x => x.appointment_id !== appId && x.app_id !== appId);
+        DB.set(STORAGE_KEYS.APPOINTMENTS, remaining);
+
+        this.render();
+        DashboardModule.render();
+        alert('🗑️ ลบรายการนัดหมายเรียบร้อยแล้ว');
+      },
+      openNewModal() {
+        document.getElementById('app-new-patient-search').value = '';
+        document.getElementById('app-new-hn').value = '';
+        document.getElementById('app-new-name').value = '';
+        document.getElementById('app-new-patient-selected').style.display = 'none';
+        document.getElementById('app-new-patient-dropdown').style.display = 'none';
+
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        document.getElementById('app-new-date').value = d.toISOString().slice(0, 10);
+        document.getElementById('app-new-time').value = '09:00';
+        document.getElementById('app-new-reason').value = '';
+        document.getElementById('app-new-note').value = '';
+
+        const docSelect = document.getElementById('app-new-doctor');
+        if (docSelect) {
+          const doctors = DB.get(STORAGE_KEYS.DOCTORS) || [];
+          if (doctors.length > 0) {
+            docSelect.innerHTML = doctors.map(doc => {
+              const fullName = (doc.title || '') + (doc.first_name || '') + ' ' + (doc.last_name || '');
+              return '<option value="' + fullName + '">' + fullName + '</option>';
+            }).join('');
+          } else {
+            docSelect.innerHTML = '<option value="นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน">นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน</option>';
+          }
+        }
+
+        if (State.selectedVisit) {
+          this.selectPatientModal(State.selectedVisit.hn, State.selectedVisit.patient_name);
+        }
+
+        document.getElementById('modal-appointment-new')?.classList.add('active');
+        lucide.createIcons();
+      },
+      closeNewModal() {
+        document.getElementById('modal-appointment-new')?.classList.remove('active');
+      },
+      searchPatients(keyword) {
+        const kw = (keyword || '').trim().toLowerCase();
+        const drop = document.getElementById('app-new-patient-dropdown');
+        if (!drop) return;
+        if (kw.length === 0) {
+          drop.style.display = 'none';
+          return;
+        }
+        const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
+        const matched = patients.filter(p => {
+          const hnMatch = (p.hn || '').toLowerCase().includes(kw);
+          const nameMatch = ((p.first_name || '') + ' ' + (p.last_name || '')).toLowerCase().includes(kw);
+          const cidMatch = (p.national_id || '').includes(kw);
+          const phoneMatch = (p.phone || '').includes(kw);
+          return hnMatch || nameMatch || cidMatch || phoneMatch;
+        }).slice(0, 8);
+
+        if (matched.length === 0) {
+          drop.innerHTML = '<div style="padding: 10px; color: var(--slate-400); text-align: center; font-size: 0.84rem;">ไม่พบผู้ป่วยที่ตรงกับการค้นหา</div>';
+          drop.style.display = 'block';
+          return;
+        }
+
+        drop.innerHTML = matched.map(p => {
+          const fullName = (p.title || '') + (p.first_name || '') + ' ' + (p.last_name || '');
+          const safeName = fullName.replace(/'/g, "\'");
+          return '<div style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background=\'#f0fdf4\'" onmouseout="this.style.background=\'white\'" onclick="AppointmentModule.selectPatientModal(\'' + p.hn + '\', \'' + safeName + '\')">' +
+            '<div><strong>' + fullName + '</strong> <span style="color: var(--slate-500); font-size: 0.8rem;">HN: ' + p.hn + '</span></div>' +
+            '<span class="badge badge-outline" style="font-size: 0.72rem;">' + (p.rights || 'UC') + '</span>' +
+          '</div>';
+        }).join('');
+        drop.style.display = 'block';
+      },
+      selectPatientModal(hn, name) {
+        document.getElementById('app-new-hn').value = hn;
+        document.getElementById('app-new-name').value = name;
+        document.getElementById('app-new-patient-search').value = name + ' (HN: ' + hn + ')';
+        document.getElementById('app-new-patient-display').textContent = name + ' (HN: ' + hn + ')';
+        document.getElementById('app-new-patient-selected').style.display = 'block';
+        document.getElementById('app-new-patient-dropdown').style.display = 'none';
+      },
+      clearSelectedPatientModal() {
+        document.getElementById('app-new-hn').value = '';
+        document.getElementById('app-new-name').value = '';
+        document.getElementById('app-new-patient-search').value = '';
+        document.getElementById('app-new-patient-selected').style.display = 'none';
+        document.getElementById('app-new-patient-dropdown').style.display = 'none';
+        document.getElementById('app-new-patient-search').focus();
+      },
+      addDaysModal(days) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        document.getElementById('app-new-date').value = d.toISOString().slice(0, 10);
+      },
+      setReasonModal(text) {
+        document.getElementById('app-new-reason').value = text;
+      },
+      saveModalAppointment() {
+        const hn = document.getElementById('app-new-hn')?.value || '';
+        const name = document.getElementById('app-new-name')?.value || '';
+        if (!hn || !name) {
+          alert('⚠️ กรุณาค้นหาและเลือกผู้ป่วยก่อนทำการบันทึกนัดหมาย');
+          document.getElementById('app-new-patient-search')?.focus();
+          return;
+        }
+        const dateVal = (document.getElementById('app-new-date')?.value || '').trim();
+        const timeVal = (document.getElementById('app-new-time')?.value || '').trim();
+        if (!dateVal) {
+          alert('⚠️ กรุณาระบุ "วันที่นัด" ก่อนทำการบันทึกนัดหมาย');
+          document.getElementById('app-new-date')?.focus();
+          return;
+        }
+        if (!timeVal) {
+          alert('⚠️ กรุณาระบุ "เวลานัด" ก่อนทำการบันทึกนัดหมาย');
+          document.getElementById('app-new-time')?.focus();
+          return;
+        }
+        const reason = (document.getElementById('app-new-reason')?.value || '').trim();
+        const doctor = document.getElementById('app-new-doctor')?.value || 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน';
+        const note = (document.getElementById('app-new-note')?.value || '').trim();
+
+        const aid = 'APP_' + Date.now();
+        const item = {
+          app_id: aid,
+          appointment_id: aid,
+          hn: hn,
+          patient_id: hn,
+          patient_name: name,
+          date: dateVal,
+          appt_date: dateVal,
+          time: timeVal,
+          appt_time: timeVal,
+          reason: reason,
+          doctor: doctor,
+          status: "PENDING",
+          note: note
+        };
+
+        DB.upsertItem(STORAGE_KEYS.APPOINTMENTS, item, 'appointment_id');
+        this.closeNewModal();
+        this.render();
+        DashboardModule.render();
+        alert('🎉 บันทึกการนัดหมายผู้ป่วย "' + name + '" วันที่ ' + Utils.formatDateShort(dateVal) + ' เวลา ' + timeVal + ' น. เรียบร้อยแล้ว');
       },
       generateAppointmentPrint(hn, name, date, time, reason, doctor) {
         const w = window.open('', '', 'width=600,height=650');
@@ -11811,16 +12169,19 @@ Return ONLY valid JSON without markdown wrapping.`;
           };
         }
         if (table === 'opd_appointments') {
+          const apptId = item.appointment_id || item.app_id || ('APP_' + Date.now());
+          const dateVal = item.appt_date || item.date || '';
+          const timeVal = item.appt_time || item.time || '09:00';
           return {
-            appointment_id: item.appointment_id || ('APP_' + Date.now()),
+            appointment_id: apptId,
             patient_id: item.patient_id || item.hn || '',
             hn: item.hn || '',
             patient_name: item.patient_name || '',
-            doctor: item.doctor || '',
-            appt_date: item.appt_date || '',
-            appt_time: item.appt_time || '',
+            doctor: item.doctor || 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน',
+            appt_date: dateVal,
+            appt_time: timeVal,
             reason: item.reason || '',
-            status: item.status || 'scheduled',
+            status: item.status || 'PENDING',
             note: item.note || ''
           };
         }
@@ -11876,6 +12237,26 @@ Return ONLY valid JSON without markdown wrapping.`;
           return {
             ...row,
             age: Utils.calcAge(row.dob)
+          };
+        }
+        if (table === 'opd_appointments') {
+          const apptId = row.appointment_id || row.app_id || ('APP_' + Date.now());
+          const dateVal = row.appt_date || row.date || '';
+          const timeVal = row.appt_time || row.time || '09:00';
+          return {
+            app_id: apptId,
+            appointment_id: apptId,
+            hn: row.hn || '',
+            patient_id: row.patient_id || row.hn || '',
+            patient_name: row.patient_name || '',
+            doctor: row.doctor || 'นายแพทย์ กชณัฐ พันธุ์วรรธนะสิน',
+            date: dateVal,
+            appt_date: dateVal,
+            time: timeVal,
+            appt_time: timeVal,
+            reason: row.reason || '',
+            status: row.status || 'PENDING',
+            note: row.note || ''
           };
         }
         return row;
