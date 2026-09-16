@@ -432,6 +432,35 @@ namespace ThaiCardReader {
                         return;
                     }
 
+                    // Serve Static Files (CSS, JS, JSON, Images)
+                    string baseDir = Path.GetDirectoryName(htmlFilePath);
+                    string cleanPath = path.Split('?')[0].TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                    string localFilePath = Path.Combine(baseDir, cleanPath);
+                    if (cleanPath.Contains(".") && File.Exists(localFilePath) && !cleanPath.Contains("..")) {
+                        string ext = Path.GetExtension(localFilePath).ToLower();
+                        string mime = "application/octet-stream";
+                        if (ext == ".js") mime = "application/javascript; charset=utf-8";
+                        else if (ext == ".css") mime = "text/css; charset=utf-8";
+                        else if (ext == ".json") mime = "application/json; charset=utf-8";
+                        else if (ext == ".html") mime = "text/html; charset=utf-8";
+                        else if (ext == ".png") mime = "image/png";
+                        else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
+                        else if (ext == ".svg") mime = "image/svg+xml";
+                        else if (ext == ".ico") mime = "image/x-icon";
+
+                        byte[] fileBytes = File.ReadAllBytes(localFilePath);
+                        string header = "HTTP/1.1 200 OK\r\n" +
+                            "Content-Type: " + mime + "\r\n" +
+                            "Access-Control-Allow-Origin: *\r\n" +
+                            "Access-Control-Allow-Private-Network: true\r\n" +
+                            "Content-Length: " + fileBytes.Length + "\r\n" +
+                            "Connection: close\r\n\r\n";
+                        byte[] hBytes = Encoding.UTF8.GetBytes(header);
+                        stream.Write(hBytes, 0, hBytes.Length);
+                        stream.Write(fileBytes, 0, fileBytes.Length);
+                        return;
+                    }
+
                     // JSON API (/health or /read)
                     string jsonResponse = "";
                     if (path.Contains("health") || path.Contains("status")) {
