@@ -2092,6 +2092,71 @@
     </div>
   </div>
 
+  <!-- Drug Merge Modal (Admin Only) -->
+  <div class="modal-backdrop" id="modal-drug-merge">
+    <div class="modal modal-md" style="max-width: 620px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #4338ca 0%, #3b82f6 100%); color: white; border-radius: 12px 12px 0 0;">
+        <h3 class="modal-title" style="color: white; display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="git-merge"></i> รวมรายการยากับยาเดิมในคลัง (Merge Drug)
+        </h3>
+        <button class="modal-close" style="color: white;" onclick="DrugModule.closeMergeModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <input type="hidden" id="merge-source-id">
+        
+        <!-- Source Drug Card -->
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: #991b1b; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+            <i data-lucide="arrow-right-from-line" style="width:14px;height:14px;"></i> 1. รายการยาที่จะยุบรวมออก (Source Drug - จะถูกตัดสต็อกและลบออก)
+          </div>
+          <div id="merge-source-info" style="font-size: 0.88rem; color: #1e293b; font-weight: 600; line-height: 1.5;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Target Drug Select -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 4px;">
+            <i data-lucide="arrow-down-to-line" style="width:14px;height:14px; color: #059669;"></i> 2. เลือกยาหลักที่จะรวมเข้าด้วยกัน (Target Drug - จะได้รับสต็อกเพิ่ม) <span class="required">*</span>
+          </label>
+          <select id="merge-target-select" class="form-select" style="font-size: 0.88rem; padding: 8px;" onchange="DrugModule.calculateMergePreview()">
+            <!-- Options populated by JS -->
+          </select>
+        </div>
+
+        <!-- Price Options -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+          <label class="form-label" style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">3. การกำหนดราคาซื้อ (ต้นทุน) และราคาขายหลังรวมยา:</label>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="merge-price-rule" value="weighted_avg" checked onchange="DrugModule.calculateMergePreview()">
+              <span><strong>คำนวณต้นทุนเฉลี่ยถ่วงน้ำหนัก (Weighted Average)</strong> <span style="color:#64748b; font-size:0.75rem;">(แนะนำ เพื่อความแม่นยำทางบัญชี)</span></span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="merge-price-rule" value="keep_target" onchange="DrugModule.calculateMergePreview()">
+              <span><strong>คงราคาเดิมของยาหลัก (Keep Target Price)</strong></span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="merge-price-rule" value="use_source" onchange="DrugModule.calculateMergePreview()">
+              <span><strong>ใช้ราคาตามยาย่อยที่นำมารวม (Use Source Price)</strong></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Preview Result Box -->
+        <div id="merge-preview-box" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px; font-size: 0.84rem; color: #1e40af; line-height: 1.5;">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <button class="btn btn-secondary" onclick="DrugModule.closeMergeModal()">ยกเลิก</button>
+        <button class="btn btn-primary" style="background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%); border: none;" onclick="DrugModule.executeMergeDrug()">
+          <i data-lucide="check-circle-2"></i> ยืนยันการรวมยา (Confirm Merge)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Lab Master Modal (Admin Only) -->
   <div class="modal-backdrop" id="modal-lab-master">
     <div class="modal modal-md">
@@ -2541,7 +2606,7 @@
   <script src="js/modules/patient.js?v=2.0.0"></script>
   <script src="js/modules/visit.js?v=2.0.0"></script>
   <script src="js/modules/lab-proc.js?v=2.0.0"></script>
-  <script src="js/modules/drug.js?v=2.2.0"></script>
+  <script src="js/modules/drug.js?v=2.3.0"></script>
   <script src="js/modules/billing.js?v=2.0.0"></script>
   <script src="js/modules/certificate.js?v=2.0.0"></script>
 

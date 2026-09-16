@@ -166,9 +166,11 @@ const StockModule = {
           '<td><span class="badge ' + (d.stock <= d.min_stock ? 'badge-danger' : 'badge-primary') + '">' + (d.stock || 0) + ' ' + d.unit + '</span></td>' +
           '<td>' + (d.min_stock || 10) + '</td>' +
           '<td><span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 600;">' + (d.drawer ? 'ลิ้นชัก ' + d.drawer : '-') + '</span></td>' +
-          '<td><div style="display: flex; gap: 4px;">' +
+          '<td><div style="display: flex; gap: 4px; flex-wrap: wrap;">' +
           '<button class="btn btn-outline btn-sm" onclick="DrugModule.openEditDrugModal(\'' + d.drug_id + '\')"><i data-lucide="edit-2"></i> แก้ไข</button>' +
+          '<button class="btn btn-sm" style="background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;" onclick="DrugModule.openMergeDrugModal(\'' + d.drug_id + '\')" title="รวมรายการยากับยาเดิมในคลัง"><i data-lucide="git-merge"></i> รวมยา</button>' +
           '<button class="btn btn-secondary btn-sm" onclick="DrugHistoryModule.openHistoryModal(\'' + d.drug_id + '\')" title="ดูประวัติราคาและสต็อก"><i data-lucide="history"></i> ประวัติ</button>' +
+          '<button class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: 1px solid #fecaca;" onclick="DrugModule.deleteDrug(\'' + d.drug_id + '\')" title="ลบรายการยานี้ออกจากคลัง"><i data-lucide="trash-2"></i> ลบ</button>' +
           '</div></td></tr>'
         ).join('');
         lucide.createIcons();
@@ -262,6 +264,59 @@ const StockModule = {
               note: 'แก้ไขราคาขายผ่านหน้าจัดการยา'
             });
           }
+          if (oldDrug.stock !== newStock) {
+            DrugHistoryModule.logChange({
+              drug_id: data.drug_id,
+              generic_name: data.generic_name,
+              trade_name: data.trade_name,
+              type: 'STOCK_ADJUST',
+              old_cost: newCost,
+              new_cost: newCost,
+              old_price: newPrice,
+              new_price: newPrice,
+              qty_change: (newStock - oldDrug.stock),
+              stock_before: oldDrug.stock || 0,
+              stock_after: newStock,
+              note: `ปรับยอดสต็อกยาด้วยตนเอง (${oldDrug.stock || 0} ➔ ${newStock})`
+            });
+            if (typeof StockModule !== "undefined" && StockModule.recordStockTx) {
+              StockModule.recordStockTx({
+                drug_id: data.drug_id,
+                generic_name: data.generic_name,
+                trade_name: data.trade_name || '',
+                visit_id: '',
+                type: (newStock >= oldDrug.stock ? 'ADJUST_UP' : 'ADJUST_DOWN'),
+                qty: Math.abs(newStock - oldDrug.stock),
+                cost_price: newCost,
+                sale_price: newPrice,
+                stock_before: oldDrug.stock || 0,
+                stock_after: newStock,
+                reference_no: 'MANUAL_ADJUST',
+                note: 'ปรับยอดสต็อกยาผ่านหน้าจัดการยา'
+              });
+            }
+          }
+          const infoChanges = [];
+          if (oldDrug.generic_name !== data.generic_name) infoChanges.push(`Generic: ${oldDrug.generic_name} ➔ ${data.generic_name}`);
+          if ((oldDrug.trade_name || '') !== (data.trade_name || '')) infoChanges.push(`Trade: ${oldDrug.trade_name || '-'} ➔ ${data.trade_name || '-'}`);
+          if ((oldDrug.strength || '') !== (data.strength || '')) infoChanges.push(`Strength: ${oldDrug.strength || '-'} ➔ ${data.strength || '-'}`);
+          if (oldDrug.dosage_form !== data.dosage_form) infoChanges.push(`Form: ${oldDrug.dosage_form} ➔ ${data.dosage_form}`);
+          if (infoChanges.length > 0) {
+            DrugHistoryModule.logChange({
+              drug_id: data.drug_id,
+              generic_name: data.generic_name,
+              trade_name: data.trade_name,
+              type: 'INFO_CHANGE',
+              old_cost: newCost,
+              new_cost: newCost,
+              old_price: newPrice,
+              new_price: newPrice,
+              qty_change: 0,
+              stock_before: newStock,
+              stock_after: newStock,
+              note: `แก้ไขข้อมูลยา: ${infoChanges.join(', ')}`
+            });
+          }
         } else {
           drugs.push(data);
           DrugHistoryModule.logChange({
@@ -285,6 +340,289 @@ const StockModule = {
         this.render();
         DashboardModule.render();
         alert('บันทึกข้อมูลยาเรียบร้อย');
+      },
+
+      deleteDrug(drugId) {
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("ลบรายการยา")) return;
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const d = drugs.find(x => x.drug_id === drugId);
+        if (!d) return;
+
+        const confirmMsg = `⚠️ ยืนยันการลบรายการยาออกจากคลัง?\n\n- รหัส: ${d.drug_id}\n- ชื่อยา: ${d.generic_name} ${d.trade_name ? '(' + d.trade_name + ')' : ''}\n- รูปแบบ/ขนาด: ${d.dosage_form || 'Tablet'} ${d.strength || ''}\n- สต็อกคงเหลือ: ${d.stock || 0} ${d.unit || 'หน่วย'}\n\n*หมายเหตุ: การลบจะถูกบันทึกลงใน Log ประวัติสต็อกยาอย่างถาวร`;
+        if (!confirm(confirmMsg)) return;
+
+        const oldStock = d.stock || 0;
+        const filtered = drugs.filter(x => x.drug_id !== drugId);
+        DB.set(STORAGE_KEYS.DRUGS, filtered);
+
+        DrugHistoryModule.logChange({
+          drug_id: d.drug_id,
+          generic_name: d.generic_name,
+          trade_name: d.trade_name || '',
+          type: 'DELETE_DRUG',
+          old_cost: d.purchase_price || 0,
+          new_cost: 0,
+          old_price: d.sale_price || 0,
+          new_price: 0,
+          qty_change: -oldStock,
+          stock_before: oldStock,
+          stock_after: 0,
+          ref_invoice: 'ADMIN_DELETE',
+          note: `ลบรายการยาออกจากระบบโดย Admin (สต็อกก่อนลบ: ${oldStock} ${d.unit || 'หน่วย'})`
+        });
+
+        if (typeof StockModule !== "undefined" && StockModule.recordStockTx) {
+          StockModule.recordStockTx({
+            drug_id: d.drug_id,
+            generic_name: d.generic_name,
+            trade_name: d.trade_name || '',
+            visit_id: '',
+            type: 'DISCARD',
+            qty: oldStock,
+            cost_price: d.purchase_price || 0,
+            sale_price: d.sale_price || 0,
+            stock_before: oldStock,
+            stock_after: 0,
+            reference_no: 'ADMIN_DELETE',
+            note: 'ตัดจำหน่าย/ลบรายการยาออกจากระบบ'
+          });
+        }
+
+        this.render();
+        if (typeof DashboardModule !== "undefined" && DashboardModule.render) DashboardModule.render();
+        alert(`🗑️ ลบรายการยา [${d.drug_id}] ${d.generic_name} เรียบร้อยแล้ว`);
+      },
+
+      openMergeDrugModal(sourceDrugId) {
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("รวมรายการยา")) return;
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const source = drugs.find(x => x.drug_id === sourceDrugId);
+        if (!source) return;
+
+        document.getElementById('merge-source-id').value = source.drug_id;
+        const infoEl = document.getElementById('merge-source-info');
+        if (infoEl) {
+          infoEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span><span class="badge badge-gray">[${source.drug_id}]</span> <strong>${source.generic_name}</strong> ${source.trade_name ? '<span style="color:#475569;">(' + source.trade_name + ')</span>' : ''}</span>
+              <span class="badge badge-danger">สต็อก: ${source.stock || 0} ${source.unit || 'หน่วย'}</span>
+            </div>
+            <div style="font-size:0.8rem; color:#64748b; margin-top:4px;">
+              รูปแบบ: <strong>${source.dosage_form || 'Tablet'}</strong> | ขนาดยา: <strong>${source.strength || '-'}</strong> | ทุน: ฿${Number(source.purchase_price || 0).toFixed(2)} | ขาย: ฿${Number(source.sale_price || 0).toFixed(2)}
+            </div>
+          `;
+        }
+
+        const targetSelect = document.getElementById('merge-target-select');
+        if (targetSelect) {
+          const otherDrugs = drugs.filter(x => x.drug_id !== sourceDrugId);
+          targetSelect.innerHTML = '<option value="">-- กรุณาเลือกยาหลักที่จะรวมเข้าด้วยกัน --</option>' +
+            otherDrugs.map(d => `<option value="${d.drug_id}">[${d.drug_id}] ${d.generic_name} ${d.trade_name ? '(' + d.trade_name + ')' : ''} | ${d.dosage_form || 'Tablet'} ${d.strength || ''} | สต็อก: ${d.stock || 0} ${d.unit || 'หน่วย'}</option>`).join('');
+        }
+
+        this.calculateMergePreview();
+        document.getElementById('modal-drug-merge').classList.add('active');
+        lucide.createIcons();
+      },
+
+      closeMergeModal() {
+        document.getElementById('modal-drug-merge').classList.remove('active');
+      },
+
+      calculateMergePreview() {
+        const sourceId = document.getElementById('merge-source-id')?.value;
+        const targetId = document.getElementById('merge-target-select')?.value;
+        const previewBox = document.getElementById('merge-preview-box');
+        if (!previewBox) return;
+
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const source = drugs.find(x => x.drug_id === sourceId);
+        const target = drugs.find(x => x.drug_id === targetId);
+
+        if (!source || !target) {
+          previewBox.innerHTML = '<div style="color: #64748b; font-style: italic;">กรุณาเลือกยาหลักด้านบนเพื่อดูผลลัพธ์การคำนวณ</div>';
+          return;
+        }
+
+        const rule = document.querySelector('input[name="merge-price-rule"]:checked')?.value || 'weighted_avg';
+        const sStock = Number(source.stock) || 0;
+        const tStock = Number(target.stock) || 0;
+        const combinedStock = sStock + tStock;
+
+        const sCost = Number(source.purchase_price) || 0;
+        const tCost = Number(target.purchase_price) || 0;
+        let finalCost = tCost;
+        let finalSale = Number(target.sale_price) || 0;
+
+        if (rule === 'weighted_avg') {
+          if (combinedStock > 0) {
+            finalCost = Number((((tCost * tStock) + (sCost * sStock)) / combinedStock).toFixed(2));
+          } else {
+            finalCost = tCost > 0 ? tCost : sCost;
+          }
+        } else if (rule === 'use_source') {
+          finalCost = sCost;
+          finalSale = Number(source.sale_price) || finalSale;
+        }
+
+        previewBox.innerHTML = `
+          <div style="font-weight: 700; margin-bottom: 6px; color: #1e3a8a;"><i data-lucide="calculator" style="width:14px;height:14px;display:inline;"></i> สรุปผลหลังการรวมรายการยา:</div>
+          <div>• <strong>ยาหลักที่จะคงไว้:</strong> [${target.drug_id}] ${target.generic_name} ${target.trade_name ? '(' + target.trade_name + ')' : ''}</div>
+          <div>• <strong>ยอดสต็อกรวมใหม่:</strong> ${tStock} + ${sStock} = <strong style="color: #059669; font-size: 0.95rem;">${combinedStock} ${target.unit || 'หน่วย'}</strong></div>
+          <div>• <strong>ราคาซื้อ (ต้นทุน):</strong> ฿${finalCost.toFixed(2)} (เดิม ฿${tCost.toFixed(2)}) | <strong>ราคาขาย:</strong> ฿${finalSale.toFixed(2)}</div>
+          <div style="margin-top: 4px; color: #b91c1c; font-size: 0.78rem;">* รายการ [${source.drug_id}] จะถูกตัดยอดเป็น 0 และลบออกจากรายการ Master เพื่อป้องกันความซ้ำซ้อน</div>
+        `;
+        lucide.createIcons();
+      },
+
+      executeMergeDrug() {
+        if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("รวมรายการยา")) return;
+        const sourceId = document.getElementById('merge-source-id')?.value;
+        const targetId = document.getElementById('merge-target-select')?.value;
+        if (!sourceId || !targetId) {
+          alert('กรุณาเลือกยาหลักที่จะรวมเข้าด้วยกัน');
+          return;
+        }
+        if (sourceId === targetId) {
+          alert('ไม่สามารถรวมยาเข้ากับตัวเองได้');
+          return;
+        }
+
+        const drugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+        const source = drugs.find(x => x.drug_id === sourceId);
+        const target = drugs.find(x => x.drug_id === targetId);
+
+        if (!source || !target) {
+          alert('ไม่พบข้อมูลยาในระบบ');
+          return;
+        }
+
+        const rule = document.querySelector('input[name="merge-price-rule"]:checked')?.value || 'weighted_avg';
+        const sStock = Number(source.stock) || 0;
+        const tStock = Number(target.stock) || 0;
+        const combinedStock = sStock + tStock;
+
+        const sCost = Number(source.purchase_price) || 0;
+        const tCost = Number(target.purchase_price) || 0;
+        let finalCost = tCost;
+        let finalSale = Number(target.sale_price) || 0;
+
+        if (rule === 'weighted_avg') {
+          if (combinedStock > 0) {
+            finalCost = Number((((tCost * tStock) + (sCost * sStock)) / combinedStock).toFixed(2));
+          } else {
+            finalCost = tCost > 0 ? tCost : sCost;
+          }
+        } else if (rule === 'use_source') {
+          finalCost = sCost;
+          finalSale = Number(source.sale_price) || finalSale;
+        }
+
+        const confirmMsg = `⚠️ ยืนยันการรวมรายการยา?\n\nยุบรวม: [${source.drug_id}] ${source.generic_name} (${sStock} หน่วย)\nเข้ากับยาหลัก: [${target.drug_id}] ${target.generic_name}\n\n- สต็อกยาหลักใหม่จะเป็น: ${combinedStock} หน่วย\n- ต้นทุนใหม่: ฿${finalCost.toFixed(2)}\n- รายการ [${source.drug_id}] จะถูกลบออกจาก Master`;
+        if (!confirm(confirmMsg)) return;
+
+        // 1. Update Target Drug
+        const oldTargetCost = target.purchase_price || 0;
+        const oldTargetSale = target.sale_price || 0;
+        target.stock = combinedStock;
+        target.purchase_price = finalCost;
+        target.sale_price = finalSale;
+
+        // 2. Remove Source Drug from Master
+        const updatedDrugs = drugs.filter(x => x.drug_id !== sourceId);
+        DB.set(STORAGE_KEYS.DRUGS, updatedDrugs);
+
+        // 3. Migrate historical Visit Prescriptions
+        try {
+          const visits = DB.get(STORAGE_KEYS.VISITS) || [];
+          let migratedRxCount = 0;
+          visits.forEach(v => {
+            if (v.prescriptions && Array.isArray(v.prescriptions)) {
+              v.prescriptions.forEach(p => {
+                if (p.drug_id === sourceId) {
+                  p.drug_id = target.drug_id;
+                  p.migrated_from = sourceId;
+                  migratedRxCount++;
+                }
+              });
+            }
+          });
+          if (migratedRxCount > 0) {
+            DB.set(STORAGE_KEYS.VISITS, visits);
+          }
+        } catch(_) {}
+
+        // 4. Audit Log in Drug History
+        DrugHistoryModule.logChange({
+          drug_id: target.drug_id,
+          generic_name: target.generic_name,
+          trade_name: target.trade_name || '',
+          type: 'MERGE_INBOUND',
+          old_cost: oldTargetCost,
+          new_cost: finalCost,
+          old_price: oldTargetSale,
+          new_price: finalSale,
+          qty_change: sStock,
+          stock_before: tStock,
+          stock_after: combinedStock,
+          ref_invoice: 'MERGE_FROM:' + source.drug_id,
+          note: `รวมสต็อกจาก [${source.drug_id}] ${source.generic_name} ${source.trade_name ? '(' + source.trade_name + ')' : ''} (+${sStock} ${source.unit || 'หน่วย'})`
+        });
+
+        DrugHistoryModule.logChange({
+          drug_id: source.drug_id,
+          generic_name: source.generic_name,
+          trade_name: source.trade_name || '',
+          type: 'MERGED_OUT',
+          old_cost: sCost,
+          new_cost: 0,
+          old_price: source.sale_price || 0,
+          new_price: 0,
+          qty_change: -sStock,
+          stock_before: sStock,
+          stock_after: 0,
+          ref_invoice: 'MERGED_TO:' + target.drug_id,
+          note: `ยุบรวมรายการเข้ากับ [${target.drug_id}] ${target.generic_name} ${target.trade_name ? '(' + target.trade_name + ')' : ''}`
+        });
+
+        // 5. Stock Movement Tx Log
+        if (typeof StockModule !== "undefined" && StockModule.recordStockTx) {
+          StockModule.recordStockTx({
+            drug_id: target.drug_id,
+            generic_name: target.generic_name,
+            trade_name: target.trade_name || '',
+            visit_id: '',
+            type: 'MERGE_IN',
+            qty: sStock,
+            cost_price: finalCost,
+            sale_price: finalSale,
+            stock_before: tStock,
+            stock_after: combinedStock,
+            reference_no: 'MERGE:' + source.drug_id,
+            note: `รับรวมสต็อกจาก ${source.drug_id}`
+          });
+
+          StockModule.recordStockTx({
+            drug_id: source.drug_id,
+            generic_name: source.generic_name,
+            trade_name: source.trade_name || '',
+            visit_id: '',
+            type: 'MERGE_OUT',
+            qty: sStock,
+            cost_price: sCost,
+            sale_price: source.sale_price || 0,
+            stock_before: sStock,
+            stock_after: 0,
+            reference_no: 'MERGE:' + target.drug_id,
+            note: `โอนสต็อกยุบรวมไปยัง ${target.drug_id}`
+          });
+        }
+
+        this.closeMergeModal();
+        this.render();
+        if (typeof DashboardModule !== "undefined" && DashboardModule.render) DashboardModule.render();
+
+        alert(`🎉 รวมรายการยาสำเร็จ!\n\n- ยาหลัก: [${target.drug_id}] ${target.generic_name}\n- สต็อกรวมใหม่: ${combinedStock} ${target.unit || 'หน่วย'}\n- บันทึกประวัติการรวมยาลง Log เรียบร้อยแล้ว`);
       },
       openStockInModal() {
         if (typeof AuthModule !== "undefined" && AuthModule.requireAdmin && !AuthModule.requireAdmin("รับยาเข้าคลัง")) return;
@@ -537,6 +875,16 @@ const StockModule = {
             typeBadge = '<span class="badge badge-primary"><i data-lucide="tag"></i> ปรับราคาขาย</span>';
           } else if (row.type === 'NEW_DRUG') {
             typeBadge = '<span class="badge badge-info"><i data-lucide="plus-circle"></i> ยาใหม่</span>';
+          } else if (row.type === 'MERGE_INBOUND') {
+            typeBadge = '<span class="badge" style="background:#e0e7ff; color:#4338ca; border:1px solid #c7d2fe;"><i data-lucide="git-merge"></i> รวมสต็อกเข้า</span>';
+          } else if (row.type === 'MERGED_OUT') {
+            typeBadge = '<span class="badge" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a;"><i data-lucide="git-pull-request"></i> ยุบรวมออก</span>';
+          } else if (row.type === 'DELETE_DRUG') {
+            typeBadge = '<span class="badge badge-danger"><i data-lucide="trash-2"></i> ลบรายการยา</span>';
+          } else if (row.type === 'STOCK_ADJUST') {
+            typeBadge = '<span class="badge" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;"><i data-lucide="sliders"></i> ปรับสต็อกมือ</span>';
+          } else if (row.type === 'INFO_CHANGE') {
+            typeBadge = '<span class="badge" style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4;"><i data-lucide="edit-3"></i> แก้ไขข้อมูล</span>';
           } else {
             typeBadge = '<span class="badge badge-gray">' + (row.type || '-') + '</span>';
           }
@@ -1019,6 +1367,36 @@ const StockModule = {
       if (combined.match(/\b(inhaler|พ่น|spray|aerosol)\b/i)) return 'inhaler';
       if (combined.match(/\b(tab|tablet|cap|capsule|เม็ด|แคปซูล|ยาเม็ด)\b/i)) return 'oral_solid';
       return 'other';
+    }
+
+    // Helper: Normalize drug generic names to bridge short vs long forms
+    function normalizeGenericName(name) {
+      if (!name) return '';
+      let s = String(name).toLowerCase().trim();
+      s = s.replace(/\s*\([^)]*\)/g, '')
+           .replace(/^(tab|cap|syr|inj|cream|oint|sachet)[\.\s]+/i, '')
+           .replace(/\b(\d+mg|\d+g|\d+ml|\d+%)\b/gi, '')
+           .trim();
+      if (s === 'amoxy' || s === 'amox' || s === 'amoxicillin') return 'amoxicillin';
+      if (s === 'cpm' || s === 'chlorpheniramine' || s === 'chlorphen') return 'chlorpheniramine maleate';
+      if (s === 'para' || s === 'parac' || s === 'paracetamol') return 'paracetamol';
+      if (s === 'dimen' || s === 'dimenhydrinate') return 'dimenhydrinate';
+      if (s === 'diclo' || s === 'difelene' || s === 'voltaren' || s === 'diclofenac') return 'diclofenac sodium';
+      if (s === 'triamcinolone' || s === 'triamcinolone acetonide') return 'triamcinolone acetonide';
+      if (s === 'ibu' || s === 'brufen' || s === 'nurofen' || s === 'ibuprofen') return 'ibuprofen';
+      if (s === 'ambroxol' || s === 'ambril' || s === 'mucosolvan') return 'ambroxol hcl';
+      if (s === 'bromhexine' || s === 'bisolvon') return 'bromhexine hcl';
+      if (s === 'salbutamol' || s === 'ventolin' || s === 'asthalin') return 'salbutamol';
+      if (s === 'norflox' || s === 'norfloxacin') return 'norfloxacin';
+      if (s === 'cipro' || s === 'ciprobay' || s === 'ciprofloxacin') return 'ciprofloxacin';
+      if (s === 'levo' || s === 'cravit' || s === 'levofloxacin') return 'levofloxacin';
+      if (s === 'clinda' || s === 'dalacin' || s === 'clindamycin') return 'clindamycin';
+      if (s === 'doxy' || s === 'vibramycin' || s === 'doxycycline') return 'doxycycline';
+      if (s === 'cetirizine' || s === 'zyrtec' || s === 'cetriz') return 'cetirizine hcl';
+      if (s === 'fexofenadine' || s === 'telfast') return 'fexofenadine';
+      if (s === 'loratadine' || s === 'clarityne') return 'loratadine';
+      if (s === 'omeprazole' || s === 'miracid' || s === 'losec') return 'omeprazole';
+      return s;
     }
 
     // Advanced Clinical Pharmacological Enricher & Canonical Matcher
@@ -1663,11 +2041,14 @@ Return ONLY valid JSON without markdown wrapping.`;
           const cost = parseFloat(item.cost_price || item.unit_price || item.cost || item.price) || 0;
           const itemCat = getDosageCategory(form, unit, tradeName + ' ' + genName);
 
-          // Find ALL candidate drugs in clinic with matching generic name or similar trade name
+          const genNorm = normalizeGenericName(genName);
+
+          // Find ALL candidate drugs in clinic with matching generic name, normalized generic, or similar trade name
           const candidateDrugs = existingDrugs.filter(d => {
             const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dGenNorm = normalizeGenericName(dGen);
             const dTrade = (d.trade_name || '').toLowerCase().trim();
-            return (genName && dGen === genName.toLowerCase()) || 
+            return (genName && (dGen === genName.toLowerCase() || (genNorm && dGenNorm === genNorm))) || 
                    (tradeName && (dTrade === tradeName.toLowerCase() || dTrade.includes(tradeName.toLowerCase()) || tradeName.toLowerCase().includes(dTrade)));
           });
 
@@ -1684,24 +2065,27 @@ Return ONLY valid JSON without markdown wrapping.`;
             });
           }
 
-          // Tier 2: Generic Name + Same Dosage Category + Same Strength
+          // Tier 2: Generic Name (Exact or Normalized) + Same Dosage Category + Same Strength
           if (!matchedDrug && genName) {
             matchedDrug = existingDrugs.find(d => {
               const dGen = (d.generic_name || '').toLowerCase().trim();
+              const dGenNorm = normalizeGenericName(dGen);
               const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
-              const sameGen = (dGen === genName.toLowerCase());
+              const sameGen = (dGen === genName.toLowerCase()) || (genNorm && dGenNorm === genNorm);
               const sameCat = (dCat === itemCat);
               const sameStrength = (!strength || !d.strength || (d.strength || '').toLowerCase().trim() === strength.toLowerCase());
               return sameGen && sameCat && sameStrength;
             });
           }
 
-          // Tier 3: Generic Name + Same Dosage Category (e.g. both are Topical/Cream)
+          // Tier 3: Generic Name (Exact or Normalized) + Same Dosage Category (e.g. both are Topical/Cream)
           if (!matchedDrug && genName) {
             matchedDrug = existingDrugs.find(d => {
               const dGen = (d.generic_name || '').toLowerCase().trim();
+              const dGenNorm = normalizeGenericName(dGen);
               const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
-              return (dGen === genName.toLowerCase()) && (dCat === itemCat);
+              const sameGen = (dGen === genName.toLowerCase()) || (genNorm && dGenNorm === genNorm);
+              return sameGen && (dCat === itemCat);
             });
           }
 
@@ -1776,30 +2160,49 @@ Return ONLY valid JSON without markdown wrapping.`;
 
           let matchSelectorHtml = '';
           const candidates = row.candidate_drugs || [];
+          const existingDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+          const otherDrugs = existingDrugs.filter(d => !candidates.some(c => c.drug_id === d.drug_id));
 
           if (row.action === 'new' || !row.matched_drug_id || !row.matched_drug) {
             matchSelectorHtml = `
               <div style="display: flex; flex-direction: column; gap: 4px;">
                 <div class="ocr-badge-new" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #ecfdf5; color: #047857; font-weight: 600; border: 1px solid #a7f3d0;"><i data-lucide="sparkles" style="width:13px; height:13px;"></i> ✨ รายการยาใหม่ (แยกสต็อก)</div>
-                ${candidates.length > 0 ? `
-                  <select class="form-select" style="font-size: 0.72rem; padding: 2px 4px; background: #f8fafc; border-color: #cbd5e1; max-width: 220px;" onchange="DrugOcrModule.changeMatchedDrug(${idx}, this.value)">
-                    <option value="NEW" selected>✨ [+] สร้างเป็นยาใหม่แยกรายการ</option>
-                    <optgroup label="หรือเลือกยาเดิมในคลัง:">
+                <select class="form-select" style="font-size: 0.72rem; padding: 2px 4px; background: #f8fafc; border-color: #cbd5e1; max-width: 220px;" onchange="DrugOcrModule.changeMatchedDrug(${idx}, this.value)">
+                  <option value="NEW" selected>✨ [+] สร้างเป็นยาใหม่แยกรายการ</option>
+                  ${candidates.length > 0 ? `
+                    <optgroup label="💡 ยาที่ตรงกัน/ใกล้เคียงในคลัง:">
                       ${candidates.map(cd => `<option value="${cd.drug_id}">📦 [${cd.drug_id}] ${cd.trade_name || cd.generic_name} (${cd.dosage_form || cd.unit}) คงเหลือ: ${cd.stock || 0}</option>`).join('')}
                     </optgroup>
-                  </select>
-                ` : ''}
+                  ` : ''}
+                  ${otherDrugs.length > 0 ? `
+                    <optgroup label="📋 หรือเลือกยาอื่นทั้งหมดในคลัง:">
+                      ${otherDrugs.map(od => `<option value="${od.drug_id}">[${od.drug_id}] ${od.generic_name} ${od.trade_name ? '(' + od.trade_name + ')' : ''} (${od.dosage_form || od.unit}) สต็อก: ${od.stock || 0}</option>`).join('')}
+                    </optgroup>
+                  ` : ''}
+                </select>
               </div>
             `;
           } else {
             const md = row.matched_drug;
+            const remainingCandidates = candidates.filter(cd => cd.drug_id !== md.drug_id);
             matchSelectorHtml = `
               <div style="display: flex; flex-direction: column; gap: 4px;">
                 <div class="ocr-badge-match" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #eff6ff; color: #1d4ed8; font-weight: 600; border: 1px solid #bfdbfe;"><i data-lucide="check-circle" style="width:13px; height:13px;"></i> [${md.drug_id}] ${md.trade_name || md.generic_name}</div>
                 <select class="form-select" style="font-size: 0.72rem; padding: 2px 4px; background: #f0fdf4; border-color: #86efac; max-width: 220px;" onchange="DrugOcrModule.changeMatchedDrug(${idx}, this.value)">
                   <option value="${md.drug_id}" selected>📦 [${md.drug_id}] ${md.trade_name || md.generic_name} (${md.dosage_form || md.unit}) สต็อก: ${md.stock || 0}</option>
-                  ${candidates.filter(cd => cd.drug_id !== md.drug_id).map(cd => `<option value="${cd.drug_id}">📦 [${cd.drug_id}] ${cd.trade_name || cd.generic_name} (${cd.dosage_form || cd.unit}) สต็อก: ${cd.stock || 0}</option>`).join('')}
-                  <option value="NEW">✨ [+] แยกเป็นรายการยาใหม่ (New SKU)</option>
+                  ${remainingCandidates.length > 0 ? `
+                    <optgroup label="💡 ตัวเลือกอื่นที่ใกล้เคียง:">
+                      ${remainingCandidates.map(cd => `<option value="${cd.drug_id}">📦 [${cd.drug_id}] ${cd.trade_name || cd.generic_name} (${cd.dosage_form || cd.unit}) สต็อก: ${cd.stock || 0}</option>`).join('')}
+                    </optgroup>
+                  ` : ''}
+                  <optgroup label="✨ นำเข้าเป็นรายการใหม่:">
+                    <option value="NEW">✨ [+] แยกเป็นรายการยาใหม่ (New SKU)</option>
+                  </optgroup>
+                  ${otherDrugs.length > 0 ? `
+                    <optgroup label="📋 หรือเลือกยาอื่นทั้งหมดในคลัง:">
+                      ${otherDrugs.map(od => `<option value="${od.drug_id}">[${od.drug_id}] ${od.generic_name} ${od.trade_name ? '(' + od.trade_name + ')' : ''} (${od.dosage_form || od.unit}) สต็อก: ${od.stock || 0}</option>`).join('')}
+                    </optgroup>
+                  ` : ''}
                 </select>
               </div>
             `;
@@ -1921,10 +2324,13 @@ Return ONLY valid JSON without markdown wrapping.`;
         const tradeName = (row.trade_name || '').toLowerCase().trim();
         const itemCat = getDosageCategory(row.dosage_form, row.unit, tradeName + ' ' + genName);
 
+        const genNorm = normalizeGenericName(genName);
+
         row.candidate_drugs = existingDrugs.filter(d => {
           const dGen = (d.generic_name || '').toLowerCase().trim();
+          const dGenNorm = normalizeGenericName(dGen);
           const dTrade = (d.trade_name || '').toLowerCase().trim();
-          return (genName && dGen === genName) || 
+          return (genName && (dGen === genName || (genNorm && dGenNorm === genNorm))) || 
                  (tradeName && (dTrade === tradeName || dTrade.includes(tradeName) || tradeName.includes(dTrade)));
         });
 
@@ -1938,21 +2344,25 @@ Return ONLY valid JSON without markdown wrapping.`;
                    (itemCat === 'other' || dCat === itemCat);
           });
         }
-        // 2. Generic + Same Dosage Category + Strength
+        // 2. Generic (Exact or Normalized) + Same Dosage Category + Strength
         if (!matched && genName) {
           matched = existingDrugs.find(d => {
             const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dGenNorm = normalizeGenericName(dGen);
             const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+            const sameGen = (dGen === genName) || (genNorm && dGenNorm === genNorm);
             const sameStrength = (!row.strength || !d.strength || (d.strength || '').toLowerCase().trim() === row.strength.toLowerCase().trim());
-            return (dGen === genName) && (dCat === itemCat) && sameStrength;
+            return sameGen && (dCat === itemCat) && sameStrength;
           });
         }
-        // 3. Generic + Same Dosage Category
+        // 3. Generic (Exact or Normalized) + Same Dosage Category
         if (!matched && genName) {
           matched = existingDrugs.find(d => {
             const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dGenNorm = normalizeGenericName(dGen);
             const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
-            return (dGen === genName) && (dCat === itemCat);
+            const sameGen = (dGen === genName) || (genNorm && dGenNorm === genNorm);
+            return sameGen && (dCat === itemCat);
           });
         }
 
