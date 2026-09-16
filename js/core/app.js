@@ -4,8 +4,8 @@
    ========================================================================== */
 
 const App = {
-      init() {
-        DB.init();
+      async init() {
+        await DB.init();
         LoginModule.init();
         AuthModule.init();
         CloudSyncModule.init();
@@ -500,4 +500,4 @@ const MigrationModule = {
       }
     };
 
-document.addEventListener('DOMContentLoaded', () => { App.init(); });
+document.addEventListener('DOMContentLoaded', async () => { await App.init(); });

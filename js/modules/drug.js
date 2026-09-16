@@ -830,6 +830,19 @@ const StockModule = {
       'zovirax': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
       'acyclo': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
       'acyclovir': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'acyclovir cream': { generic: 'Acyclovir', strength: '5%', form: 'Cream', defaultUnit: 'หลอด' },
+      'zovirax': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zovirax cream': { generic: 'Acyclovir', strength: '5%', form: 'Cream', defaultUnit: 'หลอด' },
+      'zocovin': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clinovir': { generic: 'Acyclovir', strength: '400 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'clinovir cream': { generic: 'Acyclovir', strength: '5%', form: 'Cream', defaultUnit: 'หลอด' },
+      'monirax': { generic: 'Acyclovir', strength: '5%', form: 'Cream', defaultUnit: 'หลอด' },
+      'buflex': { generic: 'Ibuprofen', strength: '100 mg/5ml', form: 'Suspension', defaultUnit: 'ขวด' },
+      'xebramol': { generic: 'Paracetamol', strength: '120 mg/5ml', form: 'Syrup', defaultUnit: 'ขวด' },
+      'kressmol': { generic: 'Paracetamol', strength: '250 mg/5ml', form: 'Syrup', defaultUnit: 'ขวด' },
+      'kanolone': { generic: 'Triamcinolone acetonide', strength: '0.1%', form: 'Sachet', defaultUnit: 'ซอง' },
+      'zyno': { generic: 'Triamcinolone acetonide', strength: '0.1%', form: 'Cream', defaultUnit: 'หลอด' },
+      'zyno cream': { generic: 'Triamcinolone acetonide', strength: '0.02%', form: 'Cream', defaultUnit: 'หลอด' },
       'valtrex': { generic: 'Valacyclovir', strength: '500 mg', form: 'Tablet', defaultUnit: 'เม็ด' },
 
       // Antihistamines, Respiratory & Cold Combinations
@@ -995,17 +1008,32 @@ const StockModule = {
     };
 
     // Advanced Clinical Pharmacological Enricher & Canonical Matcher
+    // Helper: Categorize dosage forms to prevent cross-form auto-merging (e.g. Cream vs Tablet)
+    function getDosageCategory(form = '', unit = '', text = '') {
+      const combined = (String(form || '') + ' ' + String(unit || '') + ' ' + String(text || '')).toLowerCase();
+      if (combined.match(/\b(cream|ครีม|oint|ointment|ขี้ผึ้ง|gel|เจล|paste|tube|หลอด|ทาผิว|ยาทา|topical)\b/i)) return 'topical';
+      if (combined.match(/\b(syr|syrup|ยาน้ำ|ยาน้ำเชื่อม|susp|suspension|ขวด|bottle|solution|cc|ml)\b/i)) return 'oral_liquid';
+      if (combined.match(/\b(eye|ear|drops?|หยอดตา|หยอดหู|oph)\b/i)) return 'drops';
+      if (combined.match(/\b(inj|injection|ยาฉีด|vial|amp|ampoule|ไวอัล|แอมพูล)\b/i)) return 'injection';
+      if (combined.match(/\b(sachet|ซอง|powder|ผง|effervescent)\b/i)) return 'powder';
+      if (combined.match(/\b(inhaler|พ่น|spray|aerosol)\b/i)) return 'inhaler';
+      if (combined.match(/\b(tab|tablet|cap|capsule|เม็ด|แคปซูล|ยาเม็ด)\b/i)) return 'oral_solid';
+      return 'other';
+    }
+
+    // Advanced Clinical Pharmacological Enricher & Canonical Matcher
     function enrichOpdDrugItem(item) {
       if (!item || typeof item !== 'object') return item;
 
       let tradeKey = (item.trade_name || '').toLowerCase().trim();
       let genericKey = (item.generic_name || '').toLowerCase().trim();
+      const itemCat = getDosageCategory(item.dosage_form, item.unit, tradeKey + ' ' + genericKey);
 
-      // Clean distributor prefixes & package suffixes (e.g. "Tab. Noraphen 500mg (S.R.O.)" -> "noraphen")
+      // Clean distributor prefixes & package suffixes
       const cleanKey = (text) => {
         return text
-          .replace(/\s*\([^)]*\)/g, '') // remove parenthesized distributor
-          .replace(/^(tab|cap|syr|inj|cream|oint|sachet|dr|drops?|solution|susp|amp|vial)[\.\s]+/i, '')
+          .replace(/\s*\([^)]*\)/g, '')
+          .replace(/^(tab|cap|syr|inj|sachet|dr|solution|amp|vial)[\.\s]+/i, '')
           .replace(/\b(\d+mg|\d+g|\d+ml|\d+%|forte|plus|comp|max|d|sr|xr|cr|retard)\b/gi, '')
           .replace(/[-_\/\.]/g, ' ')
           .replace(/\s+/g, ' ')
@@ -1015,45 +1043,46 @@ const StockModule = {
       const cTrade = cleanKey(tradeKey);
       const cGeneric = cleanKey(genericKey);
 
-      // 1. Direct match on Thai Drug Database
-      let match = THAI_DRUG_DATABASE[tradeKey] || 
-                  THAI_DRUG_DATABASE[cTrade] || 
-                  THAI_DRUG_DATABASE[genericKey] || 
-                  THAI_DRUG_DATABASE[cGeneric];
-
-      // 2. Word-level prefix matching (e.g. "Noraphen 500" -> "noraphen")
+      // 1. Direct match on Thai Drug Database (prioritizing form-specific match)
+      let match = null;
+      if (itemCat === 'topical') {
+        match = THAI_DRUG_DATABASE[tradeKey] || THAI_DRUG_DATABASE[cTrade] || 
+                THAI_DRUG_DATABASE[tradeKey + ' cream'] || THAI_DRUG_DATABASE[genericKey + ' cream'];
+      } else if (itemCat === 'oral_liquid') {
+        match = THAI_DRUG_DATABASE[tradeKey] || THAI_DRUG_DATABASE[cTrade] || 
+                THAI_DRUG_DATABASE[tradeKey + ' syrup'] || THAI_DRUG_DATABASE[genericKey + ' syrup'];
+      }
       if (!match) {
-        const tWords = cTrade.split(' ');
-        if (tWords.length > 0 && THAI_DRUG_DATABASE[tWords[0]]) {
-          match = THAI_DRUG_DATABASE[tWords[0]];
-        }
-        const gWords = cGeneric.split(' ');
-        if (!match && gWords.length > 0 && THAI_DRUG_DATABASE[gWords[0]]) {
-          match = THAI_DRUG_DATABASE[gWords[0]];
-        }
+        match = THAI_DRUG_DATABASE[tradeKey] || 
+                THAI_DRUG_DATABASE[cTrade] || 
+                THAI_DRUG_DATABASE[genericKey] || 
+                THAI_DRUG_DATABASE[cGeneric];
       }
 
-      // 3. Fuzzy partial matching in database keys
-      if (!match && cTrade.length >= 3) {
-        for (const [k, v] of Object.entries(THAI_DRUG_DATABASE)) {
-          if (k.startsWith(cTrade) || cTrade.startsWith(k) || (k.length >= 4 && cTrade.includes(k))) {
-            match = v;
-            break;
-          }
-        }
-      }
-
-      // 4. Cross-check against active Clinic Drug Master (STORAGE_KEYS.DRUGS)
+      // 2. Cross-check against active Clinic Drug Master (STORAGE_KEYS.DRUGS)
       let clinicMatch = null;
       try {
         const existingDrugs = (typeof DB !== 'undefined' && DB.get) ? (DB.get(STORAGE_KEYS.DRUGS) || []) : [];
         if (existingDrugs.length > 0) {
-          clinicMatch = existingDrugs.find(d => {
-            const dGen = (d.generic_name || '').toLowerCase().trim();
-            const dTrade = (d.trade_name || '').toLowerCase().trim();
-            return (cTrade && dTrade && (dTrade === cTrade || dTrade.includes(cTrade) || cTrade.includes(dTrade))) ||
-                   (cGeneric && dGen && (dGen === cGeneric || dGen.includes(cGeneric) || cGeneric.includes(dGen)));
-          });
+          // Tier 1: Match Trade Name exact / partial with same dosage category
+          if (cTrade) {
+            clinicMatch = existingDrugs.find(d => {
+              const dTrade = (d.trade_name || '').toLowerCase().trim();
+              const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+              const nameMatch = dTrade && (dTrade === tradeKey || dTrade === cTrade || dTrade.includes(cTrade) || cTrade.includes(dTrade));
+              return nameMatch && (itemCat === 'other' || dCat === itemCat);
+            });
+          }
+
+          // Tier 2: Match Generic Name ONLY IF dosage category matches!
+          if (!clinicMatch && cGeneric) {
+            clinicMatch = existingDrugs.find(d => {
+              const dGen = (d.generic_name || '').toLowerCase().trim();
+              const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+              const genMatch = dGen && (dGen === genericKey || dGen === cGeneric || dGen.includes(cGeneric) || cGeneric.includes(dGen));
+              return genMatch && (itemCat === 'other' || dCat === itemCat);
+            });
+          }
         }
       } catch(_) {}
 
@@ -1062,23 +1091,27 @@ const StockModule = {
         if (!item.strength && clinicMatch.strength) item.strength = clinicMatch.strength;
         if (!item.dosage_form && clinicMatch.dosage_form) item.dosage_form = clinicMatch.dosage_form;
         if (!item.unit && clinicMatch.unit) item.unit = clinicMatch.unit;
+        if ((!item.trade_name || item.trade_name.toLowerCase() === item.generic_name.toLowerCase()) && clinicMatch.trade_name) {
+          item.trade_name = clinicMatch.trade_name;
+        }
       } else if (match) {
-        // Apply enriched standard details
-        if (!item.generic_name || genericKey === tradeKey || genericKey.includes('unknown') || genericKey.includes('parac') || genericKey.length < 4 || cGeneric === cTrade) {
-          item.generic_name = match.generic;
-        }
-        if (!item.strength && match.strength) {
-          item.strength = match.strength;
-        }
-        if (!item.dosage_form || item.dosage_form.toLowerCase() === 'drug' || item.dosage_form.toLowerCase() === 'medicine') {
-          item.dosage_form = match.form;
-        }
-        if (!item.unit) {
-          item.unit = match.defaultUnit;
+        const matchCat = getDosageCategory(match.form, match.defaultUnit, match.generic);
+        if (itemCat === 'other' || matchCat === itemCat) {
+          if (!item.generic_name || genericKey === tradeKey || genericKey.includes('unknown') || genericKey.includes('parac') || genericKey.length < 4 || cGeneric === cTrade) {
+            item.generic_name = match.generic;
+          }
+          if (!item.strength && match.strength) item.strength = match.strength;
+          if (!item.dosage_form || item.dosage_form.toLowerCase() === 'drug') item.dosage_form = match.form;
+          if (!item.unit) item.unit = match.defaultUnit;
+          if ((!item.trade_name || item.trade_name.toLowerCase() === item.generic_name.toLowerCase()) && match.trade) {
+            item.trade_name = match.trade;
+          }
+        } else {
+          if (!item.generic_name) item.generic_name = match.generic;
         }
       }
 
-      // 5. Clean up truncated abbreviations in Generic Name (e.g. "Orphenadrine + Parac" -> "Orphenadrine citrate + Paracetamol")
+      // 5. Clean up common abbreviations
       if (item.generic_name) {
         let g = item.generic_name;
         g = g.replace(/\bparac\b/gi, 'Paracetamol')
@@ -1099,10 +1132,6 @@ const StockModule = {
       if (item.strength) {
         item.strength = String(item.strength).replace(/(\d+)(mg|mcg|g|ml|%)/gi, '$1 $2').trim();
       }
-
-      const cost = parseFloat(item.cost_price || item.unit_price || item.price || 0) || 0;
-      item.cost_price = Math.round(cost * 100) / 100;
-      item.quantity = parseInt(item.quantity || item.qty || 1, 10) || 1;
 
       return item;
     }
@@ -1485,7 +1514,9 @@ CRITICAL PHARMACEUTICAL EXTRACTION RULES:
 
 2. "strength": Drug potency with unit (e.g. "1000 mg", "500 mg", "625 mg", "120 mg/5ml", "10%", "500 mcg").
 3. "dosage_form": English formulation (e.g. "Tablet", "Capsule", "Syrup", "Suspension", "Cream", "Ointment", "Eye Drop", "Injection", "Sachet", "Ampoule", "Gel").
-4. "trade_name": Commercial brand name / Trade name as printed on the invoice (e.g. "Amk", "Fleming / GSK", "Sara 500", "Tylenol Syrup", "Royal-D").
+4. "trade_name": Commercial brand name / Trade name as printed on the invoice or packaging (e.g. "Clinovir ครีม 5gm", "MONIRAX", "Zocovin 400", "Sara 500", "Tylenol Syrup", "Amk 1000", "Royal-D").
+   - CRITICAL BRAND EXTRACTION: You MUST extract the commercial Trade Name / Brand / Manufacturer packaging printed on the invoice.
+   - Do NOT just duplicate the Generic Name into trade_name! If an invoice says "Clinovir cream 5g" or "Acyclovir cream 5g GPO", keep "Clinovir ครีม 5gm" or "Acyclovir ครีม GPO" as the trade_name so doctors and inventory staff can distinguish brands!
 5. "unit": Smallest single dispensing inventory unit in Thai (e.g. "เม็ด", "แคปซูล", "ขวด", "ซอง", "หลอด", "แอมพูล", "ไวอัล").
 6. "quantity": Number of units received (numeric).
 7. "cost_price": Purchase price PER SMALLEST DISPENSING UNIT (Float with 2 decimals).
@@ -1630,44 +1661,68 @@ Return ONLY valid JSON without markdown wrapping.`;
           const unit = (item.unit || 'เม็ด').trim();
           const qty = parseInt(item.quantity || item.qty, 10) || 1;
           const cost = parseFloat(item.cost_price || item.unit_price || item.cost || item.price) || 0;
+          const itemCat = getDosageCategory(form, unit, tradeName + ' ' + genName);
 
-          // Intelligent Matching against Clinic Drug Master
+          // Find ALL candidate drugs in clinic with matching generic name or similar trade name
+          const candidateDrugs = existingDrugs.filter(d => {
+            const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dTrade = (d.trade_name || '').toLowerCase().trim();
+            return (genName && dGen === genName.toLowerCase()) || 
+                   (tradeName && (dTrade === tradeName.toLowerCase() || dTrade.includes(tradeName.toLowerCase()) || tradeName.toLowerCase().includes(dTrade)));
+          });
+
+          // Multi-Tier Intelligent Matching against Clinic Drug Master
           let matchedDrug = null;
 
-          // 1. Exact Match on Generic + Strength
-          if (genName) {
-            matchedDrug = existingDrugs.find(d => 
-              (d.generic_name || '').toLowerCase().trim() === genName.toLowerCase().trim() && 
-              (!strength || !d.strength || (d.strength || '').toLowerCase().trim() === strength.toLowerCase().trim())
-            );
+          // Tier 1: Exact / Close Trade Name match (within compatible category)
+          if (tradeName) {
+            matchedDrug = existingDrugs.find(d => {
+              const dTrade = (d.trade_name || '').toLowerCase().trim();
+              const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+              const isTradeMatch = (dTrade === tradeName.toLowerCase() || dTrade.includes(tradeName.toLowerCase()) || tradeName.toLowerCase().includes(dTrade));
+              return isTradeMatch && (itemCat === 'other' || dCat === itemCat);
+            });
           }
 
-          // 2. Exact Match on Generic alone
+          // Tier 2: Generic Name + Same Dosage Category + Same Strength
           if (!matchedDrug && genName) {
-            matchedDrug = existingDrugs.find(d => 
-              (d.generic_name || '').toLowerCase().trim() === genName.toLowerCase().trim()
-            );
+            matchedDrug = existingDrugs.find(d => {
+              const dGen = (d.generic_name || '').toLowerCase().trim();
+              const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+              const sameGen = (dGen === genName.toLowerCase());
+              const sameCat = (dCat === itemCat);
+              const sameStrength = (!strength || !d.strength || (d.strength || '').toLowerCase().trim() === strength.toLowerCase());
+              return sameGen && sameCat && sameStrength;
+            });
           }
 
-          // 3. Exact Match on Trade Name
-          if (!matchedDrug && tradeName) {
-            matchedDrug = existingDrugs.find(d => 
-              (d.trade_name || '').toLowerCase().trim() === tradeName.toLowerCase().trim()
-            );
+          // Tier 3: Generic Name + Same Dosage Category (e.g. both are Topical/Cream)
+          if (!matchedDrug && genName) {
+            matchedDrug = existingDrugs.find(d => {
+              const dGen = (d.generic_name || '').toLowerCase().trim();
+              const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+              return (dGen === genName.toLowerCase()) && (dCat === itemCat);
+            });
           }
 
+          // STRICT SAFEGUARD: If dosage categories conflict (e.g. Scanned is Cream but candidate is Tablet),
+          // DO NOT auto-match! Default to 'new' (New SKU)
           let salePrice = 0;
           let action = 'new';
           if (matchedDrug) {
             action = 'stock_in';
-            // รายการยาเดิมในคลัง: ยึดราคาขายเดิมของคลินิกไว้เสมอ
             salePrice = matchedDrug.sale_price !== undefined && matchedDrug.sale_price !== null && matchedDrug.sale_price > 0 
               ? matchedDrug.sale_price 
               : Number((cost * 1.5).toFixed(2));
           } else {
             action = 'new';
-            // รายการยาใหม่: คำนวณราคาขายแนะนำเริ่มต้น (+50% Markup)
             salePrice = Number((cost * 1.5).toFixed(2));
+          }
+
+          let finalTrade = tradeName;
+          // Fallback to matched drug's trade name if extracted trade name is empty, generic, or identical to generic name
+          if ((!finalTrade || finalTrade.toLowerCase() === genName.toLowerCase() || finalTrade.toLowerCase() === (form || '').toLowerCase()) && matchedDrug && matchedDrug.trade_name) {
+            finalTrade = matchedDrug.trade_name;
           }
 
           return {
@@ -1675,20 +1730,19 @@ Return ONLY valid JSON without markdown wrapping.`;
             generic_name: genName || (matchedDrug ? matchedDrug.generic_name : ''),
             strength: strength || (matchedDrug ? matchedDrug.strength : ''),
             dosage_form: form || (matchedDrug ? matchedDrug.dosage_form : 'Tablet'),
-            trade_name: tradeName || (matchedDrug ? matchedDrug.trade_name : ''),
+            trade_name: finalTrade || (matchedDrug ? matchedDrug.trade_name : ''),
             unit: unit || (matchedDrug ? matchedDrug.unit : 'เม็ด'),
             quantity: qty,
             cost_price: cost,
             sale_price: salePrice,
             matched_drug_id: matchedDrug ? matchedDrug.drug_id : null,
             matched_drug: matchedDrug,
+            candidate_drugs: candidateDrugs,
             action: action
           };
         });
 
-        // เลือกทุกรายการที่สแกนได้โดยอัตโนมัติ เพื่อให้ผู้ใช้ตรวจสอบและกดยืนยันนำเข้าได้ทันที
         this.scannedRows.forEach((_, idx) => this.selectedIndices.add(idx));
-
         this.renderOcrTable();
       },
 
@@ -1720,11 +1774,35 @@ Return ONLY valid JSON without markdown wrapping.`;
             totalVal += ((row.quantity || 0) * (row.cost_price || 0));
           }
 
-          let matchBadge = '';
-          if (isMatched) {
-            matchBadge = `<div class="ocr-badge-match"><i data-lucide="check-circle"></i> ตรงกับ ${row.matched_drug.generic_name} (สต็อก: ${row.matched_drug.stock || 0})</div>`;
+          let matchSelectorHtml = '';
+          const candidates = row.candidate_drugs || [];
+
+          if (row.action === 'new' || !row.matched_drug_id || !row.matched_drug) {
+            matchSelectorHtml = `
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="ocr-badge-new" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #ecfdf5; color: #047857; font-weight: 600; border: 1px solid #a7f3d0;"><i data-lucide="sparkles" style="width:13px; height:13px;"></i> ✨ รายการยาใหม่ (แยกสต็อก)</div>
+                ${candidates.length > 0 ? `
+                  <select class="form-select" style="font-size: 0.72rem; padding: 2px 4px; background: #f8fafc; border-color: #cbd5e1; max-width: 220px;" onchange="DrugOcrModule.changeMatchedDrug(${idx}, this.value)">
+                    <option value="NEW" selected>✨ [+] สร้างเป็นยาใหม่แยกรายการ</option>
+                    <optgroup label="หรือเลือกยาเดิมในคลัง:">
+                      ${candidates.map(cd => `<option value="${cd.drug_id}">📦 [${cd.drug_id}] ${cd.trade_name || cd.generic_name} (${cd.dosage_form || cd.unit}) คงเหลือ: ${cd.stock || 0}</option>`).join('')}
+                    </optgroup>
+                  </select>
+                ` : ''}
+              </div>
+            `;
           } else {
-            matchBadge = `<div class="ocr-badge-new"><i data-lucide="sparkles"></i> ยาตัวใหม่ (จะสร้างรหัสยาใหม่)</div>`;
+            const md = row.matched_drug;
+            matchSelectorHtml = `
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="ocr-badge-match" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #eff6ff; color: #1d4ed8; font-weight: 600; border: 1px solid #bfdbfe;"><i data-lucide="check-circle" style="width:13px; height:13px;"></i> [${md.drug_id}] ${md.trade_name || md.generic_name}</div>
+                <select class="form-select" style="font-size: 0.72rem; padding: 2px 4px; background: #f0fdf4; border-color: #86efac; max-width: 220px;" onchange="DrugOcrModule.changeMatchedDrug(${idx}, this.value)">
+                  <option value="${md.drug_id}" selected>📦 [${md.drug_id}] ${md.trade_name || md.generic_name} (${md.dosage_form || md.unit}) สต็อก: ${md.stock || 0}</option>
+                  ${candidates.filter(cd => cd.drug_id !== md.drug_id).map(cd => `<option value="${cd.drug_id}">📦 [${cd.drug_id}] ${cd.trade_name || cd.generic_name} (${cd.dosage_form || cd.unit}) สต็อก: ${cd.stock || 0}</option>`).join('')}
+                  <option value="NEW">✨ [+] แยกเป็นรายการยาใหม่ (New SKU)</option>
+                </select>
+              </div>
+            `;
           }
 
           return `
@@ -1746,13 +1824,12 @@ Return ONLY valid JSON without markdown wrapping.`;
                   <option value="Suspension" ${row.dosage_form === 'Suspension' ? 'selected' : ''}>Suspension (ยาน้ำแขวนตะกอน)</option>
                   <option value="Cream" ${row.dosage_form === 'Cream' ? 'selected' : ''}>Cream (ครีม)</option>
                   <option value="Ointment" ${row.dosage_form === 'Ointment' ? 'selected' : ''}>Ointment (ขี้ผึ้ง)</option>
+                  <option value="Tube" ${row.dosage_form === 'Tube' ? 'selected' : ''}>Tube (หลอด)</option>
                   <option value="Injection" ${row.dosage_form === 'Injection' ? 'selected' : ''}>Injection (ยาฉีด)</option>
                   <option value="Eye Drops" ${row.dosage_form === 'Eye Drops' ? 'selected' : ''}>Eye Drops (ยาหยอดตา)</option>
                   <option value="Ear Drops" ${row.dosage_form === 'Ear Drops' ? 'selected' : ''}>Ear Drops (ยาหยอดหู)</option>
-                  <option value="Nasal Spray" ${row.dosage_form === 'Nasal Spray' ? 'selected' : ''}>Nasal Spray (พ่นจมูก)</option>
-                  <option value="Inhaler" ${row.dosage_form === 'Inhaler' ? 'selected' : ''}>Inhaler (ยาพ่นสูด)</option>
-                  <option value="Solution" ${row.dosage_form === 'Solution' ? 'selected' : ''}>Solution (สารละลาย)</option>
-                  <option value="Medical Supply" ${row.dosage_form === 'Medical Supply' ? 'selected' : ''}>Medical Supply (เวชภัณฑ์)</option>
+                  <option value="Sachet" ${row.dosage_form === 'Sachet' ? 'selected' : ''}>Sachet (ซอง)</option>
+                  <option value="Bottle" ${row.dosage_form === 'Bottle' ? 'selected' : ''}>Bottle (ขวด)</option>
                   <option value="Other" ${row.dosage_form === 'Other' ? 'selected' : ''}>Other (อื่นๆ)</option>
                 </select>
               </td>
@@ -1772,7 +1849,7 @@ Return ONLY valid JSON without markdown wrapping.`;
                 <input type="number" step="0.01" class="form-input" value="${row.sale_price || 0}" onchange="DrugOcrModule.updateField(${idx}, 'sale_price', parseFloat(this.value) || 0)" style="color: #047857; font-weight: 700; text-align: right; min-width: 85px;">
               </td>
               <td>
-                ${matchBadge}
+                ${matchSelectorHtml}
               </td>
               <td>
                 <select class="form-select" onchange="DrugOcrModule.updateField(${idx}, 'action', this.value)" style="font-weight: 600; font-size: 0.8rem; min-width: 135px;">
@@ -1799,10 +1876,37 @@ Return ONLY valid JSON without markdown wrapping.`;
         lucide.createIcons();
       },
 
+      changeMatchedDrug(index, drugId) {
+        const row = this.scannedRows[index];
+        if (!row) return;
+        const existingDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
+
+        if (drugId === 'NEW' || !drugId) {
+          row.matched_drug_id = null;
+          row.matched_drug = null;
+          row.action = 'new';
+          row.sale_price = Number((row.cost_price * 1.5).toFixed(2));
+        } else {
+          const d = existingDrugs.find(x => x.drug_id === drugId);
+          if (d) {
+            row.matched_drug_id = d.drug_id;
+            row.matched_drug = d;
+            row.action = 'stock_in';
+            row.generic_name = d.generic_name;
+            if (d.trade_name) row.trade_name = d.trade_name;
+            if (d.dosage_form) row.dosage_form = d.dosage_form;
+            if (d.strength) row.strength = d.strength;
+            if (d.unit) row.unit = d.unit;
+            if (d.sale_price > 0) row.sale_price = d.sale_price;
+          }
+        }
+        this.renderOcrTable();
+      },
+
       updateField(index, field, value) {
         if (this.scannedRows[index]) {
           this.scannedRows[index][field] = value;
-          if (field === 'generic_name' || field === 'strength' || field === 'trade_name') {
+          if (field === 'generic_name' || field === 'strength' || field === 'trade_name' || field === 'dosage_form') {
             this.reCheckMatch(index);
           }
           this.renderOcrTable();
@@ -1815,17 +1919,53 @@ Return ONLY valid JSON without markdown wrapping.`;
         const existingDrugs = DB.get(STORAGE_KEYS.DRUGS) || [];
         const genName = (row.generic_name || '').toLowerCase().trim();
         const tradeName = (row.trade_name || '').toLowerCase().trim();
+        const itemCat = getDosageCategory(row.dosage_form, row.unit, tradeName + ' ' + genName);
 
-        let matched = existingDrugs.find(d => 
-          (d.generic_name || '').toLowerCase().trim() === genName || 
-          (tradeName && (d.trade_name || '').toLowerCase().trim() === tradeName)
-        );
+        row.candidate_drugs = existingDrugs.filter(d => {
+          const dGen = (d.generic_name || '').toLowerCase().trim();
+          const dTrade = (d.trade_name || '').toLowerCase().trim();
+          return (genName && dGen === genName) || 
+                 (tradeName && (dTrade === tradeName || dTrade.includes(tradeName) || tradeName.includes(dTrade)));
+        });
+
+        let matched = null;
+        // 1. Trade Name exact / partial
+        if (tradeName) {
+          matched = existingDrugs.find(d => {
+            const dTrade = (d.trade_name || '').toLowerCase().trim();
+            const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+            return (dTrade === tradeName || dTrade.includes(tradeName) || tradeName.includes(dTrade)) &&
+                   (itemCat === 'other' || dCat === itemCat);
+          });
+        }
+        // 2. Generic + Same Dosage Category + Strength
+        if (!matched && genName) {
+          matched = existingDrugs.find(d => {
+            const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+            const sameStrength = (!row.strength || !d.strength || (d.strength || '').toLowerCase().trim() === row.strength.toLowerCase().trim());
+            return (dGen === genName) && (dCat === itemCat) && sameStrength;
+          });
+        }
+        // 3. Generic + Same Dosage Category
+        if (!matched && genName) {
+          matched = existingDrugs.find(d => {
+            const dGen = (d.generic_name || '').toLowerCase().trim();
+            const dCat = getDosageCategory(d.dosage_form, d.unit, d.trade_name);
+            return (dGen === genName) && (dCat === itemCat);
+          });
+        }
 
         row.matched_drug = matched || null;
         row.matched_drug_id = matched ? matched.drug_id : null;
         if (matched) {
           if (row.action === 'new') row.action = 'stock_in';
           if (matched.sale_price > 0) row.sale_price = matched.sale_price;
+          if ((!row.trade_name || row.trade_name.toLowerCase() === row.generic_name.toLowerCase()) && matched.trade_name) {
+            row.trade_name = matched.trade_name;
+          }
+        } else {
+          row.action = 'new';
         }
       },
 
@@ -2016,8 +2156,8 @@ Return ONLY valid JSON without markdown wrapping.`;
               d.stock = stockBefore + qty;
               if (cost > 0) d.purchase_price = cost;
               if (sale > 0) d.sale_price = sale;
-              if (row.strength && !d.strength) d.strength = row.strength;
-              if (row.trade_name && !d.trade_name) d.trade_name = row.trade_name;
+              if (row.strength && row.strength !== d.strength) d.strength = row.strength;
+              if (row.trade_name && row.trade_name !== d.trade_name) d.trade_name = row.trade_name;
 
               totalStockAdded += qty;
               updatedCount++;

@@ -163,6 +163,7 @@ const CLINIC_LOGO = (typeof OPD_CLINIC_LOGO !== "undefined") ? OPD_CLINIC_LOGO :
 
     const DB = {
       _cache: {},
+      _saveQueue: 0,
       async init() {
         LabStorageDB.init();
         
@@ -174,6 +175,13 @@ const CLINIC_LOGO = (typeof OPD_CLINIC_LOGO !== "undefined") ? OPD_CLINIC_LOGO :
             if (raw) this._cache[k] = JSON.parse(raw);
           } catch(e) {}
         }
+
+        window.addEventListener('beforeunload', (e) => {
+          if (DB._saveQueue > 0) {
+            e.preventDefault();
+            e.returnValue = 'กำลังบันทึกข้อมูล กรุณารอสักครู่...';
+          }
+        });
 
         // 2. Synchronously ensure 196 Master Drugs are in _cache and localStorage immediately
         const currentDrugs = this._cache[STORAGE_KEYS.DRUGS];
@@ -325,7 +333,10 @@ const CLINIC_LOGO = (typeof OPD_CLINIC_LOGO !== "undefined") ? OPD_CLINIC_LOGO :
         
         // Save to localForage asynchronously
         if (typeof localforage !== 'undefined') {
-          localforage.setItem(key, data).catch(e => console.warn('localforage save error', e));
+          this._saveQueue++;
+          localforage.setItem(key, data)
+            .catch(e => console.warn('localforage save error', e))
+            .finally(() => { this._saveQueue--; });
         }
 
         // Save to localStorage as fallback but without throwing QuotaExceededError

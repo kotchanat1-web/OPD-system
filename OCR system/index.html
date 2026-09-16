@@ -2118,9 +2118,15 @@
       'clinda': { generic: 'Clindamycin', form: 'Capsule', defaultUnit: 'แคปซูล' },
       'vibramycin': { generic: 'Doxycycline', form: 'Capsule', defaultUnit: 'แคปซูล' },
       'doxy': { generic: 'Doxycycline', form: 'Capsule', defaultUnit: 'แคปซูล' },
-      'zovirax': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด' },
-      'acyclo': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด' },
-      'valtrex': { generic: 'Valacyclovir', form: 'Tablet', defaultUnit: 'เม็ด' },
+      'zovirax': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด', trade: 'Zovirax' },
+      'zovirax cream': { generic: 'Acyclovir', form: 'Cream', defaultUnit: 'หลอด', trade: 'Zovirax Cream' },
+      'acyclo': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด', trade: 'Acyclo' },
+      'acyclovir cream': { generic: 'Acyclovir', form: 'Cream', defaultUnit: 'หลอด', trade: 'Acyclovir ครีม' },
+      'clinovir': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด', trade: 'Clinovir' },
+      'clinovir cream': { generic: 'Acyclovir', form: 'Cream', defaultUnit: 'หลอด', trade: 'Clinovir ครีม 5gm' },
+      'monirax': { generic: 'Acyclovir', form: 'Cream', defaultUnit: 'หลอด', trade: 'MONIRAX/ T.man' },
+      'zocovin': { generic: 'Acyclovir', form: 'Tablet', defaultUnit: 'เม็ด', trade: 'Zocovin/T.O.PHARMA' },
+      'valtrex': { generic: 'Valacyclovir', form: 'Tablet', defaultUnit: 'เม็ด', trade: 'Valtrex' },
 
       // Pain Relievers, NSAIDs & Muscle Relaxants
       'sara': { generic: 'Paracetamol', form: 'Tablet', defaultUnit: 'เม็ด' },
@@ -2276,6 +2282,10 @@
         if (!item.unit) {
           item.unit = match.defaultUnit;
         }
+        // Preserve and populate trade name if missing or generic
+        if ((!item.trade_name || item.trade_name.toLowerCase() === item.generic_name.toLowerCase()) && match.trade) {
+          item.trade_name = match.trade;
+        }
       }
 
       // Format clean Strength string (e.g. ensure space before mg if needed)
@@ -2354,7 +2364,9 @@ CRITICAL PHARMACEUTICAL EXTRACTION RULES:
 
 2. "strength": Drug potency with unit (e.g. "1000 mg", "500 mg", "625 mg", "120 mg/5ml", "10%", "500 mcg").
 3. "dosage_form": English formulation (e.g. "Tablet", "Capsule", "Syrup", "Suspension", "Cream", "Ointment", "Eye Drop", "Injection", "Sachet", "Ampoule", "Gel").
-4. "trade_name": Commercial brand name / Trade name as printed on the invoice (e.g. "Amk", "Fleming / GSK", "Sara 500", "Tylenol Syrup", "Royal-D").
+4. "trade_name": Commercial brand name / Trade name as printed on the invoice (e.g. "Clinovir ครีม 5gm", "MONIRAX", "Zocovin 400", "Sara 500", "Tylenol Syrup", "Amk 1000", "Royal-D").
+   - CRITICAL BRAND EXTRACTION: You MUST extract the commercial Trade Name / Brand / Manufacturer packaging printed on the invoice.
+   - Do NOT just duplicate the Generic Name into trade_name! If an invoice says "Clinovir cream 5g" or "Acyclovir cream 5g GPO", keep "Clinovir ครีม 5gm" or "Acyclovir ครีม GPO" as the trade_name so doctors and inventory staff can distinguish brands!
 5. "unit": Smallest single dispensing inventory unit in Thai (e.g. "เม็ด", "แคปซูล", "ขวด", "ซอง", "หลอด", "แอมพูล", "ไวอัล").
 6. "unit_price": Purchase price PER SMALLEST DISPENSING UNIT (Float / Number with 2 decimals).
    - UNIT PRICE CALCULATION: Divide package price by total smallest units contained:
