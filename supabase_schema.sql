@@ -56,14 +56,19 @@ create table if not exists public.opd_visits (
 -- 3. ตารางคลังยาและเวชภัณฑ์ (opd_drugs)
 create table if not exists public.opd_drugs (
     drug_id text primary key,
-    code text,
-    trade_name text,
     generic_name text not null,
-    dosage text,
+    strength text,
+    dosage_form text,
+    trade_name text,
     unit text,
+    purchase_price numeric default 0,
     cost_price numeric default 0,
     sale_price numeric default 0,
     stock numeric default 0,
+    min_stock numeric default 10,
+    drawer text,
+    code text,
+    dosage text,
     category text,
     usage_instruction text,
     usage_text text,
@@ -72,6 +77,13 @@ create table if not exists public.opd_drugs (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Migration alter statements for existing instances
+alter table public.opd_drugs add column if not exists strength text;
+alter table public.opd_drugs add column if not exists dosage_form text;
+alter table public.opd_drugs add column if not exists purchase_price numeric default 0;
+alter table public.opd_drugs add column if not exists min_stock numeric default 10;
+alter table public.opd_drugs add column if not exists drawer text;
 
 -- 4. ตารางการนัดหมาย (opd_appointments)
 create table if not exists public.opd_appointments (
