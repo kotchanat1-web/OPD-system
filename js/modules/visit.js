@@ -500,6 +500,24 @@ const VisitModule = {
         const defaultPrice = Number(defaultProc.price || 150.00);
         const defaultDfPrice = (defaultProc.df_price !== undefined && defaultProc.df_price !== null) ? Number(defaultProc.df_price) : defaultPrice;
 
+        const sType = document.getElementById('nv-service-type').value;
+        const isAmed2 = (sType === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)');
+        const isAmed1 = (sType === 'A-Med สปสช. (เก็บส่วนต่าง)' || sType === 'A-Med');
+        const isAmed = isAmed1 || isAmed2;
+        const initAmedDeduct = isAmed ? 180.00 : 0.00;
+        let initTotal = defaultPrice;
+        let initPayMethod = 'เงินสด';
+        let initClinicSupport = 0;
+
+        if (isAmed2) {
+          initTotal = 0.00;
+          initClinicSupport = Math.max(0, defaultPrice - initAmedDeduct);
+          initPayMethod = 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)';
+        } else if (isAmed1) {
+          initTotal = Math.max(0, defaultPrice - initAmedDeduct);
+          initPayMethod = 'A-Med สปสช. (เก็บส่วนต่าง)';
+        }
+
         const newVisit = {
           visit_id: 'V_' + Date.now(),
           patient_id: patient.patient_id,
@@ -508,7 +526,7 @@ const VisitModule = {
           patient_name: (patient.title || '') + patient.first_name + ' ' + patient.last_name,
           visit_date: new Date().toISOString().slice(0, 16).replace('T', ' '),
           doctor: AuthModule.getActiveDoctorName(),
-          service_type: document.getElementById('nv-service-type').value,
+          service_type: sType,
           vitals: { ...lastVitals, bp: "", pr: "", temp: "" },
           chief_complaint: document.getElementById('nv-cc').value.trim() || "มาตรวจรักษาทั่วไป",
           present_illness: "", physical_exam: "", assessment: "", treatment_plan: "",
@@ -519,7 +537,16 @@ const VisitModule = {
           procedures: [{ proc_id: defaultProc.proc_id || "PROC1", name: defaultProc.name || "ตรวจรักษาโรคทั่วไป OPD", category: defaultProc.category || "บริการทั่วไป", price: defaultPrice, df_price: defaultDfPrice, performer_name: AuthModule.getActiveDoctorName() }],
           appointment: null,
           status: "OPEN",
-          billing: { subtotal: defaultPrice, discount: 0, amed_discount: (document.getElementById('nv-service-type').value === 'A-Med' ? 180.00 : 0), total: (document.getElementById('nv-service-type').value === 'A-Med' ? Math.max(0, defaultPrice - 180.00) : defaultPrice), paid: false, payment_method: (document.getElementById('nv-service-type').value === 'A-Med' ? 'A-Med (สปสช.)' : 'เงินสด') }
+          billing: {
+            subtotal: defaultPrice,
+            discount: 0,
+            amed_type: isAmed2 ? 'AMED_FREE' : (isAmed1 ? 'AMED_COPAY' : null),
+            amed_discount: initAmedDeduct,
+            amed_clinic_support: initClinicSupport,
+            total: initTotal,
+            paid: false,
+            payment_method: initPayMethod
+          }
         };
 
         visits.push(newVisit);
@@ -1190,9 +1217,21 @@ const VisitModule = {
         if (!v.billing) v.billing = {};
         v.billing.subtotal = subtotal;
 
-        let amedDeduct = (v.billing.payment_method === 'A-Med (สปสช.)') ? 180.00 : 0;
+        const pMethod = v.billing.payment_method || (v.service_type?.includes('A-Med') ? v.service_type : '');
+        const isAmed2 = (pMethod === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)' || v.service_type === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)');
+        const isAmed1 = (pMethod === 'A-Med สปสช. (เก็บส่วนต่าง)' || pMethod === 'A-Med (สปสช.)' || v.service_type === 'A-Med สปสช. (เก็บส่วนต่าง)' || v.service_type === 'A-Med');
+        const isAmed = isAmed1 || isAmed2;
+        let amedDeduct = isAmed ? 180.00 : 0;
         v.billing.amed_discount = amedDeduct;
-        v.billing.total = Math.max(0, subtotal - (v.billing.discount || 0) - amedDeduct);
+        v.billing.amed_type = isAmed2 ? 'AMED_FREE' : (isAmed1 ? 'AMED_COPAY' : null);
+
+        if (isAmed2) {
+          v.billing.amed_clinic_support = Math.max(0, subtotal - (v.billing.discount || 0) - amedDeduct);
+          v.billing.total = 0;
+        } else {
+          v.billing.amed_clinic_support = 0;
+          v.billing.total = Math.max(0, subtotal - (v.billing.discount || 0) - amedDeduct);
+        }
 
         // Ensure lab attachments are saved to IndexedDB
         if (v.lab_attachments && v.lab_attachments.length > 0 && typeof LabStorageDB !== 'undefined') {

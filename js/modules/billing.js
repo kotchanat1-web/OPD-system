@@ -24,7 +24,16 @@ const BillingModule = {
 
         document.getElementById('billing-items-body').innerHTML = itemsHtml || '<tr><td colspan="4" style="text-align: center; color: var(--slate-400);">ไม่มีรายการค่าใช้จ่าย</td></tr>';
         document.getElementById('bill-discount').value = v.billing?.discount || 0;
-        document.getElementById('bill-payment-method').value = v.billing?.payment_method || (v.service_type === 'A-Med' ? 'A-Med (สปสช.)' : 'เงินสด');
+        const curMethod = v.billing?.payment_method;
+        if (curMethod) {
+          document.getElementById('bill-payment-method').value = curMethod;
+        } else if (v.service_type === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)') {
+          document.getElementById('bill-payment-method').value = 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)';
+        } else if (v.service_type === 'A-Med สปสช. (เก็บส่วนต่าง)' || v.service_type === 'A-Med') {
+          document.getElementById('bill-payment-method').value = 'A-Med สปสช. (เก็บส่วนต่าง)';
+        } else {
+          document.getElementById('bill-payment-method').value = 'เงินสด';
+        }
         this.calcTotal();
         this.renderReceiptPreview(v);
       },
@@ -36,13 +45,43 @@ const BillingModule = {
         const procTotal = (v.procedures || []).reduce((sum, p) => sum + (p.price || 0), 0);
         const subtotal = medTotal + labTotal + procTotal;
 
-        const isAmed = (document.getElementById('bill-payment-method').value === 'A-Med (สปสช.)');
+        const payMethod = document.getElementById('bill-payment-method').value;
+        const isAmed2 = (payMethod === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)');
+        const isAmed1 = (payMethod === 'A-Med สปสช. (เก็บส่วนต่าง)' || payMethod === 'A-Med (สปสช.)');
+        const isAmed = isAmed1 || isAmed2;
         const amedDeduct = isAmed ? 180.00 : 0.00;
         const discount = parseFloat(document.getElementById('bill-discount').value) || 0;
-        const grandTotal = Math.max(0, subtotal - amedDeduct - discount);
+
+        let clinicSupport = 0;
+        let grandTotal = 0;
+
+        if (isAmed2) {
+          // A-Med 2 (ขาประจำ): คลินิกช่วยซับพอร์ตส่วนต่าง คนไข้ไม่ต้องจ่ายเพิ่ม ยอดสุทธิ 0 บาท
+          clinicSupport = Math.max(0, subtotal - amedDeduct - discount);
+          grandTotal = 0.00;
+        } else if (isAmed1) {
+          // A-Med 1 (ขาจร): หัก 180 บาท หากเกิน คนไข้ต้องชำระส่วนต่าง
+          grandTotal = Math.max(0, subtotal - amedDeduct - discount);
+        } else {
+          grandTotal = Math.max(0, subtotal - discount);
+        }
 
         document.getElementById('bill-subtotal').textContent = '฿' + subtotal.toFixed(2);
-        document.getElementById('bill-amed-row').style.display = isAmed ? 'flex' : 'none';
+        
+        const amedRow = document.getElementById('bill-amed-row');
+        if (amedRow) {
+          amedRow.style.display = isAmed ? 'flex' : 'none';
+          const amedDeductEl = document.getElementById('bill-amed-deduct');
+          if (amedDeductEl) amedDeductEl.textContent = '- ฿' + amedDeduct.toFixed(2);
+        }
+
+        const amedSupportRow = document.getElementById('bill-amed-support-row');
+        if (amedSupportRow) {
+          amedSupportRow.style.display = (isAmed2 && clinicSupport > 0) ? 'flex' : 'none';
+          const amedSupportEl = document.getElementById('bill-amed-support-amount');
+          if (amedSupportEl) amedSupportEl.textContent = '- ฿' + clinicSupport.toFixed(2);
+        }
+
         document.getElementById('bill-total-discount').textContent = '- ฿' + discount.toFixed(2);
         document.getElementById('bill-grand-total').textContent = '฿' + grandTotal.toFixed(2);
         document.getElementById('bill-baht-text').textContent = '(' + Utils.bahtText(grandTotal) + ')';
@@ -56,15 +95,51 @@ const BillingModule = {
         const subtotal = medTotal + labTotal + procTotal;
 
         const payMethod = document.getElementById('bill-payment-method').value;
-        const isAmed = (payMethod === 'A-Med (สปสช.)');
+        const isAmed2 = (payMethod === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)');
+        const isAmed1 = (payMethod === 'A-Med สปสช. (เก็บส่วนต่าง)' || payMethod === 'A-Med (สปสช.)');
+        const isAmed = isAmed1 || isAmed2;
         const amedDeduct = isAmed ? 180.00 : 0.00;
         const discount = parseFloat(document.getElementById('bill-discount').value) || 0;
+
+        let clinicSupport = 0;
+        let grandTotal = 0;
+
+        if (isAmed2) {
+          clinicSupport = Math.max(0, subtotal - amedDeduct - discount);
+          grandTotal = 0.00;
+        } else if (isAmed1) {
+          grandTotal = Math.max(0, subtotal - amedDeduct - discount);
+        } else {
+          grandTotal = Math.max(0, subtotal - discount);
+        }
+
+        // คำนวณต้นทุนยาจริง (Actual Drug Cost)
+        const drugsCatalog = DB.get(STORAGE_KEYS.DRUGS) || [];
+        let actualDrugCost = 0;
+        (v.prescriptions || []).forEach(p => {
+          const d = drugsCatalog.find(x => x.drug_id === p.drug_id || (x.generic_name && p.generic_name && x.generic_name.toLowerCase().trim() === p.generic_name.toLowerCase().trim()));
+          const cPrice = Number(p.cost_price !== undefined && p.cost_price !== null ? p.cost_price : (d ? (d.purchase_price || d.cost_price) : 0)) || 0;
+          actualDrugCost += (cPrice * (Number(p.qty) || 1));
+        });
+
+        // รายรับรวมคลินิก (Clinic Total Revenue): ถ้าเป็น A-med จะได้รับ 180 บ. จาก สปสช. + เงินสด/โอนส่วนต่างที่คนไข้จ่าย
+        const clinicRevenue = isAmed ? (180.00 + grandTotal) : grandTotal;
+        // กำไร/ขาดทุน เทียบราคาขายหน้าร้าน (Vs Selling Price)
+        const profitVsSale = isAmed ? (clinicRevenue - subtotal) : (grandTotal - subtotal);
+        // กำไร/ขาดทุน เทียบต้นทุนยาจริง (Vs Actual Cost)
+        const profitVsCost = isAmed ? (clinicRevenue - actualDrugCost) : (grandTotal - actualDrugCost);
 
         v.billing = {
           subtotal: subtotal,
           discount: discount,
           amed_discount: amedDeduct,
-          total: Math.max(0, subtotal - amedDeduct - discount),
+          amed_type: isAmed2 ? 'AMED_FREE' : (isAmed1 ? 'AMED_COPAY' : null),
+          amed_clinic_support: clinicSupport,
+          cost_total: actualDrugCost,
+          revenue_total: clinicRevenue,
+          profit_vs_sale: profitVsSale,
+          profit_vs_cost: profitVsCost,
+          total: grandTotal,
           paid: true,
           payment_method: payMethod
         };
@@ -78,7 +153,7 @@ const BillingModule = {
         this.renderReceiptPreview(v);
         DashboardModule.render();
         ReportModule.render();
-        alert('บันทึกรับเงินและปิดบิลเรียบร้อย');
+        alert('บันทึกรับเงินและปิดบิลเรียบร้อย' + (isAmed2 ? '\nสิทธิ A-Med สปสช. ไม่เก็บส่วนต่าง (ยอดชำระ 0 บาท)' : ''));
       },
       renderReceiptPreview(v) {
         if (!v) return;
@@ -104,6 +179,7 @@ const BillingModule = {
         (v.labs || []).forEach(l => { html += '<tr><td style="text-align:center; padding: 4px 2px;">' + (count++) + '</td><td style="padding: 4px 6px;">ตรวจ Lab: ' + l.name + '</td><td style="text-align:center; padding: 4px 2px;">1</td><td style="text-align:right; padding: 4px 6px;">฿' + Number(l.price).toFixed(2) + '</td></tr>'; });
         (v.procedures || []).forEach(pr => { html += '<tr><td style="text-align:center; padding: 4px 2px;">' + (count++) + '</td><td style="padding: 4px 6px;">' + pr.name + '</td><td style="text-align:center; padding: 4px 2px;">1</td><td style="text-align:right; padding: 4px 6px;">฿' + Number(pr.price).toFixed(2) + '</td></tr>'; });
         if (v.billing?.amed_discount > 0) html += '<tr style="color:#2563eb;"><td style="text-align:center; padding: 4px 2px;">-</td><td style="padding: 4px 6px;">สิทธิ A-Med สปสช. (เหมาจ่าย)</td><td style="text-align:center; padding: 4px 2px;">1</td><td style="text-align:right; padding: 4px 6px;">-180.00</td></tr>';
+        if (v.billing?.amed_clinic_support > 0) html += '<tr style="color:#7c3aed;"><td style="text-align:center; padding: 4px 2px;">-</td><td style="padding: 4px 6px;">ส่วนลดสิทธิบัตรทองประจำ (คลินิกซับพอร์ต)</td><td style="text-align:center; padding: 4px 2px;">1</td><td style="text-align:right; padding: 4px 6px;">-' + Number(v.billing.amed_clinic_support).toFixed(2) + '</td></tr>';
 
         document.getElementById('rec-items-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center; padding: 8px;">ไม่มีรายการ</td></tr>';
         const total = v.billing?.total || 0;
@@ -253,8 +329,11 @@ const ReportModule = {
 
           if (payFilter) {
             const method = v.billing?.payment_method || 'เงินสด';
-            if (payFilter === 'A-Med' && (v.billing?.amed_discount || 0) <= 0) return false;
-            if (payFilter !== 'A-Med' && method !== payFilter) return false;
+            const isAmedVisit = (v.billing?.amed_discount || 0) > 0 || method.includes('A-Med') || (v.service_type && v.service_type.includes('A-Med'));
+            if (payFilter === 'A-Med' && !isAmedVisit) return false;
+            if (payFilter === 'A-Med สปสช. (เก็บส่วนต่าง)' && !(method === 'A-Med สปสช. (เก็บส่วนต่าง)' || method === 'A-Med (สปสช.)' || (isAmedVisit && (v.billing?.amed_type === 'AMED_COPAY' || (!v.billing?.amed_type && (v.billing?.total || 0) > 0))))) return false;
+            if (payFilter === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)' && !(method === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)' || v.billing?.amed_type === 'AMED_FREE' || (isAmedVisit && (v.billing?.amed_clinic_support || 0) > 0))) return false;
+            if (!payFilter.startsWith('A-Med') && method !== payFilter) return false;
           }
 
           return true;
@@ -279,12 +358,27 @@ const ReportModule = {
 
         const visits = this.getFilteredVisits();
         const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
+        const drugsCatalog = DB.get(STORAGE_KEYS.DRUGS) || [];
 
         let count = visits.length;
         let cashTotal = 0;
         let transferTotal = 0;
         let amedTotal = 0;
         let totalRevenue = 0;
+
+        // A-Med Specific Analytics
+        let amedVisitsCount = 0;
+        let amedCopayCount = 0;
+        let amedFreeCount = 0;
+        let amedClaimTotal = 0;
+
+        let amedSaleProfitCount = 0;
+        let amedSaleLossCount = 0;
+        let amedNetVsSale = 0;
+
+        let amedCostProfitCount = 0;
+        let amedCostLossCount = 0;
+        let amedNetVsCost = 0;
 
         visits.forEach(v => {
           const b = v.billing || {};
@@ -293,7 +387,46 @@ const ReportModule = {
           else if (b.payment_method === 'เงินสด') cashTotal += total;
           else cashTotal += total;
 
-          amedTotal += Number(b.amed_discount || 0);
+          const method = b.payment_method || '';
+          const isAmedVisit = (b.amed_discount || 0) > 0 || method.includes('A-Med') || (v.service_type && v.service_type.includes('A-Med'));
+
+          if (isAmedVisit) {
+            amedVisitsCount++;
+            const isFree = (method === 'A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)' || b.amed_type === 'AMED_FREE' || (b.amed_clinic_support || 0) > 0);
+            if (isFree) amedFreeCount++;
+            else amedCopayCount++;
+
+            const claimAmt = Number(b.amed_discount || 180.00);
+            amedClaimTotal += claimAmt;
+            amedTotal += claimAmt;
+
+            const subtotal = Number(b.subtotal || 0);
+            const paidAmt = Number(b.total || 0);
+            const clinicRevenue = claimAmt + paidAmt;
+
+            // Compute actual drug cost if not cached
+            let costTotal = Number(b.cost_total);
+            if (isNaN(costTotal) || costTotal === undefined) {
+              costTotal = 0;
+              (v.prescriptions || []).forEach(p => {
+                const d = drugsCatalog.find(x => x.drug_id === p.drug_id || (x.generic_name && p.generic_name && x.generic_name.toLowerCase().trim() === p.generic_name.toLowerCase().trim()));
+                const cPrice = Number(p.cost_price !== undefined && p.cost_price !== null ? p.cost_price : (d ? (d.purchase_price || d.cost_price) : 0)) || 0;
+                costTotal += (cPrice * (Number(p.qty) || 1));
+              });
+            }
+
+            const pVsSale = clinicRevenue - subtotal;
+            const pVsCost = clinicRevenue - costTotal;
+
+            amedNetVsSale += pVsSale;
+            if (pVsSale >= 0) amedSaleProfitCount++;
+            else amedSaleLossCount++;
+
+            amedNetVsCost += pVsCost;
+            if (pVsCost >= 0) amedCostProfitCount++;
+            else amedCostLossCount++;
+          }
+
           totalRevenue += total;
         });
 
@@ -309,21 +442,93 @@ const ReportModule = {
         if (amedEl) amedEl.textContent = '฿' + amedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         if (totalEl) totalEl.textContent = '฿' + totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+        // Populate A-Med Analytics Banner Cards
+        const aTotalCasesEl = document.getElementById('amed-stat-total-cases');
+        const aClaimTotalEl = document.getElementById('amed-stat-claim-total');
+        const aCopayCasesEl = document.getElementById('amed-stat-copay-cases');
+        const aFreeCasesEl = document.getElementById('amed-stat-free-cases');
+
+        const aSaleDiffEl = document.getElementById('amed-stat-sale-diff-total');
+        const aSaleProfitCountEl = document.getElementById('amed-stat-sale-profit-count');
+        const aSaleLossCountEl = document.getElementById('amed-stat-sale-loss-count');
+
+        const aCostProfitEl = document.getElementById('amed-stat-cost-profit-total');
+        const aCostProfitCountEl = document.getElementById('amed-stat-cost-profit-count');
+        const aCostLossCountEl = document.getElementById('amed-stat-cost-loss-count');
+
+        if (aTotalCasesEl) aTotalCasesEl.textContent = amedVisitsCount + ' เคส';
+        if (aClaimTotalEl) aClaimTotalEl.textContent = '฿' + amedClaimTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        if (aCopayCasesEl) aCopayCasesEl.textContent = amedCopayCount;
+        if (aFreeCasesEl) aFreeCasesEl.textContent = amedFreeCount;
+
+        if (aSaleDiffEl) {
+          const sign = amedNetVsSale >= 0 ? '+' : '';
+          aSaleDiffEl.textContent = sign + '฿' + amedNetVsSale.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          aSaleDiffEl.style.color = amedNetVsSale >= 0 ? '#059669' : '#dc2626';
+        }
+        if (aSaleProfitCountEl) aSaleProfitCountEl.textContent = amedSaleProfitCount;
+        if (aSaleLossCountEl) aSaleLossCountEl.textContent = amedSaleLossCount;
+
+        if (aCostProfitEl) {
+          const sign = amedNetVsCost >= 0 ? '+' : '';
+          aCostProfitEl.textContent = sign + '฿' + amedNetVsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          aCostProfitEl.style.color = amedNetVsCost >= 0 ? '#047857' : '#dc2626';
+        }
+        if (aCostProfitCountEl) aCostProfitCountEl.textContent = amedCostProfitCount;
+        if (aCostLossCountEl) aCostLossCountEl.textContent = amedCostLossCount;
+
         const tbody = document.querySelector('#rep-table tbody');
         const tfoot = document.getElementById('rep-table-foot');
 
         if (tbody) {
           if (visits.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--slate-400); padding: 20px;">ไม่พบรายการตรวจหรือรายรับในช่วงวันที่เลือก</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; color: var(--slate-400); padding: 20px;">ไม่พบรายการตรวจหรือรายรับในช่วงวันที่เลือก</td></tr>';
             if (tfoot) tfoot.innerHTML = '';
           } else {
             const sorted = visits.slice().sort((a, b) => (b.visit_date || '').localeCompare(a.visit_date || ''));
 
             tbody.innerHTML = sorted.map(v => {
               const p = patients.find(x => x.hn === v.hn) || {};
-              const actualPaid = Number(v.billing?.total || 0);
-              const amedAmt = Number(v.billing?.amed_discount || 0);
+              const b = v.billing || {};
+              const actualPaid = Number(b.total || 0);
+              const method = b.payment_method || 'เงินสด';
+              const isAmedVisit = (b.amed_discount || 0) > 0 || method.includes('A-Med') || (v.service_type && v.service_type.includes('A-Med'));
+              const amedAmt = isAmedVisit ? Number(b.amed_discount || 180.00) : 0;
               const dxText = (v.diagnoses && v.diagnoses.length > 0) ? v.diagnoses.map(d => d.name).join(', ') : (v.assessment || '-');
+
+              let amedBadgeHtml = '<span style="color: var(--slate-400); font-size: 0.75rem;">-</span>';
+              if (isAmedVisit) {
+                const subtotal = Number(b.subtotal || 0);
+                const clinicRevenue = amedAmt + actualPaid;
+
+                let costTotal = Number(b.cost_total);
+                if (isNaN(costTotal) || costTotal === undefined) {
+                  costTotal = 0;
+                  (v.prescriptions || []).forEach(pr => {
+                    const d = drugsCatalog.find(x => x.drug_id === pr.drug_id || (x.generic_name && pr.generic_name && x.generic_name.toLowerCase().trim() === pr.generic_name.toLowerCase().trim()));
+                    const cPrice = Number(pr.cost_price !== undefined && pr.cost_price !== null ? pr.cost_price : (d ? (d.purchase_price || d.cost_price) : 0)) || 0;
+                    costTotal += (cPrice * (Number(pr.qty) || 1));
+                  });
+                }
+
+                const diffVsCost = clinicRevenue - costTotal;
+                const diffVsSale = clinicRevenue - subtotal;
+
+                const costLabel = (diffVsCost >= 0 ? '+' : '') + '฿' + diffVsCost.toFixed(2) + ' (ทุน)';
+                const saleLabel = (diffVsSale >= 0 ? '+' : '') + '฿' + diffVsSale.toFixed(2) + ' (ขาย)';
+
+                const costBadgeClass = diffVsCost >= 0 ? 'badge-success' : 'badge-danger';
+                const saleColor = diffVsSale >= 0 ? '#059669' : '#dc2626';
+
+                amedBadgeHtml = '<div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">' +
+                  '<span class="badge ' + costBadgeClass + '" style="font-size: 0.72rem; padding: 2px 6px;" title="กำไร/ขาดทุนเทียบต้นทุนยาจริง">' + costLabel + '</span>' +
+                  '<span style="font-size: 0.7rem; font-weight: 600; color: ' + saleColor + ';" title="กำไร/ส่วนต่างเทียบราคาขายหน้าร้าน">' + saleLabel + '</span>' +
+                '</div>';
+              }
+
+              let payMethodBadgeClass = 'badge-success';
+              if (method === 'โอนเงิน/QR') payMethodBadgeClass = 'badge-primary';
+              else if (method.includes('A-Med')) payMethodBadgeClass = 'badge-purple';
 
               return '<tr>' +
                 '<td style="font-size: 0.78rem; color: var(--slate-600); white-space: nowrap;">' + (v.visit_date || '-') + '</td>' +
@@ -333,17 +538,20 @@ const ReportModule = {
                 '<td><strong>' + v.patient_name + '</strong></td>' +
                 '<td><span class="badge badge-primary" style="font-size: 0.72rem;">' + (v.service_type || 'OPD') + '</span></td>' +
                 '<td style="max-width: 180px; font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + dxText + '">' + dxText + '</td>' +
-                '<td><span class="badge ' + (v.billing?.payment_method === 'โอนเงิน/QR' ? 'badge-primary' : 'badge-success') + '">' + (v.billing?.payment_method || 'เงินสด') + '</span></td>' +
+                '<td><span class="badge ' + payMethodBadgeClass + '" style="font-size: 0.74rem;">' + method + '</span></td>' +
                 '<td style="text-align: right; font-weight: 600; color: #047857;">฿' + actualPaid.toFixed(2) + '</td>' +
                 '<td style="text-align: right; font-weight: 600; color: #7c3aed;">' + (amedAmt > 0 ? ('฿' + amedAmt.toFixed(2)) : '-') + '</td>' +
+                '<td style="text-align: center;">' + amedBadgeHtml + '</td>' +
               '</tr>';
             }).join('');
 
             if (tfoot) {
+              const costSign = amedNetVsCost >= 0 ? '+' : '';
               tfoot.innerHTML = '<tr>' +
                 '<td colspan="8" style="text-align: right;">รวมทั้งสิ้น (' + count + ' รายการ):</td>' +
                 '<td style="text-align: right; color: #047857; font-size: 0.95rem;">฿' + totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</td>' +
                 '<td style="text-align: right; color: #7c3aed; font-size: 0.95rem;">฿' + amedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</td>' +
+                '<td style="text-align: center; font-size: 0.82rem; color: ' + (amedNetVsCost >= 0 ? '#047857' : '#dc2626') + '; font-weight: 700;">' + costSign + '฿' + amedNetVsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</td>' +
               '</tr>';
             }
           }
@@ -559,10 +767,92 @@ const ReportModule = {
         DFModule.printDFSummary();
       },
 
+      filterAmedOnly() {
+        const sel = document.getElementById('rep-payment-filter');
+        if (sel) {
+          sel.value = 'A-Med';
+          this.render();
+        }
+      },
+
+      exportAmedProfitLossCSV() {
+        const fromDate = document.getElementById('rep-from-date')?.value || '';
+        const toDate = document.getElementById('rep-to-date')?.value || '';
+        const visits = this.getFilteredVisits().filter(v => (v.billing?.amed_discount || 0) > 0 || (v.service_type && v.service_type.includes('A-Med')) || (v.billing?.payment_method && v.billing.payment_method.includes('A-Med')));
+        const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
+        const drugsCatalog = DB.get(STORAGE_KEYS.DRUGS) || [];
+
+        if (visits.length === 0) {
+          alert('ไม่พบรายการเคส A-Med ในช่วงวันที่เลือก');
+          return;
+        }
+
+        let csv = '\uFEFFวันที่รับบริการ,AN,HN,เลขบัตรประชาชน,ชื่อ-นามสกุล,สิทธิการรักษา,วิธีชำระเงิน,การวินิจฉัย,ยอดราคาขายเต็ม (บาท),ต้นทุนยาจริง (บาท),ยอดเบิก A-Med (บาท),ยอดคนไข้จ่ายเพิ่ม (บาท),รายรับรวมคลินิก (บาท),กำไร-ขาดทุนเทียบราคาขาย (บาท),กำไร-ขาดทุนเทียบต้นทุนจริง (บาท),สรุปผลประกอบการ\n';
+
+        visits.forEach(v => {
+          const p = patients.find(x => x.hn === v.hn) || {};
+          const b = v.billing || {};
+          const dx = ((v.diagnoses && v.diagnoses.length > 0) ? v.diagnoses.map(d => d.name).join(';') : (v.assessment || '')).replace(/"/g, '""');
+
+          const subtotal = Number(b.subtotal || 0);
+          const claimAmt = Number(b.amed_discount || 180.00);
+          const paidAmt = Number(b.total || 0);
+          const clinicRevenue = claimAmt + paidAmt;
+
+          let costTotal = Number(b.cost_total);
+          if (isNaN(costTotal) || costTotal === undefined) {
+            costTotal = 0;
+            (v.prescriptions || []).forEach(pr => {
+              const d = drugsCatalog.find(x => x.drug_id === pr.drug_id || (x.generic_name && pr.generic_name && x.generic_name.toLowerCase().trim() === pr.generic_name.toLowerCase().trim()));
+              const cPrice = Number(pr.cost_price !== undefined && pr.cost_price !== null ? pr.cost_price : (d ? (d.purchase_price || d.cost_price) : 0)) || 0;
+              costTotal += (cPrice * (Number(pr.qty) || 1));
+            });
+          }
+
+          const diffVsSale = clinicRevenue - subtotal;
+          const diffVsCost = clinicRevenue - costTotal;
+
+          let statusText = '';
+          if (diffVsCost >= 0) {
+            statusText = (diffVsSale >= 0) ? 'กำไรทั้งราคาขายและต้นทุน' : 'กำไรเนื้อเงิน (คลินิกซับพอร์ตส่วนลดราคาขาย)';
+          } else {
+            statusText = 'ขาดทุนเข้าเนื้อต้นทุน';
+          }
+
+          const aType = b.amed_type === 'AMED_FREE' ? 'A-Med ขาประจำ (ยอด 0 บ.)' : (b.amed_type === 'AMED_COPAY' ? 'A-Med ขาจร (เก็บส่วนต่าง)' : (v.service_type || 'A-Med'));
+
+          csv += '"' + (v.visit_date ? v.visit_date.slice(0, 16) : '') + '","' +
+                 v.an + '","' +
+                 v.hn + '","' +
+                 (p.national_id || '') + '","' +
+                 v.patient_name + '","' +
+                 aType + '","' +
+                 (b.payment_method || 'A-Med') + '","' +
+                 dx + '",' +
+                 subtotal.toFixed(2) + ',' +
+                 costTotal.toFixed(2) + ',' +
+                 claimAmt.toFixed(2) + ',' +
+                 paidAmt.toFixed(2) + ',' +
+                 clinicRevenue.toFixed(2) + ',' +
+                 diffVsSale.toFixed(2) + ',' +
+                 diffVsCost.toFixed(2) + ',"' +
+                 statusText + '"\n';
+        });
+
+        const periodSlug = (fromDate && toDate) ? (fromDate + '_to_' + toDate) : (fromDate || toDate || 'All');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'AMed_Profit_Loss_Analysis_' + periodSlug + '.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
       exportAmedCSV() {
         const fromDate = document.getElementById('rep-from-date')?.value || '';
         const toDate = document.getElementById('rep-to-date')?.value || '';
-        const visits = this.getFilteredVisits().filter(v => (v.billing?.amed_discount || 0) > 0 || v.service_type === 'A-Med');
+        const visits = this.getFilteredVisits().filter(v => (v.billing?.amed_discount || 0) > 0 || (v.service_type && v.service_type.includes('A-Med')) || (v.billing?.payment_method && v.billing.payment_method.includes('A-Med')));
         const patients = DB.get(STORAGE_KEYS.PATIENTS) || [];
 
         if (visits.length === 0) {

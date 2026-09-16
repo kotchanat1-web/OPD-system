@@ -789,12 +789,14 @@
               <select id="bill-payment-method" class="form-select" onchange="BillingModule.calcTotal()">
                 <option value="เงินสด">เงินสด (Cash)</option>
                 <option value="โอนเงิน/QR">โอนเงิน / พร้อมเพย์ QR</option>
-                <option value="A-Med (สปสช.)">A-Med (สปสช.) - หักค่าใช้จ่าย 180 บาท</option>
+                <option value="A-Med สปสช. (เก็บส่วนต่าง)">A-Med สปสช. (เก็บส่วนต่าง - หัก 180 บ.)</option>
+                <option value="A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)">A-Med สปสช. (ไม่เก็บส่วนต่าง - ยอดชำระ 0 บ.)</option>
               </select>
             </div>
             <div style="background: var(--slate-50); padding: 12px; border-radius: var(--radius-md); margin-top: 12px; border: 1px solid var(--slate-200);">
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem;"><span>ยอดรวมทั้งหมด (Subtotal):</span><span id="bill-subtotal" style="font-weight: 600;">฿0.00</span></div>
-              <div id="bill-amed-row" style="display: none; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem; color: #2563eb;"><span>สิทธิ A-Med สปสช. (เหมาจ่าย):</span><span>- ฿180.00</span></div>
+              <div id="bill-amed-row" style="display: none; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem; color: #2563eb;"><span>สิทธิ A-Med สปสช. (เหมาจ่าย):</span><span id="bill-amed-deduct">- ฿180.00</span></div>
+              <div id="bill-amed-support-row" style="display: none; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem; color: #7c3aed;"><span>ส่วนลดคลินิกซับพอร์ต (ยอดชำระ 0 บ.):</span><span id="bill-amed-support-amount">- ฿0.00</span></div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem; color: var(--rose-600);"><span>ส่วนลดทั่วไป:</span><span id="bill-total-discount">- ฿0.00</span></div>
               <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; color: var(--primary-800); border-top: 2px solid var(--slate-300); padding-top: 6px; margin-top: 6px;"><span>ยอดสุทธิที่ต้องชำระ (Total):</span><span id="bill-grand-total">฿0.00</span></div>
               <div id="bill-baht-text" style="font-size: 0.78rem; color: var(--slate-500); text-align: right; margin-top: 2px;">(ศูนย์บาทถ้วน)</div>
@@ -917,11 +919,13 @@
               สรุปข้อมูล: <strong id="rep-period-label" style="color: var(--primary-700);">วันนี้</strong>
             </div>
             <div style="display: flex; gap: 8px; align-items: center;">
-              <select id="rep-payment-filter" class="form-select" style="width: 160px; font-size: 0.8rem;" onchange="ReportModule.render()">
+              <select id="rep-payment-filter" class="form-select" style="width: 180px; font-size: 0.8rem;" onchange="ReportModule.render()">
                 <option value="">-- ทุกวิธีชำระเงิน --</option>
                 <option value="เงินสด">เงินสด</option>
                 <option value="โอนเงิน/QR">โอนเงิน/QR</option>
-                <option value="A-Med">A-Med</option>
+                <option value="A-Med">A-Med (สปสช. ทั้งหมด)</option>
+                <option value="A-Med สปสช. (เก็บส่วนต่าง)">A-Med (เก็บส่วนต่าง)</option>
+                <option value="A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)">A-Med (ยอด 0 บ. ขาประจำ)</option>
               </select>
             </div>
           </div>
@@ -933,6 +937,67 @@
             <div class="stat-card"><div class="stat-info"><h3>ยอดโอนเงิน/QR</h3><div class="stat-value" id="rep-transfer" style="color: var(--secondary-600);">฿0</div></div><div class="stat-icon blue"><i data-lucide="qr-code"></i></div></div>
             <div class="stat-card"><div class="stat-info"><h3>ยอดเบิก A-Med</h3><div class="stat-value" id="rep-amed" style="color: #7c3aed;">฿0</div></div><div class="stat-icon teal"><i data-lucide="shield-check"></i></div></div>
             <div class="stat-card" style="border: 2px solid var(--emerald-500); background: #ecfdf5;"><div class="stat-info"><h3>ยอดรวมรายรับจริง</h3><div class="stat-value" id="rep-total" style="color: #047857; font-weight: 800;">฿0</div></div><div class="stat-icon emerald"><i data-lucide="wallet"></i></div></div>
+          </div>
+
+          <!-- A-Med Profit & Loss Analytics Card (สิทธิบัตรทอง / A-Med สปสช.) -->
+          <div id="rep-amed-analytics-card" style="margin-top: 14px; background: linear-gradient(135deg, #fbfbfe 0%, #f3e8ff 100%); border: 1.5px solid #d8b4fe; border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid rgba(216, 180, 254, 0.6); padding-bottom: 8px; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #7c3aed; color: #ffffff; border-radius: var(--radius-md); box-shadow: 0 2px 4px rgba(124, 58, 237, 0.3);">
+                  <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                </span>
+                <div>
+                  <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #581c87;">A-Med Profit & Loss Analytics — วิเคราะห์ผลประกอบการบัตรทอง สปสช.</h4>
+                  <p style="margin: 0; font-size: 0.76rem; color: #6b21a8;">เปรียบเทียบผลกำไร-ขาดทุนระหว่างรายรับจาก A-Med (เหมาจ่าย 180 บ. + ส่วนต่าง) กับราคาขายและต้นทุนยาจริง</p>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button class="btn btn-sm" style="background: #ffffff; border: 1px solid #c084fc; color: #6b21a8; font-weight: 600;" onclick="ReportModule.filterAmedOnly()"><i data-lucide="filter"></i> กรองดูเฉพาะ A-Med</button>
+                <button class="btn btn-sm" style="background: #7c3aed; color: #ffffff; border: none; font-weight: 600;" onclick="ReportModule.exportAmedProfitLossCSV()"><i data-lucide="file-spreadsheet"></i> Export วิเคราะห์กำไร-ขาดทุน A-Med (CSV)</button>
+              </div>
+            </div>
+
+            <!-- 3 Columns Analytics Metrics -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+              <!-- Col 1: Overview เคส A-Med -->
+              <div style="background: #ffffff; border-radius: var(--radius-md); padding: 10px 12px; border: 1px solid #e9d5ff;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: #7c3aed; margin-bottom: 4px;"><i data-lucide="shield-check" style="width: 14px; height: 14px; vertical-align: middle;"></i> สรุปจำนวนเคส & ยอดเคลม A-Med</div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 1.3rem; font-weight: 800; color: #581c87;" id="amed-stat-total-cases">0 เคส</span>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: #7c3aed;" id="amed-stat-claim-total">฿0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--slate-600); margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                  <span>• เก็บส่วนต่าง (ขาจร): <strong id="amed-stat-copay-cases" style="color: #2563eb;">0</strong> เคส</span>
+                  <span>• ยอด 0 บ. (ขาประจำ): <strong id="amed-stat-free-cases" style="color: #7c3aed;">0</strong> เคส</span>
+                </div>
+              </div>
+
+              <!-- Col 2: Vs Selling Price (เทียบราคาขายหน้าร้าน) -->
+              <div style="background: #ffffff; border-radius: var(--radius-md); padding: 10px 12px; border: 1px solid #fbcfe8;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: #be185d; margin-bottom: 4px;"><i data-lucide="trending-down" style="width: 14px; height: 14px; vertical-align: middle;"></i> เทียบกับราคาขายหน้าร้าน + หัตถการ</div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 1.15rem; font-weight: 800;" id="amed-stat-sale-diff-total">฿0.00</span>
+                  <span style="font-size: 0.75rem; color: var(--slate-500);">(ส่วนต่างที่ซับพอร์ต/ลดให้)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                  <span style="color: #059669;">• กำไร/เท่าทุน: <strong id="amed-stat-sale-profit-count">0</strong> เคส</span>
+                  <span style="color: #dc2626;">• ขาดทุน/ซับพอร์ต: <strong id="amed-stat-sale-loss-count">0</strong> เคส</span>
+                </div>
+              </div>
+
+              <!-- Col 3: Vs Actual Cost (เทียบต้นทุนยาจริง) -->
+              <div style="background: #ffffff; border-radius: var(--radius-md); padding: 10px 12px; border: 1px solid #a7f3d0;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: #047857; margin-bottom: 4px;"><i data-lucide="banknote" style="width: 14px; height: 14px; vertical-align: middle;"></i> เทียบกับต้นทุนยาจริง (กำไรสุทธิเข้าคลินิก)</div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 1.15rem; font-weight: 800; color: #047857;" id="amed-stat-cost-profit-total">+฿0.00</span>
+                  <span style="font-size: 0.75rem; color: #059669; font-weight: 600;">(กำไรแท้จริง)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                  <span style="color: #059669;">• กำไรเนื้อเงิน: <strong id="amed-stat-cost-profit-count">0</strong> เคส</span>
+                  <span style="color: #dc2626;">• เข้าเนื้อต้นทุน: <strong id="amed-stat-cost-loss-count">0</strong> เคส</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Table with footer total -->
@@ -950,6 +1015,7 @@
                   <th>วิธีชำระ</th>
                   <th style="text-align: right;">ยอดชำระจริง (฿)</th>
                   <th style="text-align: right;">ยอดเบิก A-Med (฿)</th>
+                  <th style="text-align: center; min-width: 140px;">ผลกำไร/ขาดทุน A-Med</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -1877,7 +1943,7 @@
         <div class="form-group"><label class="form-label">เลือกผู้ป่วย <span class="required">*</span></label><select id="nv-patient-select" class="form-select" onchange="VisitModule.onSelectPatientForVisit(this.value)"><option value="">-- เลือกผู้ป่วย --</option></select></div>
         <div class="form-row form-row-2">
           <div class="form-group"><label class="form-label">เลขที่ Visit (AN)</label><input type="text" id="nv-an" class="form-input" readonly></div>
-          <div class="form-group"><label class="form-label">ประเภทการรับบริการ</label><select id="nv-service-type" class="form-select"><option value="OPD ตรวจรักษาทั่วไป">OPD ตรวจรักษาทั่วไป</option><option value="A-Med">A-Med (นวัตกรรม สปสช.)</option><option value="ใบรับรองแพทย์ลาป่วย">ใบรับรองแพทย์ลาป่วย</option><option value="ใบรับรองแพทย์สมัครงาน">ใบรับรองแพทย์สมัครงาน</option><option value="ใบรับรองแพทย์ใบขับขี่">ใบรับรองแพทย์ใบขับขี่</option></select></div>
+          <div class="form-group"><label class="form-label">ประเภทการรับบริการ</label><select id="nv-service-type" class="form-select"><option value="OPD ตรวจรักษาทั่วไป">OPD ตรวจรักษาทั่วไป</option><option value="A-Med สปสช. (เก็บส่วนต่าง)">A-Med สปสช. (เก็บส่วนต่าง)</option><option value="A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)">A-Med สปสช. (ไม่เก็บส่วนต่าง/ยอด 0 บ.)</option><option value="ใบรับรองแพทย์ลาป่วย">ใบรับรองแพทย์ลาป่วย</option><option value="ใบรับรองแพทย์สมัครงาน">ใบรับรองแพทย์สมัครงาน</option><option value="ใบรับรองแพทย์ใบขับขี่">ใบรับรองแพทย์ใบขับขี่</option></select></div>
         </div>
         <div class="form-group"><label class="form-label">อาการเบื้องต้น (CC)</label><textarea id="nv-cc" class="form-textarea" rows="2" placeholder="ระบุอาการสำคัญ..."></textarea></div>
       </div>
@@ -2604,10 +2670,10 @@
 
   <!-- Feature Modules -->
   <script src="js/modules/patient.js?v=2.0.0"></script>
-  <script src="js/modules/visit.js?v=2.0.0"></script>
+  <script src="js/modules/visit.js?v=2.4.0"></script>
   <script src="js/modules/lab-proc.js?v=2.0.0"></script>
   <script src="js/modules/drug.js?v=2.3.0"></script>
-  <script src="js/modules/billing.js?v=2.0.0"></script>
+  <script src="js/modules/billing.js?v=2.4.0"></script>
   <script src="js/modules/certificate.js?v=2.0.0"></script>
 
   <!-- Application Bootstrap -->
