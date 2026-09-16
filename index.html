@@ -3428,7 +3428,7 @@
       ADMIN_PIN: 'opd_nakhonsawan_admin_pin_v1',
       PATIENTS: 'opd_nakhonsawan_patients_v5',
       VISITS: 'opd_nakhonsawan_visits_v7',
-      DRUGS: 'opd_nakhonsawan_drugs_v6',
+      DRUGS: 'opd_nakhonsawan_drugs_v7',
       LABS: 'opd_nakhonsawan_labs_v4',
       LAB_SETS: 'opd_nakhonsawan_lab_sets_v1',
       PROCEDURES: 'opd_nakhonsawan_procedures_v4',
@@ -3592,7 +3592,7 @@
         // 2. Synchronously ensure 196 Master Drugs are in _cache and localStorage immediately
         const currentDrugs = this._cache[STORAGE_KEYS.DRUGS];
         if (!Array.isArray(currentDrugs) || currentDrugs.length < 196 || currentDrugs.some(d => d.drug_id === 'D1' || d.drug_id === 'D5')) {
-          ['opd_nakhonsawan_drugs_v1', 'opd_nakhonsawan_drugs_v2', 'opd_nakhonsawan_drugs_v3', 'opd_nakhonsawan_drugs_v4', 'opd_nakhonsawan_drugs_v5'].forEach(k => {
+          ['opd_nakhonsawan_drugs_v1', 'opd_nakhonsawan_drugs_v2', 'opd_nakhonsawan_drugs_v3', 'opd_nakhonsawan_drugs_v4', 'opd_nakhonsawan_drugs_v5', 'opd_nakhonsawan_drugs_v6'].forEach(k => {
             try { localStorage.removeItem(k); } catch(e) {}
             try { if (typeof localforage !== 'undefined') localforage.removeItem(k); } catch(e) {}
           });
@@ -12017,7 +12017,7 @@ Return ONLY valid JSON without markdown wrapping.`;
         'opd_nakhonsawan_drug_price_history_v1': { table: 'opd_drug_price_history', pk: 'history_id' },
         'opd_nakhonsawan_patients_v5': { table: 'opd_patients', pk: 'patient_id' },
         'opd_nakhonsawan_visits_v7': { table: 'opd_visits', pk: 'visit_id' },
-        'opd_nakhonsawan_drugs_v6': { table: 'opd_drugs', pk: 'drug_id' },
+        'opd_nakhonsawan_drugs_v7': { table: 'opd_drugs', pk: 'drug_id' },
         'opd_nakhonsawan_appointments_v5': { table: 'opd_appointments', pk: 'appointment_id' },
         'opd_nakhonsawan_procedures_v4': { table: 'opd_procedures', pk: 'proc_id' },
         'opd_nakhonsawan_labs_v4': { table: 'opd_labs', pk: 'lab_id' },

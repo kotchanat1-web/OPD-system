@@ -1,5 +1,5 @@
 // ข้อมูลคลังยาและเวชภัณฑ์ระบบ OPD คลินิกเวชกรรมนครสวรรค์เฮลท์แคร์ (196 รายการ)
-// อัปเดตล่าสุด: 16/9/2569 จาก Folder med
+// อัปเดตล่าสุด: 16/9/2569 (Standardized Pharmacological Generic Names for OCR)
 const OPD_MASTER_DRUGS = [
   {
     "drug_id": "D001",
@@ -101,7 +101,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D008",
-    "generic_name": "Aescin +Diethylamine salicylate",
+    "generic_name": "Aescin + Diethylamine salicylate",
     "strength": "10g",
     "dosage_form": "Tube",
     "trade_name": "Reparil gel 10gm",
@@ -115,7 +115,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D009",
-    "generic_name": "ALLOPURINOL",
+    "generic_name": "Allopurinol",
     "strength": "300MG",
     "dosage_form": "Tablet",
     "trade_name": "ALLOPURINOL300MG / XANOL",
@@ -129,7 +129,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D010",
-    "generic_name": "allopurinol",
+    "generic_name": "Allopurinol",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "pipALLO 100mg",
@@ -143,7 +143,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D011",
-    "generic_name": "allopurinol",
+    "generic_name": "Allopurinol",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "ALLOPURINOL300MG 50X10'S(XANOL)",
@@ -157,7 +157,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D012",
-    "generic_name": "Alum milk",
+    "generic_name": "Aluminium hydroxide + Magnesium hydroxide",
     "strength": "240 ML",
     "dosage_form": "Bottle",
     "trade_name": "Bowa Gel",
@@ -241,7 +241,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D018",
-    "generic_name": "Amoxicillin +clavulanic",
+    "generic_name": "Amoxicillin + Clavulanic acid",
     "strength": "1000mg.",
     "dosage_form": "Tablet",
     "trade_name": "AMK 1000MG 10'S/pro-03 C01",
@@ -255,7 +255,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D019",
-    "generic_name": "Amoxicillin +clavulanic",
+    "generic_name": "Amoxicillin + Clavulanic acid",
     "strength": "50 Mg.",
     "dosage_form": "Bottle",
     "trade_name": "Manclamine Es กลิ่นส้ม 642.9mg/5ml 50ml",
@@ -269,7 +269,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D020",
-    "generic_name": "amoxicillin trihydrate",
+    "generic_name": "Amoxicillin",
     "strength": "125MG",
     "dosage_form": "Bottle",
     "trade_name": "STARMOX DRY SYRUP seven starใส่กล่อง)",
@@ -283,7 +283,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D021",
-    "generic_name": "amoxicillin trihydrate+potassium clavulanate",
+    "generic_name": "Amoxicillin + Clavulanic acid",
     "strength": "5ml 50ml",
     "dosage_form": "Bottle",
     "trade_name": "Manclamine Es กลิ่นส้ม 642.9mg/5ml 50ml",
@@ -297,7 +297,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D022",
-    "generic_name": "Amoxycillin",
+    "generic_name": "Amoxicillin",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "Moxicap",
@@ -311,7 +311,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D023",
-    "generic_name": "Analgesic Balm",
+    "generic_name": "Methyl salicylate + Menthol + Camphor",
     "strength": "30gm",
     "dosage_form": "Box",
     "trade_name": "NEOTICA BALM /thai nakorn patana",
@@ -325,7 +325,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D024",
-    "generic_name": "Antibacterial",
+    "generic_name": "Silver sulfadiazine",
     "strength": "25 g",
     "dosage_form": "Tube",
     "trade_name": "Silverderm 25gm",
@@ -339,7 +339,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D025",
-    "generic_name": "antidiarrheal",
+    "generic_name": "Activated Charcoal",
     "strength": "200mg.",
     "dosage_form": "Tablet",
     "trade_name": "Ca-r-bon 260mg ขายเป็นแผง",
@@ -353,7 +353,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D026",
-    "generic_name": "aspirin",
+    "generic_name": "Aspirin",
     "strength": "81mg",
     "dosage_form": "Tablet",
     "trade_name": "Aspilets 81mg",
@@ -367,7 +367,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D027",
-    "generic_name": "Atenol",
+    "generic_name": "Atenolol",
     "strength": "50 mg",
     "dosage_form": "Tablet",
     "trade_name": "Atenol /อาทีนอล",
@@ -381,7 +381,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D028",
-    "generic_name": "ATK COVID INFLUENZA",
+    "generic_name": "COVID-19 / Influenza A&B Antigen Test Kit (ATK)",
     "strength": "",
     "dosage_form": "Box",
     "trade_name": "WONDER DENGUE IgG/IgM-NS1 ATK ชุด",
@@ -437,7 +437,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D032",
-    "generic_name": "Augmentin",
+    "generic_name": "Amoxicillin + Clavulanic acid",
     "strength": "1000 mg",
     "dosage_form": "Tablet",
     "trade_name": "AMOTIN 1000 /T.O CHEMICAL",
@@ -451,7 +451,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D033",
-    "generic_name": "azithromycin",
+    "generic_name": "Azithromycin",
     "strength": "200mg",
     "dosage_form": "Bottle",
     "trade_name": "Onzet-P syrup สับปะรด 200mg/5ml เหลือง",
@@ -465,7 +465,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D034",
-    "generic_name": "AZITHROMYCIN",
+    "generic_name": "Azithromycin",
     "strength": "250mg",
     "dosage_form": "Tablet",
     "trade_name": "AZITHRO /M&H",
@@ -479,7 +479,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D035",
-    "generic_name": "Benzac",
+    "generic_name": "Benzoyl peroxide",
     "strength": "60gm",
     "dosage_form": "Tube",
     "trade_name": "Benzac AC 2 1/2% gel 60gm",
@@ -549,7 +549,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D040",
-    "generic_name": "BETAMETHASONE",
+    "generic_name": "Betamethasone valerate + Neomycin sulfate",
     "strength": "5g",
     "dosage_form": "Box",
     "trade_name": "BET-N STAR 5GM",
@@ -563,7 +563,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D041",
-    "generic_name": "BETAMETHASONE and Neomycin",
+    "generic_name": "Betamethasone valerate + Neomycin sulfate",
     "strength": "15g",
     "dosage_form": "Box",
     "trade_name": "BETA- DIPO/ thainakorn patana",
@@ -577,7 +577,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D042",
-    "generic_name": "BETAMETHASONE valerate",
+    "generic_name": "Betamethasone valerate",
     "strength": "5g",
     "dosage_form": "Box",
     "trade_name": "clinivate BKD",
@@ -647,7 +647,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D047",
-    "generic_name": "BROMHEXINE 4MG",
+    "generic_name": "Bromhexine hydrochloride",
     "strength": "60ML",
     "dosage_form": "Bottle",
     "trade_name": "ASOVON SYRUP 60ML / [MS]",
@@ -661,7 +661,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D048",
-    "generic_name": "BROMXINE 8MG",
+    "generic_name": "Bromhexine hydrochloride",
     "strength": "8mg",
     "dosage_form": "Tablet",
     "trade_name": "BROMXINE 8MG mucocin",
@@ -675,7 +675,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D049",
-    "generic_name": "Brown mixture",
+    "generic_name": "Brown mixture (Glycyrrhiza compound)",
     "strength": "60ml",
     "dosage_form": "Bottle",
     "trade_name": "ไอน้ำดำเสือดาว (ล) 60ML",
@@ -689,7 +689,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D050",
-    "generic_name": "CALCIUM",
+    "generic_name": "Calcium carbonate",
     "strength": "1000mg.",
     "dosage_form": "Tablet",
     "trade_name": "CALTAB-1000MG 10X10/S[MILLIMED] (CALCIUM",
@@ -703,7 +703,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D051",
-    "generic_name": "CEFALEXIN",
+    "generic_name": "Cephalexin",
     "strength": "250 mg",
     "dosage_form": "Bottle",
     "trade_name": "TOFLEX DRY 250MG TO เปลือย (CEFALEXIN) 202",
@@ -717,7 +717,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D052",
-    "generic_name": "cefdinir",
+    "generic_name": "Cefdinir",
     "strength": "125mg/5ml.",
     "dosage_form": "Bottle",
     "trade_name": "DINICEF",
@@ -759,7 +759,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D055",
-    "generic_name": "Cetirizine",
+    "generic_name": "Cetirizine hydrochloride",
     "strength": "10mg",
     "dosage_form": "Tablet",
     "trade_name": "CETIRIZINE /Media pharma",
@@ -773,7 +773,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D056",
-    "generic_name": "CETIRIZINE",
+    "generic_name": "Cetirizine hydrochloride",
     "strength": "60ML",
     "dosage_form": "Bottle",
     "trade_name": "ALEREST SYRUP / [ชุมชน)",
@@ -787,7 +787,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D057",
-    "generic_name": "cetirizine hydrochloride",
+    "generic_name": "Cetirizine hydrochloride",
     "strength": "60ml",
     "dosage_form": "Bottle",
     "trade_name": "TIZINE SYRUP 60ML Sถสัม (BLH]",
@@ -801,7 +801,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D058",
-    "generic_name": "Chloramphenical eye drops",
+    "generic_name": "Chloramphenicol",
     "strength": "5ml",
     "dosage_form": "Bottle",
     "trade_name": "Chlor-oph (คลอรอฟ) / SENG THAI COMPANY",
@@ -815,7 +815,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D059",
-    "generic_name": "CHLOR-OPH",
+    "generic_name": "Chloramphenicol",
     "strength": "5ml",
     "dosage_form": "Bottle",
     "trade_name": "CHLOR-OPH 5CC (ขายขาด) (CHLORAM)",
@@ -829,7 +829,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D060",
-    "generic_name": "Chlorpheniramine",
+    "generic_name": "Chlorpheniramine maleate",
     "strength": "4mg",
     "dosage_form": "Tablet",
     "trade_name": "Chlorpheniramine malieate Iml 10mg Tp",
@@ -843,7 +843,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D061",
-    "generic_name": "CIPROFLOX",
+    "generic_name": "Ciprofloxacin",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "500MG [สหแพทย์]10X10'S(FLOXCIPRO",
@@ -857,7 +857,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D062",
-    "generic_name": "CIPROFLOX",
+    "generic_name": "Ciprofloxacin",
     "strength": "250mg",
     "dosage_form": "Tablet",
     "trade_name": "250MG [สหแพทย์]10X10'S(FLOXCIPRO",
@@ -871,7 +871,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D063",
-    "generic_name": "CLARITH",
+    "generic_name": "Clarithromycin",
     "strength": "250mg",
     "dosage_form": "Tablet",
     "trade_name": "CLARITH 250MG.10'S.",
@@ -899,7 +899,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D065",
-    "generic_name": "clotrimazole",
+    "generic_name": "Clotrimazole",
     "strength": "100mg",
     "dosage_form": "stick",
     "trade_name": "Starda 100mg ชนิดเหน็บช่องคลอด / seven star",
@@ -913,7 +913,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D066",
-    "generic_name": "CLOTRIMAZOLE",
+    "generic_name": "Clotrimazole",
     "strength": "100MG",
     "dosage_form": "Tablet",
     "trade_name": "CANDINOX",
@@ -941,7 +941,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D068",
-    "generic_name": "COLCHICINE",
+    "generic_name": "Colchicine",
     "strength": "0.6mg",
     "dosage_form": "Tablet",
     "trade_name": "pipCHICINE 0.6",
@@ -955,7 +955,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D069",
-    "generic_name": "Con con",
+    "generic_name": "Salicylic acid + Liquefied Phenol",
     "strength": "15ml",
     "dosage_form": "Bottle",
     "trade_name": "Con con",
@@ -969,7 +969,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D070",
-    "generic_name": "Daflon",
+    "generic_name": "Purified Flavonoid Fraction (Diosmin + Hesperidin)",
     "strength": "500 mg",
     "dosage_form": "Tablet",
     "trade_name": "daflon 500",
@@ -983,7 +983,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D071",
-    "generic_name": "DEHECTA",
+    "generic_name": "Diosmectite",
     "strength": "20ml",
     "dosage_form": "Set",
     "trade_name": "DEHECTA 20X20ML JUSTRAW",
@@ -997,7 +997,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D072",
-    "generic_name": "DEXTROMETHORPHAN",
+    "generic_name": "Dextromethorphan hydrobromide",
     "strength": "15mg",
     "dosage_form": "Tablet",
     "trade_name": "DEXTROMETHORPHAN 15MG / นิวไลฟ์ ฟาร์มา",
@@ -1011,7 +1011,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D073",
-    "generic_name": "DEXTROMETHORPHAN",
+    "generic_name": "Dextromethorphan hydrobromide",
     "strength": "15mg",
     "dosage_form": "Tablet",
     "trade_name": "Terco-D เขียว ขายเป็นแผง",
@@ -1025,7 +1025,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D074",
-    "generic_name": "DICLOFENAC",
+    "generic_name": "Diclofenac sodium",
     "strength": "25 MG",
     "dosage_form": "Tablet",
     "trade_name": "Star rent",
@@ -1039,7 +1039,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D075",
-    "generic_name": "DICLOXACILLIN",
+    "generic_name": "Dicloxacillin sodium",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "DOROX 500MG  M & H",
@@ -1053,7 +1053,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D076",
-    "generic_name": "DICLOXACILLIN",
+    "generic_name": "Dicloxacillin sodium",
     "strength": "250mg",
     "dosage_form": "Tablet",
     "trade_name": "c-clock 250 (cmed)",
@@ -1067,7 +1067,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D077",
-    "generic_name": "DICLOXACILLIN",
+    "generic_name": "Dicloxacillin sodium",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "c-clock500 (cmed)",
@@ -1081,7 +1081,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D078",
-    "generic_name": "DIMENHIDINATEURS",
+    "generic_name": "Dimenhydrinate",
     "strength": "50mg",
     "dosage_form": "Tablet",
     "trade_name": "DIMENHIDINATEURS 100X10'S",
@@ -1095,7 +1095,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D079",
-    "generic_name": "Dimenhydlinate",
+    "generic_name": "Dimenhydrinate",
     "strength": "1 ml",
     "dosage_form": "Tube",
     "trade_name": "Divomit injection 1 ml / Divomit injection 1 ml",
@@ -1109,7 +1109,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D080",
-    "generic_name": "Dimenhydlinate",
+    "generic_name": "Dimenhydrinate",
     "strength": "50mg",
     "dosage_form": "Tablet",
     "trade_name": "Dimenhyclinate 50mg NI. เหลืองกลม",
@@ -1123,7 +1123,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D081",
-    "generic_name": "Docaine jelly",
+    "generic_name": "Lidocaine hydrochloride",
     "strength": "30gm",
     "dosage_form": "Tube",
     "trade_name": "Docaine jelly 2% 30gm",
@@ -1137,7 +1137,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D082",
-    "generic_name": "docusate sodium",
+    "generic_name": "Docusate sodium",
     "strength": "15ml",
     "dosage_form": "Bottle",
     "trade_name": "Dewax หยอดหู 15ml",
@@ -1179,7 +1179,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D085",
-    "generic_name": "DOPROCT",
+    "generic_name": "Hydrocortisone acetate + Benzocaine + Zinc oxide",
     "strength": "7.5MG",
     "dosage_form": "stick",
     "trade_name": "DOPROCT เหน็บIOS(HYDROCORTISONE7.5MG) A03",
@@ -1207,7 +1207,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D087",
-    "generic_name": "doxycycillin",
+    "generic_name": "Doxycycline",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "DOXY CAP",
@@ -1221,7 +1221,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D088",
-    "generic_name": "Enalapril",
+    "generic_name": "Enalapril maleate",
     "strength": "5mg",
     "dosage_form": "Tablet",
     "trade_name": "Anapril/Berlin",
@@ -1235,7 +1235,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D089",
-    "generic_name": "Enalapril",
+    "generic_name": "Enalapril maleate",
     "strength": "20mg",
     "dosage_form": "Tablet",
     "trade_name": "Anapril/Berlin",
@@ -1249,7 +1249,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D090",
-    "generic_name": "Enalapril",
+    "generic_name": "Enalapril maleate",
     "strength": "5mg",
     "dosage_form": "Tablet",
     "trade_name": "Anapril - S /Berlin",
@@ -1263,7 +1263,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D091",
-    "generic_name": "Enalapril",
+    "generic_name": "Enalapril maleate",
     "strength": "20mg",
     "dosage_form": "Tablet",
     "trade_name": "Anapril -S /Berlin",
@@ -1277,7 +1277,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D092",
-    "generic_name": "ESIDEP",
+    "generic_name": "Escitalopram",
     "strength": "10mg",
     "dosage_form": "Tablet",
     "trade_name": "ESIDEP 10MG.7'S. 4 แผง / Sun Pharma",
@@ -1291,7 +1291,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D093",
-    "generic_name": "ETORICOXIB",
+    "generic_name": "Etoricoxib",
     "strength": "120mg",
     "dosage_form": "Tablet",
     "trade_name": "ARCOXIA 120MG 5'S กล่องละแผง",
@@ -1333,7 +1333,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D096",
-    "generic_name": "Fast cooling",
+    "generic_name": "Cooling Gel Sheet (แผ่นเจลลดไข้)",
     "strength": "แผ่น",
     "dosage_form": "Other",
     "trade_name": "ByeBye fever เด็กโต",
@@ -1347,7 +1347,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D097",
-    "generic_name": "Femarate",
+    "generic_name": "Ferrous fumarate",
     "strength": "200mg",
     "dosage_form": "Tablet",
     "trade_name": "Femarate 200mg ฟีมาเลต ขายเป็นแผง",
@@ -1389,7 +1389,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D100",
-    "generic_name": "Fever kold เด็กโตและผู้ใหญ่ 5x12cm",
+    "generic_name": "Cooling Gel Sheet (แผ่นเจลลดไข้)",
     "strength": "",
     "dosage_form": "Other",
     "trade_name": "Fever kold เด็กโตและผู้ใหญ่ 5x12cm",
@@ -1431,7 +1431,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D103",
-    "generic_name": "FLEMING",
+    "generic_name": "Amoxicillin + Clavulanic acid",
     "strength": "1000mg.",
     "dosage_form": "Tablet",
     "trade_name": "1000MG 10'S[BERLIN]",
@@ -1445,7 +1445,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D104",
-    "generic_name": "flunarizine",
+    "generic_name": "Flunarizine",
     "strength": "5mg",
     "dosage_form": "Tablet",
     "trade_name": "Sovelium  แดงเทา ขายเป็นแผง",
@@ -1459,7 +1459,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D105",
-    "generic_name": "Folimed 5mg",
+    "generic_name": "Folic acid",
     "strength": "5 mg",
     "dosage_form": "Tablet",
     "trade_name": "Folimed 5mg",
@@ -1473,7 +1473,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D106",
-    "generic_name": "Furosrmide",
+    "generic_name": "Furosemide",
     "strength": "40 mg.",
     "dosage_form": "Tablet",
     "trade_name": "Furetic",
@@ -1501,7 +1501,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D108",
-    "generic_name": "GABAPENTIN",
+    "generic_name": "Gabapentin",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "GABAPENTIN 1Q0MG 10X108ชียว)>>>230G / GPO",
@@ -1515,7 +1515,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D109",
-    "generic_name": "Gaviscon",
+    "generic_name": "Sodium alginate + Sodium bicarbonate + Calcium carbonate",
     "strength": "",
     "dosage_form": "Tablet",
     "trade_name": "Gaviscon dual ชมพู เม็ด",
@@ -1529,7 +1529,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D110",
-    "generic_name": "GEMFIBROZIL",
+    "generic_name": "Gemfibrozil",
     "strength": "600mg",
     "dosage_form": "Tablet",
     "trade_name": "Hidil 600mg ขายเป็นแผง / Berlin",
@@ -1543,7 +1543,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D111",
-    "generic_name": "GEMFIBROZIL",
+    "generic_name": "Gemfibrozil",
     "strength": "300mg",
     "dosage_form": "Tablet",
     "trade_name": "Hidil 300mg ขายเป็นแผง / Berlin",
@@ -1557,7 +1557,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D112",
-    "generic_name": "GICA 3 INI TEST",
+    "generic_name": "COVID-19 / Influenza A&B Antigen Test Kit (ATK)",
     "strength": "COVID-19 ATK",
     "dosage_form": "Box",
     "trade_name": "GICA 3 INI TEST",
@@ -1571,7 +1571,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D113",
-    "generic_name": "GLIPIZIDE",
+    "generic_name": "Glipizide",
     "strength": "5 mg.",
     "dosage_form": "Tablet",
     "trade_name": "GLIPIZIDE SMG 10X10/S[MS] GLIPIMED/medicine supply",
@@ -1599,7 +1599,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D115",
-    "generic_name": "HIP BIOTECH",
+    "generic_name": "COVID-19 / Influenza A&B Antigen Test Kit (ATK)",
     "strength": "2 IN I",
     "dosage_form": "Box",
     "trade_name": "ATK HIP 2 IN I (HIP BIOTECH] I TEST",
@@ -1613,7 +1613,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D116",
-    "generic_name": "HISTA-OPH 5CC",
+    "generic_name": "Antazoline hydrochloride + Tetrahydrozoline hydrochloride",
     "strength": "5 ml",
     "dosage_form": "Box",
     "trade_name": "HISTA-OPH 5CC",
@@ -1655,7 +1655,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D119",
-    "generic_name": "Hydroxypropylmethyl cellulose น้ำตาเทียม",
+    "generic_name": "Hypromellose (Hydroxypropyl methylcellulose)",
     "strength": "10ml",
     "dosage_form": "Box",
     "trade_name": "Lac-OPH / SENG THAI COMPANY",
@@ -1669,7 +1669,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D120",
-    "generic_name": "Hydroxypropylmethyl cellulose น้ำตาเทียม",
+    "generic_name": "Hypromellose (Hydroxypropyl methylcellulose)",
     "strength": "10ml",
     "dosage_form": "Bottle",
     "trade_name": "Lac-oph หยอดตา",
@@ -1683,7 +1683,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D121",
-    "generic_name": "Hydroxyzine Hydrochloride",
+    "generic_name": "Hydrochlorothiazide",
     "strength": "25mg",
     "dosage_form": "Tablet",
     "trade_name": "HCTZ 25 MG [GPO]",
@@ -1725,7 +1725,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D124",
-    "generic_name": "HYOSCINE",
+    "generic_name": "Hyoscine-N-butylbromide",
     "strength": "30ml.",
     "dosage_form": "Bottle",
     "trade_name": "Hyoscine star syrup 30ml",
@@ -1767,7 +1767,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D127",
-    "generic_name": "IBUPROFEN",
+    "generic_name": "Ibuprofen",
     "strength": "200MG",
     "dosage_form": "Tablet",
     "trade_name": "BUMAN-200 1000'Sกลมชมพู (IBUPROFEN)",
@@ -1795,7 +1795,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D129",
-    "generic_name": "IBUPROFEN",
+    "generic_name": "Ibuprofen",
     "strength": "60CC",
     "dosage_form": "Bottle",
     "trade_name": "BUFLEX SUSP 60CC รส ส้ม",
@@ -1809,7 +1809,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D130",
-    "generic_name": "IBUPROFEN 400MG",
+    "generic_name": "Ibuprofen",
     "strength": "400MG",
     "dosage_form": "Tablet",
     "trade_name": "GOFEN /care cap",
@@ -1823,7 +1823,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D131",
-    "generic_name": "Kamillosan",
+    "generic_name": "Chamomile extract + Essential oils spray",
     "strength": "15ml",
     "dosage_form": "Box",
     "trade_name": "Kamillosan สเปรย์ 15ml",
@@ -1837,7 +1837,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D132",
-    "generic_name": "LEVOTHYROXIN",
+    "generic_name": "Levothyroxine sodium",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "THYROSIT 100MG 50X10'S",
@@ -1865,7 +1865,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D134",
-    "generic_name": "LOSARTAN",
+    "generic_name": "Losartan potassium",
     "strength": "50MG",
     "dosage_form": "Tablet",
     "trade_name": "LOSARTAN /GPO",
@@ -1879,7 +1879,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D135",
-    "generic_name": "LOSARTAN",
+    "generic_name": "Losartan potassium",
     "strength": "50MG",
     "dosage_form": "Tablet",
     "trade_name": "LANZAAR 50MG 10X10S[BERLIN]",
@@ -1893,7 +1893,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D136",
-    "generic_name": "ltraconazole",
+    "generic_name": "Itraconazole",
     "strength": "100mg",
     "dosage_form": "Tablet",
     "trade_name": "Spornar 100mg ขายเป็นแผง",
@@ -1907,7 +1907,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D137",
-    "generic_name": "LYMA CREAM",
+    "generic_name": "Clotrimazole",
     "strength": "5gm",
     "dosage_form": "Tube",
     "trade_name": "Lyma cream",
@@ -1921,7 +1921,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D138",
-    "generic_name": "LYMA CREAM",
+    "generic_name": "Clotrimazole",
     "strength": "15gm",
     "dosage_form": "Tube",
     "trade_name": "Lyma cream",
@@ -1949,7 +1949,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D140",
-    "generic_name": "mefenmic Acid",
+    "generic_name": "Mefenamic acid",
     "strength": "500MG",
     "dosage_form": "Tablet",
     "trade_name": "PONSTAN",
@@ -1963,7 +1963,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D141",
-    "generic_name": "METFORMIN",
+    "generic_name": "Metformin hydrochloride",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "METFORMIN 500MG SOXIO'S [THUWN]",
@@ -1977,7 +1977,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D142",
-    "generic_name": "METFORMIN",
+    "generic_name": "Metformin hydrochloride",
     "strength": "500mg",
     "dosage_form": "Tablet",
     "trade_name": "METFORMIN /media pharma",
@@ -1991,7 +1991,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D143",
-    "generic_name": "METHYL SALICYLATE 10.20 %",
+    "generic_name": "Methyl salicylate + Menthol + Eugenol",
     "strength": "30 mg",
     "dosage_form": "Tube",
     "trade_name": "FLANIL / BIOPHARM",
@@ -2005,7 +2005,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D144",
-    "generic_name": "Metoclopramide HCI",
+    "generic_name": "Metoclopramide hydrochloride",
     "strength": "10mg.",
     "dosage_form": "Tablet",
     "trade_name": "Medicplex / สหแพทย์",
@@ -2033,7 +2033,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D146",
-    "generic_name": "Migana",
+    "generic_name": "Ergotamine tartrate + Caffeine",
     "strength": "100 mg",
     "dosage_form": "Tablet",
     "trade_name": "Migana (ไมเกนน่า เม็ด) / T.man PHARMA",
@@ -2047,7 +2047,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D147",
-    "generic_name": "MM ยาระบาย รสเชอรี่",
+    "generic_name": "Magnesium hydroxide (Milk of Magnesia)",
     "strength": "240ml.",
     "dosage_form": "Bottle",
     "trade_name": "MM / สหแพทย์ Medic pharma",
@@ -2061,7 +2061,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D148",
-    "generic_name": "Mucilin Natural Fiber",
+    "generic_name": "Ispaghula husk (Psyllium husk)",
     "strength": "5 mg",
     "dosage_form": "Sachet",
     "trade_name": "Mucilin SF / berlin",
@@ -2075,7 +2075,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D149",
-    "generic_name": "Mybacin เม็คอมผสมซิ้ง รสส้ม ขายเป็นซอง",
+    "generic_name": "Zinc gluconate lozenges",
     "strength": "10g",
     "dosage_form": "ซอง",
     "trade_name": "Mybacin เม็คอมผสมซิ้ง รสส้ม ขายเป็นซอง",
@@ -2089,7 +2089,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D150",
-    "generic_name": "NAPROXEN",
+    "generic_name": "Naproxen",
     "strength": "250 mg.",
     "dosage_form": "Tablet",
     "trade_name": "NAPROXEN",
@@ -2103,7 +2103,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D151",
-    "generic_name": "NEO,POLYMYXIN B,GRAMICI",
+    "generic_name": "Neomycin + Polymyxin B + Gramicidin",
     "strength": "5CC",
     "dosage_form": "Bottle",
     "trade_name": "POLY-OPH",
@@ -2117,7 +2117,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D152",
-    "generic_name": "NORFLOX 400MG",
+    "generic_name": "Norfloxacin",
     "strength": "400 mg",
     "dosage_form": "Tablet",
     "trade_name": "T-MAN 10X10'S(CROSSA-400",
@@ -2131,7 +2131,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D153",
-    "generic_name": "NORFLOXIN",
+    "generic_name": "Norfloxacin",
     "strength": "400MG",
     "dosage_form": "Tablet",
     "trade_name": "NORFLOXIN 400 MG 500S' TO C02",
@@ -2145,7 +2145,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D154",
-    "generic_name": "Norfloxstar",
+    "generic_name": "Norfloxacin",
     "strength": "400MG",
     "dosage_form": "Tablet",
     "trade_name": "Norfloxstar 400mg sevenstar",
@@ -2187,7 +2187,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D157",
-    "generic_name": "ONE GERD",
+    "generic_name": "Sodium alginate + Sodium bicarbonate + Calcium carbonate",
     "strength": "10mg.",
     "dosage_form": "Sachet",
     "trade_name": "ONE GERD IOML สูตร GAVISCON 12ชอง/กล่อง",
@@ -2201,7 +2201,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D158",
-    "generic_name": "orphenadrine+paracetamol",
+    "generic_name": "Orphenadrine citrate + Paracetamol",
     "strength": "500 mg.",
     "dosage_form": "Tablet",
     "trade_name": "Noraphen",
@@ -2215,7 +2215,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D159",
-    "generic_name": "orphenadrine+paracetamol",
+    "generic_name": "Orphenadrine citrate + Paracetamol",
     "strength": "500 mg.",
     "dosage_form": "Tablet",
     "trade_name": "Paradine / media pharma",
@@ -2229,7 +2229,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D160",
-    "generic_name": "ORS",
+    "generic_name": "Oral Rehydration Salts (ORS)",
     "strength": "20mg",
     "dosage_form": "Sachet",
     "trade_name": "D-LYTE (รสส้ม)(1X50S)(ORS) 202",
@@ -2243,7 +2243,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D161",
-    "generic_name": "ORS",
+    "generic_name": "Oral Rehydration Salts (ORS)",
     "strength": "3.3mg",
     "dosage_form": "Sachet",
     "trade_name": "Oreda ส้ม ซองเล็ก 3.3 gm",
@@ -2257,7 +2257,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D162",
-    "generic_name": "Oxymetazoline 0.05%",
+    "generic_name": "Oxymetazoline hydrochloride",
     "strength": "",
     "dosage_form": "Bottle",
     "trade_name": "liadin nasal decongest spray la'ปรย์ 0.05%",
@@ -2341,7 +2341,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D168",
-    "generic_name": "POLIROXIN",
+    "generic_name": "Roxithromycin",
     "strength": "150mg",
     "dosage_form": "Bottle",
     "trade_name": "POLIROXIN TAB 50X10S[POLIPHARM]",
@@ -2383,7 +2383,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D171",
-    "generic_name": "Propoliz Mouth Spray",
+    "generic_name": "Propolis extract spray",
     "strength": "15ml",
     "dosage_form": "Box",
     "trade_name": "Propoliz mouth spray 15ml",
@@ -2425,7 +2425,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D174",
-    "generic_name": "SENNA",
+    "generic_name": "Senna alexandrina (Senna extract)",
     "strength": "1000mg.",
     "dosage_form": "Tablet",
     "trade_name": "SENNA",
@@ -2453,7 +2453,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D176",
-    "generic_name": "SIMVASTATIN",
+    "generic_name": "Simvastatin",
     "strength": "10MG",
     "dosage_form": "Tablet",
     "trade_name": "ZIMMEX /Interpharma",
@@ -2467,7 +2467,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D177",
-    "generic_name": "SIMVASTATIN",
+    "generic_name": "Simvastatin",
     "strength": "20MG",
     "dosage_form": "Tablet",
     "trade_name": "ZIMMEX /Interpharma",
@@ -2495,7 +2495,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D179",
-    "generic_name": "SODIUM BICARBONATE",
+    "generic_name": "Sodium bicarbonate",
     "strength": "300 mg",
     "dosage_form": "Tablet",
     "trade_name": "DAMINT UD 1000'S(SODIUM BICARBONA",
@@ -2509,7 +2509,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D180",
-    "generic_name": "sulfemethoxazole",
+    "generic_name": "Sulfamethoxazole + Trimethoprim (Co-trimoxazole)",
     "strength": "800mg",
     "dosage_form": "Tablet",
     "trade_name": "Mezine forte ขายเป็นแผง",
@@ -2523,7 +2523,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D181",
-    "generic_name": "Syn-o-vits",
+    "generic_name": "Multivitamins + L-Lysine syrup",
     "strength": "60ml",
     "dosage_form": "Bottle",
     "trade_name": "Syn-o-vits 60ml มี Lysine",
@@ -2537,7 +2537,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D182",
-    "generic_name": "TENOSALIC",
+    "generic_name": "Betamethasone dipropionate + Salicylic acid",
     "strength": "5g",
     "dosage_form": "Box",
     "trade_name": "TENOSALIC OINTSGM [T-MAN]",
@@ -2551,7 +2551,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D183",
-    "generic_name": "TOLPERISONE",
+    "generic_name": "Tolperisone hydrochloride",
     "strength": "50mg",
     "dosage_form": "Tablet",
     "trade_name": "MYOXAN IIN TO SOXIOS (TOLPERISONE) B02",
@@ -2579,7 +2579,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D185",
-    "generic_name": "Tramadol HCL+Paracetamol",
+    "generic_name": "Tramadol hydrochloride + Paracetamol",
     "strength": "325mg",
     "dosage_form": "Tablet",
     "trade_name": "DUOCETZ",
@@ -2607,7 +2607,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D187",
-    "generic_name": "TRIAMCINOLONE",
+    "generic_name": "Triamcinolone acetonide",
     "strength": "1g",
     "dosage_form": "Sachet",
     "trade_name": "KANOLONE/คาโนโลน",
@@ -2621,7 +2621,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D188",
-    "generic_name": "Triamcinolone Acetonide",
+    "generic_name": "Triamcinolone acetonide",
     "strength": "5MG",
     "dosage_form": "Tube",
     "trade_name": "ZYNO CREAM 0.02% 5G[BKD",
@@ -2649,7 +2649,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D190",
-    "generic_name": "triamcinolone acetonide",
+    "generic_name": "Triamcinolone acetonide",
     "strength": "5MG",
     "dosage_form": "Tube",
     "trade_name": "Zyno 0.1% 5gm",
@@ -2663,7 +2663,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D191",
-    "generic_name": "vitamin B COMPLEX",
+    "generic_name": "Vitamin B Complex",
     "strength": "",
     "dosage_form": "Tablet",
     "trade_name": "B COMPLEX แดง สหมพทธิ์ 100XIOS MEDICPLEX",
@@ -2705,7 +2705,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D194",
-    "generic_name": "ตรวจไข้เลือดออก (3IN1)",
+    "generic_name": "Dengue NS1/IgG/IgM Rapid Test Kit",
     "strength": "",
     "dosage_form": "Other",
     "trade_name": "WONDER DENGUE IgG/IgM-NS1 ATK ชุดตรวจไข้เลือดออก (3IN1)",
@@ -2719,7 +2719,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D195",
-    "generic_name": "ยาดมสมุนไพรไทย(ตราหนุมาน",
+    "generic_name": "Traditional Thai Herbal Inhaler (ยาดมสมุนไพร)",
     "strength": "",
     "dosage_form": "Other",
     "trade_name": "ยาดมสมุนไพรไทย(ตราหนุมาน",
@@ -2733,7 +2733,7 @@ const OPD_MASTER_DRUGS = [
   },
   {
     "drug_id": "D196",
-    "generic_name": "ยาหยอดตา Poly Oph",
+    "generic_name": "Neomycin + Polymyxin B + Gramicidin",
     "strength": "5ml",
     "dosage_form": "Bottle",
     "trade_name": "Polyoph",
@@ -2747,6 +2747,6 @@ const OPD_MASTER_DRUGS = [
   }
 ];
 
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = OPD_MASTER_DRUGS;
 }
